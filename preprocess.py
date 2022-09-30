@@ -20,6 +20,8 @@ LANG_TO_ORTHO = {
 }
 MIN_OCCUR = 5
 
+vocab = set()
+
 for lang, ortho_name in LANG_TO_ORTHO.items():
     print(f'=== Processing language: {lang} ===')
     vocab_counter = Counter()
@@ -40,9 +42,10 @@ for lang, ortho_name in LANG_TO_ORTHO.items():
     print('Converting to IPA...')
     for token in tqdm(frequent_tokens):
         # doing ''.join(ipa_segs(s)) removes non-ipa characters from the string
-        ipa = ''.join(ft.ipa_segs(epi.transliterate(token)))
-        if ipa:
-            ipas.append(ipa)
+        segments = ft.ipa_segs(epi.transliterate(token))
+        vocab.update(segments)
+        if segments:
+            ipas.append(''.join(segments))
 
     ipa_set = set(ipas)
     print('   number of tokens after cleaning up', len(ipa_set))
@@ -50,3 +53,7 @@ for lang, ortho_name in LANG_TO_ORTHO.items():
         f.write('\n'.join(ipa_set))
 
     print('Saved to file!')
+
+with open(f"data/vocab.txt", 'w') as f:
+    f.write('\n'.join(vocab))
+print("Vocab file generated")
