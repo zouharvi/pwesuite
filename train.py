@@ -16,7 +16,7 @@ print('gpu id is', gpuid)
 model_save_path = f'./checkpoints/gpu{gpuid}_best_loss.pt'
 
 
-def train_step(vae_model, train_loader, optimizer, loss_multipliers):
+def train_step(vae_model, train_loader, optimizer, loss_multipliers, limit_iter_per_epoch=None):
     vae_model.train()
     cross_entropy = CrossEntropyLoss(ignore_index=PAD_IDX)
 
@@ -37,8 +37,11 @@ def train_step(vae_model, train_loader, optimizer, loss_multipliers):
         total_kl += kl_loss.item()
         total_recon += recon_loss.item()
         total_loss += loss.item()
+        if limit_iter_per_epoch is not None and i >= limit_iter_per_epoch:
+            # this is nothing more than a way to log more frequently than every (full) epoch.
+            break
 
-    N = len(train_loader)
+    N = i+1  # len(train_loader)
     return {
         'train/recon_loss': total_recon / N,
         'train/kl_loss': total_kl / N,
@@ -91,7 +94,8 @@ def train(args, vocab, vae_model, loss_multipliers):
     for ep in range(args.epochs):
         t = time.time()
 
-        train_loss_dict = train_step(vae_model, train_loader, optimizer, loss_multipliers)
+        train_loss_dict = train_step(vae_model, train_loader, optimizer, loss_multipliers,
+                                     limit_iter_per_epoch=args.limit_iter_per_epoch)
         train_time = time.time()
         val_loss_dict = validate_step(vae_model, val_loader, loss_multipliers)
         wandb.log({"train/lr": optimizer.param_groups[0]['lr'], **train_loss_dict, **val_loss_dict})
@@ -103,7 +107,7 @@ def train(args, vocab, vae_model, loss_multipliers):
 
         print(f'< epoch {ep} >  (elapsed: {time.time() - t:.2f}s, decode time: {time.time() - train_time:.2f}s)')
         print(f'  * [train]  loss: {train_loss_dict["train/loss"]:.6f}')
-        print(f'  * [ val ]  loss: {val_loss_dict["dev/loss"]:.6f}')
+        print(f'  * [ val ]  loss: {val_loss_dict["val/loss"]:.6f}')
 
         scheduler.step()
 
@@ -114,14 +118,15 @@ def inference(args, vae_model):
 def parse_args():
     parser = argparse.ArgumentParser()
     parser.add_argument('--lang_codes', nargs='+')
-    parser.add_argument('--lr', type=float, default=0.0015)
+    parser.add_argument('--lr', type=float, default=0.01)
     parser.add_argument('--encoder_hidden_dim', type=int, default=128)
     parser.add_argument('--decoder_hidden_dim', type=int, default=128)
     parser.add_argument('--decoder_input_dim', type=int, default=128)
-    parser.add_argument('--epochs', type=int, default=50)
+    parser.add_argument('--epochs', type=int, default=300)
     parser.add_argument('--warmup_epochs', type=int, default=1)
-    parser.add_argument('--batch_size', type=int, default=128)
-    parser.add_argument('--kl_mult', type=float, default=0.1)
+    parser.add_argument('--batch_size', type=int, default=1024)
+    parser.add_argument('--kl_mult', type=float, default=0.3)
+    parser.add_argument('--limit_iter_per_epoch', type=int, default=200)
     parser.add_argument('--wandb_name', type=str, default="")
     parser.add_argument('--wandb_entity', type=str, default="cuichenx")
     parser.add_argument('--sweeping', type=str2bool, default=False)
