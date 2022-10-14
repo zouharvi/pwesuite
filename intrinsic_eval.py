@@ -1,6 +1,12 @@
 import os
 
-import panphon.distance
+try:
+    import panphon2
+except ImportError:
+    print("you don't have panphon2 installed. Defaulting to the slower PanPhon")
+    import panphon.distance
+    panphon2 = None
+
 import numpy as np
 from sklearn.metrics.pairwise import cosine_distances
 from scipy.stats import pearsonr, spearmanr
@@ -36,12 +42,17 @@ class IntrinsicEvaluator:
                     self.feat_edit_dist = pickle.load(f)
             else:
                 t0 = time.time()
-                dst = panphon.distance.Distance()
+
+                if panphon2 is None:
+                    fed = panphon.distance.Distance().feature_edit_distance
+                else:
+                    fed = panphon2.FeatureTable().feature_edit_distance
+
                 distances = []
                 for i in tqdm(range(len(self.phon_feats))):
                     row = []
                     for j in range(len(self.phon_feats)):
-                        row.append(dst.feature_edit_distance(self.phon_feats[i], self.phon_feats[j]))
+                        row.append(fed(self.phon_feats[i], self.phon_feats[j]))
                     distances.append(row)
                 distances = np.ravel(np.array(distances))
 
