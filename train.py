@@ -6,6 +6,7 @@ from torch.nn import CrossEntropyLoss
 from torch.utils.data import DataLoader
 import wandb
 from dataset import IPATokenDataset
+from intrinsic_eval import IntrinsicEvaluator
 from vocab import *
 from model import RNN_VAE
 from util import *
@@ -49,15 +50,16 @@ def train_step(vae_model, train_loader, optimizer, loss_multipliers, limit_iter_
     }
 
 @torch.no_grad()
-def validate_step(vae_model, val_loader, loss_multipliers):
+def validate_step(vae_model, val_loader, loss_multipliers, evaluator):
     vae_model.eval()
     cross_entropy = CrossEntropyLoss(ignore_index=PAD_IDX)
-
+    phon_embs = []
     total_kl, total_recon, total_loss = 0, 0, 0
     for i, data in enumerate(val_loader):
         tokens = data['tokens'].to(device)
         feature_array = data['feature_array'].to(device)
         mu, logvar, decoder_logits = vae_model(tokens[:, :-1], feature_array)
+        phon_embs.append(mu[0])
         kl_loss = get_kl_loss(mu, logvar)
         recon_loss = cross_entropy(decoder_logits.reshape((-1, decoder_logits.shape[-1])),
                                    tokens[:, 1:].reshape(-1))
@@ -68,11 +70,16 @@ def validate_step(vae_model, val_loader, loss_multipliers):
         total_recon += recon_loss.item()
         total_loss += loss.item()
 
+
+    evaluator.set_phon_embs(torch.cat(phon_embs, 0).detach().cpu().numpy())
+    intrinsic_eval_correlation = evaluator.eval()
+
     N = len(val_loader)
     return {
         'val/recon_loss': total_recon / N,
         'val/kl_loss': total_kl / N,
-        'val/loss': total_loss / N
+        'val/loss': total_loss / N,
+        'val/intrinsic_eval_correlation': intrinsic_eval_correlation,
     }
 
 
@@ -83,13 +90,13 @@ def train(args, vocab, vae_model, loss_multipliers):
                                                              num_training_steps=args.epochs)
 
     loader_kwargs = {'batch_size': args.batch_size, 'num_workers': 0, 'pin_memory': True, 'collate_fn': collate_fn}
-    train_loader = DataLoader(IPATokenDataset([f'data/ipa_tokens_{lang}.txt' for lang in args.lang_codes], vocab,
-                                              split_bounds=(0, 0.9)),
-                              shuffle=True, **loader_kwargs)
-    val_loader = DataLoader(IPATokenDataset([f'data/ipa_tokens_{lang}.txt' for lang in args.lang_codes], vocab,
-                                            split_bounds=(0.9, 1.0)),
-                            shuffle=False, **loader_kwargs)
+    train_dset = IPATokenDataset([f'data/ipa_tokens_{lang}.txt' for lang in args.lang_codes], vocab, split_bounds=(0, 0.999))
+    train_loader = DataLoader(train_dset, shuffle=True, **loader_kwargs)
+    val_dset = IPATokenDataset([f'data/ipa_tokens_{lang}.txt' for lang in args.lang_codes], vocab, split_bounds=(0.999, 1.0))
+    val_loader = DataLoader(val_dset, shuffle=False, **loader_kwargs)
     best_val_loss = 1e10
+    evaluator = IntrinsicEvaluator()
+    evaluator.set_phon_feats([d['ipa'] for d in val_dset])
 
     for ep in range(args.epochs):
         t = time.time()
@@ -97,7 +104,8 @@ def train(args, vocab, vae_model, loss_multipliers):
         train_loss_dict = train_step(vae_model, train_loader, optimizer, loss_multipliers,
                                      limit_iter_per_epoch=args.limit_iter_per_epoch)
         train_time = time.time()
-        val_loss_dict = validate_step(vae_model, val_loader, loss_multipliers)
+        val_loss_dict = validate_step(vae_model, val_loader, loss_multipliers, evaluator)
+
         wandb.log({"train/lr": optimizer.param_groups[0]['lr'], **train_loss_dict, **val_loss_dict})
 
         val_loss = val_loss_dict["val/loss"]
@@ -118,12 +126,13 @@ def inference(args, vae_model):
 def parse_args():
     parser = argparse.ArgumentParser()
     parser.add_argument('--lang_codes', nargs='+')
-    parser.add_argument('--lr', type=float, default=0.01)
+    parser.add_argument('--vocab_file', type=str)
+    parser.add_argument('--lr', type=float, default=0.003)
     parser.add_argument('--encoder_hidden_dim', type=int, default=128)
     parser.add_argument('--decoder_hidden_dim', type=int, default=128)
     parser.add_argument('--decoder_input_dim', type=int, default=128)
     parser.add_argument('--epochs', type=int, default=300)
-    parser.add_argument('--warmup_epochs', type=int, default=1)
+    parser.add_argument('--warmup_epochs', type=int, default=20)
     parser.add_argument('--batch_size', type=int, default=1024)
     parser.add_argument('--kl_mult', type=float, default=0.3)
     parser.add_argument('--limit_iter_per_epoch', type=int, default=200)
@@ -140,7 +149,7 @@ if __name__ == '__main__':
     wandb.config.update(args)
     os.makedirs("checkpoints", exist_ok=True)
 
-    ipa_vocab = Vocab(tokens_file='data/vocab.txt')
+    ipa_vocab = Vocab(tokens_file=args.vocab_file)
     vae_model = RNN_VAE(vocab_size=len(ipa_vocab),
                         emb_dim=24,
                         encoder_hidden_dim=args.encoder_hidden_dim,

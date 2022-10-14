@@ -24,7 +24,8 @@ class IPATokenDataset(Dataset):
 
         return {
             'feature_array': feature_array,
-            'tokens': tokens
+            'tokens': tokens,
+            'ipa': ipa
         }
 
 
