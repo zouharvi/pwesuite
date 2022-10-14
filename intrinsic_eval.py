@@ -2,7 +2,7 @@ import os
 
 import panphon.distance
 import numpy as np
-from sklearn.metrics.pairwise import cosine_similarity
+from sklearn.metrics.pairwise import cosine_distances
 from scipy.stats import pearsonr, spearmanr
 import time
 import pickle
@@ -58,7 +58,7 @@ class IntrinsicEvaluator:
     def cosine_distance(self):
         if self.cos_dist is None:
             t0 = time.time()
-            distances = cosine_similarity(self.phon_embs)
+            distances = cosine_distances(self.phon_embs)
             distances = np.ravel(distances)
             self.cos_dist = distances
             t1 = time.time()
