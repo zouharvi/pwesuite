@@ -72,14 +72,15 @@ def validate_step(vae_model, val_loader, loss_multipliers, evaluator):
 
 
     evaluator.set_phon_embs(torch.cat(phon_embs, 0).detach().cpu().numpy())
-    intrinsic_eval_correlation = evaluator.eval()
+    intrinsic_eval = evaluator.run()
 
     N = len(val_loader)
     return {
         'val/recon_loss': total_recon / N,
         'val/kl_loss': total_kl / N,
         'val/loss': total_loss / N,
-        'val/intrinsic_eval_correlation': intrinsic_eval_correlation,
+        'val/intrinsic_pearson_correlation': intrinsic_eval['pearson'],
+        'val/intrinsic_spearman_correlation': intrinsic_eval['spearman'],
     }
 
 

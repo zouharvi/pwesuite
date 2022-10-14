@@ -3,7 +3,7 @@ import os
 import panphon.distance
 import numpy as np
 from sklearn.metrics.pairwise import cosine_similarity
-from scipy.stats import pearsonr
+from scipy.stats import pearsonr, spearmanr
 import time
 import pickle
 from tqdm import tqdm
@@ -65,7 +65,7 @@ class IntrinsicEvaluator:
             print("cosine distance took", t1-t0, "seconds")
 
 
-    def eval(self):
+    def run(self):
         # compute pairwise feature edit distance of self.phon_feats using the
         # panphon.distance.Distance.feature_edit_distance module
         self.feature_edit_distance()
@@ -77,6 +77,10 @@ class IntrinsicEvaluator:
         # print(len(cos_dist), len(feat_edit_dist))
         if self.cos_dist is None or self.feat_edit_dist is None:
             raise ValueError("You must set the embedding and features before running eval")
-        corr, pval = pearsonr(self.cos_dist, self.feat_edit_dist)
+        pearson_corr, _ = pearsonr(self.cos_dist, self.feat_edit_dist)
+        spearman_corr, _ = spearmanr(self.cos_dist, self.feat_edit_dist)
 
-        return corr
+        return {
+            "pearson": pearson_corr,
+            "spearman": spearman_corr,
+        }
