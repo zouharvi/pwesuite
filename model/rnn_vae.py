@@ -2,7 +2,7 @@ import torch
 from torch import nn
 from torch.nn import functional as F
 import numpy as np
-from ..util import reparameterize
+from util import reparameterize
 
 class RNN_VAE(nn.Module):
     def __init__(self,
