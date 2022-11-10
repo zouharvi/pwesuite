@@ -8,7 +8,7 @@ import wandb
 from dataset import IPATokenDataset
 from intrinsic_eval import IntrinsicEvaluator
 from vocab import *
-from model.rnn_vae import RNN_VAE
+from model import RNN_VAE
 from util import *
 
 device = 'cuda' if torch.cuda.is_available() else 'cpu'
@@ -91,9 +91,9 @@ def train(args, vocab, vae_model, loss_multipliers):
                                                              num_training_steps=args.epochs)
 
     loader_kwargs = {'batch_size': args.batch_size, 'num_workers': 0, 'pin_memory': True, 'collate_fn': collate_fn}
-    train_dset = IPATokenDataset([f'data/ipa_tokens_{lang}.txt' for lang in args.lang_codes], vocab, split_bounds=(0, 0.999))
+    train_dset = IPATokenDataset([f'data/ipa_tokens_{lang}.txt' for lang in args.lang_codes], vocab, split_bounds=(0, args.train_ratio))
     train_loader = DataLoader(train_dset, shuffle=True, **loader_kwargs)
-    val_dset = IPATokenDataset([f'data/ipa_tokens_{lang}.txt' for lang in args.lang_codes], vocab, split_bounds=(0.999, 1.0))
+    val_dset = IPATokenDataset([f'data/ipa_tokens_{lang}.txt' for lang in args.lang_codes], vocab, split_bounds=(args.train_ratio, 1.0))
     val_loader = DataLoader(val_dset, shuffle=False, **loader_kwargs)
     best_val_loss = 1e10
     evaluator = IntrinsicEvaluator()
@@ -140,9 +140,11 @@ def parse_args():
     parser.add_argument('--wandb_name', type=str, default="")
     parser.add_argument('--wandb_entity', type=str, default="cuichenx")
     parser.add_argument('--sweeping', type=str2bool, default=False)
+    parser.add_argument('--train_ratio', type=float, default=0.999)
     return parser.parse_args()
 
 if __name__ == '__main__':
+    torch.set_num_threads(4)
     args = parse_args()
     wandb.init(project="phonetic_repr", name=args.wandb_name, entity=args.wandb_entity,
                mode='disabled' if (not args.wandb_name and not args.sweeping) else 'online')
