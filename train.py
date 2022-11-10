@@ -14,7 +14,7 @@ from util import *
 device = 'cuda' if torch.cuda.is_available() else 'cpu'
 gpuid = os.environ.get('CUDA_VISIBLE_DEVICES', 0)
 print('gpu id is', gpuid)
-model_save_path = f'./checkpoints/gpu{gpuid}_best_loss.pt'
+model_save_path = f'./checkpoints/gpu{gpuid}_best_spearman.pt'
 
 
 def train_step(vae_model, train_loader, optimizer, loss_multipliers, limit_iter_per_epoch=None):
@@ -95,7 +95,7 @@ def train(args, vocab, vae_model, loss_multipliers):
     train_loader = DataLoader(train_dset, shuffle=True, **loader_kwargs)
     val_dset = IPATokenDataset([f'data/ipa_tokens_{lang}.txt' for lang in args.lang_codes], vocab, split_bounds=(args.train_ratio, 1.0))
     val_loader = DataLoader(val_dset, shuffle=False, **loader_kwargs)
-    best_val_loss = 1e10
+    best_spearman = 0
     evaluator = IntrinsicEvaluator()
     evaluator.set_phon_feats([d['ipa'] for d in val_dset])
 
@@ -109,9 +109,9 @@ def train(args, vocab, vae_model, loss_multipliers):
 
         wandb.log({"train/lr": optimizer.param_groups[0]['lr'], **train_loss_dict, **val_loss_dict})
 
-        val_loss = val_loss_dict["val/loss"]
-        if val_loss < best_val_loss:
-            best_val_loss = val_loss
+        spearman = val_loss_dict["val/intrinsic_spearman_correlation"]
+        if spearman > best_spearman:
+            best_spearman = spearman
             save_model(vae_model, optimizer, args, ipa_vocab, ep, model_save_path)
 
         print(f'< epoch {ep} >  (elapsed: {time.time() - t:.2f}s, decode time: {time.time() - train_time:.2f}s)')
