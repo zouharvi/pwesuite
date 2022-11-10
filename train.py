@@ -120,9 +120,6 @@ def train(args, vocab, vae_model, loss_multipliers):
 
         scheduler.step()
 
-def inference(args, vae_model):
-    ...
-
 
 def parse_args():
     parser = argparse.ArgumentParser()
@@ -166,4 +163,3 @@ if __name__ == '__main__':
 
     train(args, ipa_vocab, vae_model, loss_multipliers)
 
-    inference(args, vae_model)
