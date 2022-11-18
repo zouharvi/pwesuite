@@ -99,6 +99,15 @@ def train(args, vocab, vae_model, loss_multipliers):
     evaluator = IntrinsicEvaluator()
     evaluator.set_phon_feats([d['ipa'] for d in val_dset])
 
+    # find out the correlation before any training
+    val_loss_dict = validate_step(vae_model, val_loader, loss_multipliers, evaluator)
+    spearman = val_loss_dict["val/intrinsic_spearman_correlation"]
+    pearson = val_loss_dict["val/intrinsic_pearson_correlation"]
+    wandb.log({"val/initial_spearman_correlation": spearman})
+    wandb.log({"val/initial_pearson_correlation": pearson})
+    print("Initial spearman correlation is,", spearman)
+    print("Initial pearson correlation is,", pearson)
+
     for ep in range(args.epochs):
         t = time.time()
 
@@ -138,6 +147,7 @@ def parse_args():
     parser.add_argument('--wandb_entity', type=str, default="cuichenx")
     parser.add_argument('--sweeping', type=str2bool, default=False)
     parser.add_argument('--train_ratio', type=float, default=0.999)
+    parser.add_argument('--variational', type=str2bool, default=True)
     return parser.parse_args()
 
 if __name__ == '__main__':
@@ -155,6 +165,7 @@ if __name__ == '__main__':
                         encoder_hidden_dim=args.encoder_hidden_dim,
                         decoder_hidden_dim=args.decoder_hidden_dim,
                         decoder_input_dim=args.decoder_input_dim,
+                        variational=args.variational,
                         ).to(device)
     loss_multipliers = {
         'recon': 1,

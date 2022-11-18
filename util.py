@@ -33,6 +33,8 @@ def reparameterize(mu, logvar):
 
 
 def get_kl_loss(mu, logvar):
+    if logvar is None:
+        return torch.tensor(0., device=mu.device)
     kl_loss = (-0.5 * (1 + logvar - mu.pow(2) - logvar.exp())).mean()
     return kl_loss
 

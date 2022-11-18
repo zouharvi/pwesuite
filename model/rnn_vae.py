@@ -11,9 +11,10 @@ class RNN_VAE(nn.Module):
                  encoder_hidden_dim=128,
                  decoder_input_dim=128,
                  decoder_hidden_dim=128,
+                 variational=True
                  ):
         super().__init__()
-
+        self.variational = variational
         # self.layernorm = nn.LayerNorm(hidden_dim, elementwise_affine=False)
         ## encoder
         self.encoder = nn.GRU(emb_dim, encoder_hidden_dim, num_layers=1, dropout=0.5, batch_first=True)
@@ -31,8 +32,12 @@ class RNN_VAE(nn.Module):
 
         _, encoder_hidden = self.encoder(feature_array, None)
         mu = self.to_mu(encoder_hidden)
-        logvar = self.to_logvar(encoder_hidden)
-        z = reparameterize(mu, logvar)
+        if self.variational:
+            logvar = self.to_logvar(encoder_hidden)
+            z = reparameterize(mu, logvar)
+        else:
+            logvar = None
+            z = mu
 
         # TODO: make teacher forcing adjustable
         token_emb = self.embed(tokens)
