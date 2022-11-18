@@ -87,8 +87,8 @@ def validate_step(vae_model, val_loader, loss_multipliers, evaluator):
 def train(args, vocab, vae_model, loss_multipliers):
     optimizer = torch.optim.Adam(vae_model.parameters(),
                                  lr=args.lr, eps=1e-9)
-    scheduler = transformers.get_cosine_schedule_with_warmup(optimizer, num_warmup_steps=args.warmup_epochs,
-                                                             num_training_steps=args.epochs)
+    # scheduler = transformers.get_cosine_schedule_with_warmup(optimizer, num_warmup_steps=args.warmup_epochs,
+    #                                                          num_training_steps=args.epochs)
 
     loader_kwargs = {'batch_size': args.batch_size, 'num_workers': 0, 'pin_memory': True, 'collate_fn': collate_fn}
     train_dset = IPATokenDataset([f'data/ipa_tokens_{lang}.txt' for lang in args.lang_codes], vocab, split_bounds=(0, args.train_ratio))
@@ -118,7 +118,7 @@ def train(args, vocab, vae_model, loss_multipliers):
         print(f'  * [train]  loss: {train_loss_dict["train/loss"]:.6f}')
         print(f'  * [ val ]  loss: {val_loss_dict["val/loss"]:.6f}')
 
-        scheduler.step()
+        # scheduler.step()
 
 
 def parse_args():
