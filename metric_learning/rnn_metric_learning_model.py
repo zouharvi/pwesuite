@@ -18,6 +18,18 @@ class RNNMetricLearner(torch.nn.Module):
     ):
         super().__init__()
 
+# epoch 500, num_layers=2, hidden_size=128
+# Train pearson  90.51% Train spearman 86.75%
+# Dev pearson    86.26% Dev spearman   86.00%
+
+# epoch 500, num_layers=3, hidden_size=128
+# Train pearson  89.66% Train spearman 84.42%
+# Dev pearson    85.60% Dev spearman   83.00%
+
+# epoch 500, num_layers=2, hidden_size=256
+# Train pearson  90.20% Train spearman 85.56%
+# Dev pearson    85.47% Dev spearman   83.43%
+
         self.model = torch.nn.LSTM(
             input_size=feature_size,
             hidden_size=128,
@@ -26,18 +38,20 @@ class RNNMetricLearner(torch.nn.Module):
             dropout=0.3,
             bidirectional=True,
         )
-
-        # TODO: use characters instead of vectors but maybe that doesn't matter
+        self.batch_size_eval=2048
+        self.batch_size_train=128
+        
+        # TODO: try to use characters instead of vectors but maybe that doesn't matter
         self.panphon_vectors = panphon_vectors
 
         # TODO: contrastive learning
         self.loss = torch.nn.MSELoss()
         self.panphon_distance = panphon2.FeatureTable().feature_edit_distance
-        self.optimizer = torch.optim.Adam(self.parameters(), lr=10e-3)
+        self.optimizer = torch.optim.Adam(self.parameters(), lr=1e-2)
 
         if target_metric == "l2":
             self.dist_embd = torch.nn.PairwiseDistance(p=2)
-        elif target_metric == "ip":
+        elif target_metric == "cos":
             self.dist_embd = torch.nn.CosineSimilarity()
         else:
             raise Exception(f"Unknown metric {target_metric}")
@@ -71,28 +85,38 @@ class RNNMetricLearner(torch.nn.Module):
         # compare it with the desired distance, which is our loss
         return self.loss(dist_hyp, torch.Tensor(dist_true).to(DEVICE))
 
-    def evaluate_dev_loss(self, data_dev,):
+    def evaluate_dev_loss(self, data_dev):
         self.eval()
         losses = []
 
-        for (w1, w1f) in tqdm.tqdm(data_dev):
-            # pick w2 at random
-            w2, w2f = random.choices(data_dev, k=1)[0]
+        data_loader = DataLoader(
+            data_dev, batch_size=self.batch_size_eval, shuffle=True,
+            collate_fn=lambda x: ([y[0] for y in x], [y[1] for y in x])
+        )
 
-            dist_true = self.panphon_distance(w1, w2)
+        for (ws1, ws1f) in tqdm.tqdm(data_loader):
+            # pick w2 at random
+            ws2_all = random.choices(data_dev, k=len(ws1))
+            ws2 = [x[0] for x in ws2_all]
+            ws2f = [x[1] for x in ws2_all]
+
+            dist_true = [
+                self.panphon_distance(w1, w2)
+                for w1, w2 in zip(ws1, ws2)
+            ]
             # create micro-batches of one element
             # TODO: create proper batches here
-            loss = self.train_step([w1f], [w2f], [dist_true])
+            loss = self.train_step(ws1f, ws2f, dist_true)
             losses.append(loss.cpu().detach())
 
         return np.average(losses)
 
-    def evaluate_corr(self, data, key=None, batch_size=1024):
+    def evaluate_corr(self, data, key=None):
         print("Evaluating correlation for", key)
 
         self.eval()
         data_loader = DataLoader(
-            data, batch_size=batch_size, shuffle=False,
+            data, batch_size=self.batch_size_eval, shuffle=False,
             collate_fn=lambda x: [y[1] for y in x]
         )
 
@@ -131,13 +155,13 @@ class RNNMetricLearner(torch.nn.Module):
 
     def train_epochs(
         self, data_train, data_dev,
-        epochs=1000, batch_size=128,
+        epochs=1000,        eval_train_full=False,
     ):
         for epoch in range(epochs):
             self.train()
 
             data_loader = DataLoader(
-                data_train, batch_size=batch_size, shuffle=True,
+                data_train, batch_size=self.batch_size_train, shuffle=True,
                 collate_fn=lambda x: ([y[0] for y in x], [y[1] for y in x])
             )
 
@@ -145,7 +169,7 @@ class RNNMetricLearner(torch.nn.Module):
 
             for (ws1, ws1f) in tqdm.tqdm(data_loader):
                 # pick w2 completely at random
-                # TODO: there may be a smarter strategy to do this
+                # TODO: there may be a smarter strategy to do this such as prefering local space
                 ws2_all = random.choices(data_train, k=len(ws1))
                 ws2 = [x[0] for x in ws2_all]
                 ws2f = [x[1] for x in ws2_all]
@@ -175,9 +199,9 @@ class RNNMetricLearner(torch.nn.Module):
                 corr_dev_pearson, corr_dev_spearman = self.evaluate_corr(
                     data_dev, key="dev"
                 )
-                # TODO: we don't really need this correlation for train data
+                # use only part of the training data for evaluation unless specified otherwise
                 corr_train_pearson, corr_train_spearman = self.evaluate_corr(
-                    data_train, key="train"
+                    data_train if eval_train_full else data_train[:1000], key="train"
                 )
 
                 print(
