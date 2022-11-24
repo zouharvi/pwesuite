@@ -2,3 +2,5 @@
 data/ipa_tokens_en.txt
 data/vocab_en.txt
 data/raw
+__pycache__
+computed/
