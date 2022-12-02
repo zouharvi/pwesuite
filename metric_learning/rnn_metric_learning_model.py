@@ -10,6 +10,7 @@ import multiprocess as mp
 
 DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
 
+
 class RNNMetricLearner(torch.nn.Module):
     def __init__(
         self,
@@ -17,18 +18,6 @@ class RNNMetricLearner(torch.nn.Module):
         feature_size=24, panphon_vectors=True,
     ):
         super().__init__()
-
-# epoch 500, num_layers=2, hidden_size=128
-# Train pearson  90.51% Train spearman 86.75%
-# Dev pearson    86.26% Dev spearman   86.00%
-
-# epoch 500, num_layers=3, hidden_size=128
-# Train pearson  89.66% Train spearman 84.42%
-# Dev pearson    85.60% Dev spearman   83.00%
-
-# epoch 500, num_layers=2, hidden_size=256
-# Train pearson  90.20% Train spearman 85.56%
-# Dev pearson    85.47% Dev spearman   83.43%
 
         self.model = torch.nn.LSTM(
             input_size=feature_size,
@@ -38,9 +27,9 @@ class RNNMetricLearner(torch.nn.Module):
             dropout=0.3,
             bidirectional=True,
         )
-        self.batch_size_eval=2048
-        self.batch_size_train=128
-        
+        self.batch_size_eval = 2048
+        self.batch_size_train = 128
+
         # TODO: try to use characters instead of vectors but maybe that doesn't matter
         self.panphon_vectors = panphon_vectors
 
@@ -155,7 +144,7 @@ class RNNMetricLearner(torch.nn.Module):
 
     def train_epochs(
         self, data_train, data_dev,
-        epochs=1000,        eval_train_full=False,
+        epochs=1000, eval_train_full=False,
     ):
         for epoch in range(epochs):
             self.train()

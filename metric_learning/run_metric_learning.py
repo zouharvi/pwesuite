@@ -3,12 +3,15 @@
 import panphon2
 import argparse
 import tqdm
-from metric_learning.rnn_metric_learning_model import RNNMetricLearner
+from rnn_metric_learning_model import RNNMetricLearner
+import pickle
 
 args = argparse.ArgumentParser()
 args.add_argument("-i", "--input", default="data/ipa_tokens_en.txt")
+args.add_argument("-o", "--output", default="computed/embds_en.pkl")
+args.add_argument("-e", "--epochs", type=int, default=20)
 args.add_argument(
-    "-nk", "--number-thousands", default=99, type=int,
+    "-nk", "--number-thousands", type=int, default=99,
     help="Number of training data to use (in thousands) for training",
 )
 args.add_argument(
@@ -31,4 +34,9 @@ data_train = data[1000:]
 
 # target_metric="ip" is not good for some reason
 model = RNNMetricLearner(target_metric=args.target_metric)
-model.train_epochs(data_train, data_dev, eval_train_full=args.eval_train_full)
+model.train_epochs(data_train, data_dev, eval_train_full=args.eval_train_full, epochs=args.epochs)
+
+# TODO: paralelize
+data = [(w, b, model.forward([b])[0].detach().cpu().tolist()) for w, b in tqdm.tqdm(data)]
+with open(args.output, "wb") as f:
+    pickle.dump(data, f)
