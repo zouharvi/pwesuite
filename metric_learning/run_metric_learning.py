@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 import panphon2
+import torch
 import argparse
 import tqdm
 from rnn_metric_learning_model import RNNMetricLearner
@@ -9,6 +10,7 @@ import pickle
 args = argparse.ArgumentParser()
 args.add_argument("-i", "--input", default="data/ipa_tokens_en.txt")
 args.add_argument("-o", "--output", default="computed/embds_en.pkl")
+args.add_argument("-mo", "--model-output", default="computed/model.pt")
 args.add_argument("-e", "--epochs", type=int, default=20)
 args.add_argument(
     "-nk", "--number-thousands", type=int, default=99,
@@ -36,7 +38,12 @@ data_train = data[1000:]
 model = RNNMetricLearner(target_metric=args.target_metric)
 model.train_epochs(data_train, data_dev, eval_train_full=args.eval_train_full, epochs=args.epochs)
 
-# TODO: paralelize
-data = [(w, b, model.forward([b])[0].detach().cpu().tolist()) for w, b in tqdm.tqdm(data)]
-with open(args.output, "wb") as f:
-    pickle.dump(data, f)
+if args.output is not None:
+    # TODO: paralelize
+    model.eval()
+    data = [(w, b, model.forward([b])[0].detach().cpu().tolist()) for w, b in tqdm.tqdm(data)]
+    with open(args.output, "wb") as f:
+        pickle.dump(data, f)
+
+if args.model_output is not None:
+    torch.save(model.state_dict(), args.model_output)
