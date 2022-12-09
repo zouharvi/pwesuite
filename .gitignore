@@ -5,3 +5,4 @@ data/raw
 __pycache__
 computed/
 data/rhymes.pkl
+models/

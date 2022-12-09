@@ -8,9 +8,15 @@ from rnn_metric_learning_model import RNNMetricLearner
 import pickle
 
 args = argparse.ArgumentParser()
+<<<<<<< HEAD
 args.add_argument("-i", "--input", default="data/ipa_tokens_en.txt")
 args.add_argument("-o", "--output", default="computed/embds_en.pkl")
 args.add_argument("-mo", "--model-output", default="computed/model.pt")
+=======
+args.add_argument("-i", "--input", default="data/ipa_tokens_pl.txt")
+args.add_argument("-o", "--output", default="computed/embds_pl.pkl")
+args.add_argument("-smp", "--save-model-path", default="models/model_pl.pt")
+>>>>>>> 7e2f700 (add analogies check)
 args.add_argument("-e", "--epochs", type=int, default=20)
 args.add_argument(
     "-nk", "--number-thousands", type=int, default=99,
@@ -38,6 +44,7 @@ data_train = data[1000:]
 model = RNNMetricLearner(target_metric=args.target_metric)
 model.train_epochs(data_train, data_dev, eval_train_full=args.eval_train_full, epochs=args.epochs)
 
+<<<<<<< HEAD
 if args.output is not None:
     # TODO: paralelize
     model.eval()
@@ -47,3 +54,12 @@ if args.output is not None:
 
 if args.model_output is not None:
     torch.save(model.state_dict(), args.model_output)
+=======
+# TODO: paralelize
+data = [(w, b, model.forward([b])[0].detach().cpu().tolist()) for w, b in tqdm.tqdm(data)]
+with open(args.output, "wb") as f:
+    pickle.dump(data, f)
+
+if args.save_model_path is not None:
+    torch.save(model.state_dict(), args.save_model_path)
+>>>>>>> 7e2f700 (add analogies check)
