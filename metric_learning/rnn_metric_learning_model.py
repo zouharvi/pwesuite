@@ -1,12 +1,11 @@
 import panphon2
 import torch
 from torch.utils.data import DataLoader
+from sklearn.metrics.pairwise import cosine_distances
 import random
 import tqdm
 import numpy as np
-from scipy.stats import pearsonr, spearmanr
-from sklearn.metrics.pairwise import cosine_distances
-import multiprocess as mp
+from intrinsic_evaluator import Evaluator
 
 DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
 
@@ -45,10 +44,40 @@ class RNNMetricLearner(torch.nn.Module):
         else:
             raise Exception(f"Unknown metric {target_metric}")
 
+        self.evaluator = Evaluator()
+
         # move the model to GPU
         self.to(DEVICE)
 
-        self.panphon_dist_cache = {}
+    def evaluate_intrinsic(self, data, key=None):
+        print("Evaluating everything for", key)
+
+        self.eval()
+        data_loader = DataLoader(
+            data, batch_size=self.batch_size_eval, shuffle=False,
+            collate_fn=lambda x: [y[1] for y in x]
+        )
+
+        # compute embeddings in batches on GPU
+        data_embd = [
+            self.forward(x).cpu().detach().numpy()
+            for x in data_loader
+        ]
+
+        # flatten
+        data_embd = [x for y in data_embd for x in y]
+        data_sims = cosine_distances(data_embd)
+        # data_sims = np.ravel(data_sims)
+
+        pearson_corr, spearman_corr = self.evaluator.evaluate_corr(
+            data, data_sims, key=key
+        )
+
+        retrieval_rank = self.evaluator.evaluate_retrieval(
+            data, data_sims, key=key
+        )
+        out_str = f"ρp={pearson_corr:.0%} ρs={spearman_corr:.0%} rank={retrieval_rank:.0f}"
+        return out_str
 
     def forward(self, ws):
         # TODO: here we use -1 for padding because 0.0 is already
@@ -100,48 +129,6 @@ class RNNMetricLearner(torch.nn.Module):
 
         return np.average(losses)
 
-    def evaluate_corr(self, data, key=None):
-        print("Evaluating correlation for", key)
-
-        self.eval()
-        data_loader = DataLoader(
-            data, batch_size=self.batch_size_eval, shuffle=False,
-            collate_fn=lambda x: [y[1] for y in x]
-        )
-
-        # compute embeddings in batches on GPU
-        data_embd = [
-            self.forward(x).cpu().detach().numpy()
-            for x in data_loader
-        ]
-
-        # flatten
-        data_embd = [x for y in data_embd for x in y]
-        data_sims = cosine_distances(data_embd)
-        data_sims = np.ravel(data_sims)
-
-        def compute_panphon_distance(y, data):
-            fed = panphon2.FeatureTable().feature_edit_distance
-            return [fed(x, y) for x, _ in data]
-
-        # scaffolding to compute it only once
-        if key is not None and key in self.panphon_dist_cache:
-            data_dists_true = self.panphon_dist_cache[key]
-        else:
-            # parallelization
-            with mp.Pool() as pool:
-                data_dists_true = pool.map(
-                    lambda y: compute_panphon_distance(y[0], data), data)
-                # flatten
-                data_dists_true = [x for y in data_dists_true for x in y]
-        if key is not None and key not in self.panphon_dist_cache:
-            self.panphon_dist_cache[key] = data_dists_true
-
-        # compute & return correlations
-        parson_corr, _pearson_p = pearsonr(data_sims, data_dists_true)
-        spearman_corr, _spearman_p = spearmanr(data_sims, data_dists_true)
-        return parson_corr, spearman_corr
-
     def train_epochs(
         self, data_train, data_dev,
         epochs=1000, eval_train_full=False,
@@ -185,19 +172,12 @@ class RNNMetricLearner(torch.nn.Module):
             )
 
             if epoch % 10 == 0:
-                corr_dev_pearson, corr_dev_spearman = self.evaluate_corr(
+                eval_dev = self.evaluate_intrinsic(
                     data_dev, key="dev"
                 )
                 # use only part of the training data for evaluation unless specified otherwise
-                corr_train_pearson, corr_train_spearman = self.evaluate_corr(
+                eval_train = self.evaluate_intrinsic(
                     data_train if eval_train_full else data_train[:1000], key="train"
                 )
 
-                print(
-                    f"Train pearson  {corr_train_pearson:6.2%}",
-                    f"Train spearman {corr_train_spearman:6.2%}",
-                )
-                print(
-                    f"Dev pearson    {corr_dev_pearson:6.2%}",
-                    f"Dev spearman   {corr_dev_spearman:6.2%}",
-                )
+                print("Train", eval_train, "|||", "dev", eval_dev)
