@@ -5,6 +5,7 @@ import torch
 import argparse
 import tqdm
 from rnn_metric_learning_model import RNNMetricLearner
+from rnn_metric_learning_model_zero_dist import RNNMetricLearnerZeroDist
 import pickle
 
 args = argparse.ArgumentParser()
@@ -36,7 +37,7 @@ data_train = data[1000:]
 
 # target_metric="ip" is not good for some reason
 model = RNNMetricLearner(target_metric=args.target_metric)
-model.train_epochs(data_train, data_dev, eval_train_full=args.eval_train_full, epochs=args.epochs)
+model.train_epochs(data_train=data_train, data_dev=data_dev, eval_train_full=args.eval_train_full, epochs=args.epochs)
 
 if args.output is not None:
     # TODO: paralelize

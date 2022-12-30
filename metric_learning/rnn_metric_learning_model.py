@@ -93,7 +93,7 @@ class RNNMetricLearner(torch.nn.Module):
 
         return output
 
-    def train_step(self, ws1, ws2, dist_true):
+    def train_step(self, ws1i, ws1, ws2, dist_true):
         w1embd = self.forward(ws1)
         w2embd = self.forward(ws2)
 
@@ -124,7 +124,7 @@ class RNNMetricLearner(torch.nn.Module):
             ]
             # create micro-batches of one element
             # TODO: create proper batches here
-            loss = self.train_step(ws1f, ws2f, dist_true)
+            loss = self.train_step(None, ws1f, ws2f, dist_true)
             losses.append(loss.cpu().detach())
 
         return np.average(losses)
@@ -137,13 +137,13 @@ class RNNMetricLearner(torch.nn.Module):
             self.train()
 
             data_loader = DataLoader(
-                data_train, batch_size=self.batch_size_train, shuffle=True,
-                collate_fn=lambda x: ([y[0] for y in x], [y[1] for y in x])
+                list(enumerate(data_train)), batch_size=self.batch_size_train, shuffle=True,
+                collate_fn=lambda x: ([y[0] for y in x], [y[1][0] for y in x], [y[1][1] for y in x])
             )
 
             losses = []
 
-            for (ws1, ws1f) in tqdm.tqdm(data_loader):
+            for (ws1i, ws1, ws1f) in tqdm.tqdm(data_loader):
                 # pick w2 completely at random
                 # TODO: there may be a smarter strategy to do this such as prefering local space
                 ws2_all = random.choices(data_train, k=len(ws1))
@@ -155,7 +155,7 @@ class RNNMetricLearner(torch.nn.Module):
                     self.panphon_distance(w1, w2)
                     for w1, w2 in zip(ws1, ws2)
                 ]
-                loss = self.train_step(ws1f, ws2f, dist_true)
+                loss = self.train_step(ws1i, ws1f, ws2f, dist_true)
 
                 self.optimizer.zero_grad()
                 loss.backward()
@@ -171,7 +171,7 @@ class RNNMetricLearner(torch.nn.Module):
                 f"Dev loss {dev_loss_avg:8.5f}",
             )
 
-            if epoch % 10 == 0:
+            if epoch % 5 == 0:
                 eval_dev = self.evaluate_intrinsic(
                     data_dev, key="dev"
                 )
