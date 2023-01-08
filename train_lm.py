@@ -32,11 +32,11 @@ def train_step(model, train_loader, optimizer, objective, limit_iter_per_epoch=N
         logits = []
         # the <BOS> embedding is an embedding layer with a vocab of 1 (the <BOS> token)
         #   (B, 1, 24)
-        prev_token_feats = model.bos_embedding(torch.zeros(batch_size, 1, dtype=torch.int64))
+        prev_token_feats = model.bos_embedding(torch.zeros(batch_size, 1, dtype=torch.int64).to(device))
         # initialize hidden and cell state to 0s
         (hidden, cell) = \
-            (torch.zeros((2 if model.bidirectional else 1) * model.num_layers, batch_size, model.hidden_dim),
-            torch.zeros((2 if model.bidirectional else 1) * model.num_layers, batch_size, model.hidden_dim))
+            (torch.zeros((2 if model.bidirectional else 1) * model.num_layers, batch_size, model.hidden_dim).to(device),
+            torch.zeros((2 if model.bidirectional else 1) * model.num_layers, batch_size, model.hidden_dim).to(device))
 
         # + 1 because we feed in <BOS> first
         for i in range(num_segments + 1):
@@ -82,7 +82,7 @@ def validate_step(model, val_loader, objective, evaluator):
         num_segments = feature_matrix.size(1)  # EXcludes <bos> and <eos>
 
         # intrinsic evaluation - first obtain a pooled embedding (the useful part)
-        bos_embedding = model.bos_embedding(torch.zeros(batch_size, 1, dtype=torch.int64))  # (B, 1, 24)
+        bos_embedding = model.bos_embedding(torch.zeros(batch_size, 1, dtype=torch.int64).to(device))  # (B, 1, 24)
         feature_matrix = torch.cat((bos_embedding, feature_matrix), dim=1)  # (B, S + 1, 24)
         # take the LSTM output corresponding to the final token
         # TODO: concatenate with LSTM output corresponding to <BOS> cuz it's bidirectional??
@@ -91,10 +91,10 @@ def validate_step(model, val_loader, objective, evaluator):
 
         # language modeling objective - see train_step() for more details
         logits = []
-        prev_token_feats = model.bos_embedding(torch.zeros(batch_size, 1, dtype=torch.int64))
+        prev_token_feats = model.bos_embedding(torch.zeros(batch_size, 1, dtype=torch.int64).to(device))
         (hidden, cell) = \
-            (torch.zeros((2 if model.bidirectional else 1) * model.num_layers, batch_size, model.hidden_dim),
-             torch.zeros((2 if model.bidirectional else 1) * model.num_layers, batch_size, model.hidden_dim))
+            (torch.zeros((2 if model.bidirectional else 1) * model.num_layers, batch_size, model.hidden_dim).to(device),
+             torch.zeros((2 if model.bidirectional else 1) * model.num_layers, batch_size, model.hidden_dim).to(device))
         for i in range(num_segments + 1):
             logit, (hidden, cell) = model(prev_token_feats, hidden, cell)
             logits.append(logit)
