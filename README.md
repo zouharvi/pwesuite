@@ -12,6 +12,8 @@ The suite contains the following tasks:
 
 Instructions WIP.
 
+Run `pip3 install -e .` to install this repository and its dependencies.
+
 <!-- 
 Learning a continuous representation for a sequence of discrete vectors of articulatory features.
 

@@ -5,12 +5,12 @@ import pickle
 import numpy as np
 import torch
 import panphon2
-from rnn_metric_learning_model import RNNMetricLearner
+from models.metric_learning.rnn_metric_learning_model import RNNMetricLearner
 from sklearn.metrics.pairwise import euclidean_distances
 
 args = argparse.ArgumentParser()
 args.add_argument("-i", "--input", default="computed/embds_pl.pkl")
-args.add_argument("-m", "--model", default="models/model_pl.pt")
+args.add_argument("-m", "--model", default="computed/models/model_pl.pt")
 args.add_argument("-n", "--n", type=int, default=1000)
 args = args.parse_args()
 ft = panphon2.FeatureTable()

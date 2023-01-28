@@ -1,8 +1,5 @@
 #!/usr/bin/env python3
 
-# ugly hack
-import sys
-sys.path.append(".")
 import random
 import torch
 import numpy as np
@@ -10,7 +7,7 @@ import pickle
 import argparse
 import tqdm
 import spacy
-from metric_learning.rnn_metric_learning_model import RNNMetricLearner
+from models.metric_learning.rnn_metric_learning_model import RNNMetricLearner
 from sklearn.linear_model import LogisticRegression
 from sklearn.neural_network import MLPClassifier
 

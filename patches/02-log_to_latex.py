@@ -5,8 +5,6 @@ Evaluating correlation for dev
 Evaluating correlation for train
 Train pearson  94.31% Train spearman 94.25%
 Dev pearson    94.52% Dev spearman   94.10%
-
-
 """.strip()
 
 for line in TXT.split("\n"):

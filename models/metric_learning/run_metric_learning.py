@@ -11,7 +11,7 @@ import pickle
 args = argparse.ArgumentParser()
 args.add_argument("-i", "--input", default="data/ipa_tokens_pl.txt")
 args.add_argument("-o", "--output", default="computed/embds_pl.pkl")
-args.add_argument("-smp", "--save-model-path", default="models/model_pl.pt")
+args.add_argument("-smp", "--save-model-path", default="computed/models/model_pl.pt")
 args.add_argument("-e", "--epochs", type=int, default=20)
 args.add_argument(
     "-nk", "--number-thousands", type=int, default=99,

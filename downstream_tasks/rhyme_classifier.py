@@ -1,17 +1,13 @@
 #!/usr/bin/env python3
 
-# ugly hack
-import sys
-sys.path.append(".")
 import random
 import torch
-import  numpy as np
 import pickle
 import argparse
 import tqdm
 import epitran
 import panphon2
-from metric_learning.rnn_metric_learning_model import RNNMetricLearner
+from models.metric_learning.rnn_metric_learning_model import RNNMetricLearner
 from sklearn.linear_model import LogisticRegression
 from sklearn.neural_network import MLPClassifier
 
@@ -32,7 +28,7 @@ model.load_state_dict(torch.load(args.model_input))
 # create task
 random.seed(0)
 data_task = []
-for i in range(20000//2):
+for i in range(20000 // 2):
     # select two clusters
     cluster_a, cluster_b = random.sample(rhyme_clusters, k=2)
     # select random element from those clusters
@@ -73,7 +69,7 @@ print(len(data_dev), len(data_train))
 print(data_dev[0][1].shape, "vector shape")
 
 model = MLPClassifier(
-    hidden_layer_sizes=(50,20,10),
+    hidden_layer_sizes=(50, 20, 10),
 )
 model.fit(
     [x[1] for x in data_train],
