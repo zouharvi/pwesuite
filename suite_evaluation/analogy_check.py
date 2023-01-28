@@ -1,11 +1,13 @@
 #!/usr/bin/env python3
 
+raise Exception("Not properly implemented with multi.tsv")
+
 import argparse
 import pickle
 import numpy as np
 import torch
 import panphon2
-from models.metric_learning.rnn_metric_learning_model import RNNMetricLearner
+from models.metric_learning.model import RNNMetricLearner
 from sklearn.metrics.pairwise import euclidean_distances
 
 args = argparse.ArgumentParser()

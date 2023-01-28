@@ -3,7 +3,7 @@
 import epitran
 import panphon2
 import torch
-from models.metric_learning.rnn_metric_learning_model import RNNMetricLearner
+from models.metric_learning.model import RNNMetricLearner
 
 # process data
 f = panphon2.FeatureTable()

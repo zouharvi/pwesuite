@@ -15,13 +15,14 @@ class RNNMetricLearner(torch.nn.Module):
     def __init__(
         self,
         target_metric,
-        feature_size=24, panphon_vectors=True,
+        feature_size=24,
+        dimension=300,
     ):
         super().__init__()
 
         self.model = torch.nn.LSTM(
             input_size=feature_size,
-            hidden_size=128,
+            hidden_size=dimension//2,
             num_layers=2,
             batch_first=True,
             dropout=0.3,
@@ -29,9 +30,6 @@ class RNNMetricLearner(torch.nn.Module):
         )
         self.batch_size_eval = 2048
         self.batch_size_train = 128
-
-        # TODO: try to use characters instead of vectors but maybe that doesn't matter
-        self.panphon_vectors = panphon_vectors
 
         # TODO: contrastive learning
         self.loss = torch.nn.MSELoss()

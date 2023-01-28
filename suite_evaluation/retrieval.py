@@ -17,6 +17,8 @@ args = args.parse_args()
 data_multi = load_multi_data(args.data_multi)
 data_embd = load_embd_data(args.embd)
 
+assert len(data_multi) == len(data_embd)
+
 fed = panphon2.FeatureTable().feature_edit_distance
 data_langs = collections.defaultdict(list)
 

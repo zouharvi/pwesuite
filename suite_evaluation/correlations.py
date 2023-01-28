@@ -19,6 +19,8 @@ args = args.parse_args()
 data_multi = load_multi_data(args.data_multi)
 data_embd = load_embd_data(args.embd)
 
+assert len(data_multi) == len(data_embd)
+
 fed = panphon2.FeatureTable().feature_edit_distance
 data_langs = collections.defaultdict(list)
 
@@ -53,11 +55,11 @@ for lang, data in data_langs.items():
     corr_spearman_cos = []
 
     for dist_fed, dist_l2, dist_cos in zip(data_dists_fed, data_dists_l2, data_dists_cos):
-        corr_pearson_l2.append(pearsonr(dist_fed, dist_l2))
-        corr_spearman_l2.append(spearmanr(dist_fed, dist_l2))
+        corr_pearson_l2.append(pearsonr(dist_fed, dist_l2)[0])
+        corr_spearman_l2.append(spearmanr(dist_fed, dist_l2)[0])
 
-        corr_pearson_cos.append(pearsonr(dist_fed, dist_cos))
-        corr_spearman_cos.append(spearmanr(dist_fed, dist_cos))
+        corr_pearson_cos.append(pearsonr(dist_fed, dist_cos)[0])
+        corr_spearman_cos.append(spearmanr(dist_fed, dist_cos)[0])
 
     corr_pearson_l2 = np.average(corr_pearson_l2)
     corr_pearson_cos = np.average(corr_pearson_cos)
@@ -67,10 +69,10 @@ for lang, data in data_langs.items():
     print(f"PL2:  {corr_pearson_l2:.2f} | Pcos: {corr_pearson_cos:.2f}")
     print(f"SL2:  {corr_spearman_l2:.2f} | Scos: {corr_spearman_cos:.2f}")
 
-    corr_pearson_l2_all.append(corr_pearson_l2)
-    corr_pearson_cos_all.append(corr_pearson_cos)
-    corr_spearman_l2_all.append(corr_spearman_l2)
-    corr_spearman_cos_all.append(corr_spearman_cos)
+    corr_pearson_l2_all.append(abs(corr_pearson_l2))
+    corr_pearson_cos_all.append(abs(corr_pearson_cos))
+    corr_spearman_l2_all.append(abs(corr_spearman_l2))
+    corr_spearman_cos_all.append(abs(corr_spearman_cos))
 
 
 corr_pearson_l2_all = np.average(corr_pearson_l2_all)
