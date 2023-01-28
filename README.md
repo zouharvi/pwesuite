@@ -21,11 +21,12 @@ These are found in `data/multi.tsv` (tab-separated values) in the format of:
 ```
 word_ortho	word_ipa	language	pronunciation_information
 ```
-Not all of the informations are provided for all languages, though `word_ipa` is guaranteed to be present.
+Not all of the informations are provided for all languages, though `word_ortho` and `word_ipa` is guaranteed to be present.
 Specifically, currently only English words contain all these fields.
 
-After running the embedding on each word, save it as either a Pickle or NPZ.
+After running the embedding on each word, save it as either a Pickle or NPZ. 
 The data structure can be either (1) list of list or numpy arrays or (2) numpy array.
+If your model is unable to provide an embedding for a particular word, replace it with an empty array `[]` or `None`.
 The loader will automatically parse the file and check that the dimensions are consistent.
 
 After this, you are all set to run all the evaluations using `./evaluation/all.py --data your_embd.pkl`.

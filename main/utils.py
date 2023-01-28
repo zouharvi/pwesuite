@@ -54,3 +54,30 @@ def save_model(model, optimizer, args, ipa_vocab, epoch, filepath):
     }
     torch.save(save_info, filepath)
     print(f'\t>> saved model to {filepath}')
+
+def load_multi_data(path="data/multi.tsv"):
+    print("Loading data")
+    return [
+        l.rstrip("\n").split("\t")
+        for l in open(path, "r")
+        if len(l) > 1
+    ]
+
+def load_embd_data(path):
+    if path.endswith(".pkl") or path.endswith(".pickle"):
+        import pickle
+        with open(path, "rb") as f:
+            data = pickle.load(f)
+    elif path.endswith(".npz"):
+        import numpy as np
+        with open(path, "rb") as f:
+            data = np.load(f)
+    else:
+        raise Exception("Unknown file suffix: " + path)
+
+    return data
+
+
+def get_device():
+    import torch
+    return "cuda:0" if torch.cuda.is_available() else "cpu"

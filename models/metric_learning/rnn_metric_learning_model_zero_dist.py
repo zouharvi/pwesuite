@@ -5,8 +5,9 @@ import torch
 from sklearn.metrics.pairwise import cosine_distances
 import tqdm
 from rnn_metric_learning_model import RNNMetricLearner
+from main.utils import get_device
 
-DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
+DEVICE = get_device()
 
 class RNNMetricLearnerZeroDist(RNNMetricLearner):
     def __init__(

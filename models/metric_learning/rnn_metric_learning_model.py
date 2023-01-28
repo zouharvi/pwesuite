@@ -6,8 +6,9 @@ import random
 import tqdm
 import numpy as np
 from intrinsic_evaluator import Evaluator
+from main.utils import get_device
 
-DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
+DEVICE = get_device()
 
 
 class RNNMetricLearner(torch.nn.Module):

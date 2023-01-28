@@ -8,6 +8,7 @@ setup(
     author_email='TODO',
     description='Evaluation suite for phonetic word embeddings and a distance learning model.',
     packages=find_packages(),
+    # the requirements here should only be for the evaluation, so e.g. transformers should not be here
     install_requires=[
         "numpy>=1.21",
         "transformers>=4.22",
