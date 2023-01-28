@@ -6,6 +6,7 @@ import panphon
 import re
 import lzma
 import tqdm
+from emoji import is_emoji
 
 # https://www.w3.org/TR/elreq/#ethiopic_punctuation
 amharic_symb = '፠፡።፣፤፥፦፧፨‘’“”‹›«»€…'
@@ -47,8 +48,8 @@ def process_non_en(lang, ortho_name, min_freq=5):
             # take only first 10M lines
             if i > 10_000_000:
                 break
-            # take until we have 250k tokens (English has 125k)
-            if i % 100_000 == 0 and len([k for k, v in vocab_counter.items() if v >= min_freq]) >= 210_000:
+            # take until we have 250k tokens (English has 125k) - they will be cut down to 200k later
+            if i % 100_000 == 0 and len([k for k, v in vocab_counter.items() if v >= min_freq]) >= 250_000:
                 break
             tokens = line.decode('utf-8').split()
             # strip punctuation around tokens
@@ -68,6 +69,8 @@ def process_non_en(lang, ortho_name, min_freq=5):
     vocab_all = []
     print('- converting to IPA')
     for token in tqdm.tqdm(frequent_tokens):
+        if any(c in "0123456789" or is_emoji(c) for c in token):
+            continue
         # doing ''.join(ipa_segs(s)) removes non-ipa characters from the string
         segments = ft.ipa_segs(epi.transliterate(token))
         vocab_chars.update(segments)

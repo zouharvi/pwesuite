@@ -17,5 +17,6 @@ setup(
         "tqdm>=4.64",
         "scikit-learn>=1.1",
         "scipy>=1.7",
+        "emoji>=2.2",
     ],
 )
