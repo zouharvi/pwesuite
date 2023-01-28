@@ -1,6 +1,7 @@
 import os
 import time
-
+import argparse
+import torch
 from torch.nn import CrossEntropyLoss
 from torch.utils.data import DataLoader
 import wandb
@@ -8,7 +9,7 @@ from dataset import IPATokenDataset
 from intrinsic_eval import IntrinsicEvaluator
 from vocab import *
 from models.rnn_vae import RNN_VAE
-from util import *
+from main.utils import *
 
 device = 'cuda' if torch.cuda.is_available() else 'cpu'
 gpuid = os.environ.get('CUDA_VISIBLE_DEVICES', 0)
@@ -177,8 +178,14 @@ def parse_args():
 if __name__ == '__main__':
     torch.set_num_threads(4)
     args = parse_args()
-    wandb.init(project="phonetic_repr", name=args.wandb_name, entity=args.wandb_entity,
-               mode='disabled' if (not args.wandb_name and not args.sweeping) else 'online')
+    wandb.init(
+        project="phonetic_repr",
+        name=args.wandb_name,
+        entity=args.wandb_entity,
+        mode='disabled' if (
+            not args.wandb_name and not args.sweeping
+        ) else 'online'
+    )
     wandb.run.log_code(".", include_fn=lambda path: path.endswith('.py'))
     wandb.config.update(args)
     os.makedirs("checkpoints", exist_ok=True)

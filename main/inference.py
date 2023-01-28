@@ -6,7 +6,7 @@ from torch.utils.data import DataLoader
 
 from dataset import IPATokenDataset
 from models.rnn_vae import RNN_VAE
-from util import collate_fn
+from main.utils import collate_fn
 import numpy as np
 
 device = 'cuda' if torch.cuda.is_available() else 'cpu'
@@ -50,8 +50,10 @@ if __name__ == '__main__':
     ).to(device)
 
     inference_dset = IPATokenDataset([inference_args.input_path], ipa_vocab)
-    inference_loader = DataLoader(inference_dset, shuffle=False, batch_size=inference_args.batch_size,
-                                  collate_fn=collate_fn)
+    inference_loader = DataLoader(
+        inference_dset, shuffle=False, batch_size=inference_args.batch_size,
+        collate_fn=collate_fn
+    )
     result = inference(inference_loader, vae_model)
     os.makedirs(os.path.dirname(inference_args.output_path), exist_ok=True)
     np.save(inference_args.output_path, result)

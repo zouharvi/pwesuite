@@ -13,8 +13,9 @@ class IPATokenDataset(Dataset):
                 tokens = f.read().split()
             length = len(tokens)
             self.ipa_tokens.extend(
-                tokens[int(length * split_bounds[0]):
-                       int(length * split_bounds[1])]
+                tokens[
+                    int(length * split_bounds[0]): int(length * split_bounds[1])
+                ]
             )
 
         self.ft = panphon.FeatureTable()
@@ -23,8 +24,11 @@ class IPATokenDataset(Dataset):
     def __getitem__(self, idx):
         ipa = self.ipa_tokens[idx]
         feature_array = self.ft.word_to_vector_list(ipa, numeric=True)
-        tokens = [BOS_IDX] + [self.vocab.get_idx(seg)
-                              for seg in self.ft.ipa_segs(ipa)] + [EOS_IDX]
+        tokens = (
+            [BOS_IDX] +
+            [self.vocab.get_idx(seg) for seg in self.ft.ipa_segs(ipa)] +
+            [EOS_IDX]
+        )
 
         return {
             'feature_array': feature_array,

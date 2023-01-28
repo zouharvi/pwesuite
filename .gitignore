@@ -2,6 +2,8 @@
 data/ipa_tokens_en.txt
 data/vocab_en.txt
 data/raw
+# hide for now
+data/multi.tsv
 __pycache__
 computed/
 data/rhymes.pkl
