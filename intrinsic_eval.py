@@ -3,7 +3,7 @@ import os
 try:
     import panphon2
 except ImportError:
-    print("you don't have panphon2 installed. Defaulting to the slower PanPhon")
+    print("You don't have Panphon2 installed. Defaulting to the slower Panphon")
     import panphon.distance
     panphon2 = None
 

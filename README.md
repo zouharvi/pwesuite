@@ -1,9 +1,22 @@
 # Phonetic Representation
 
+Evaluation suite for phonetic (phonological) word embeddings and an additional model based on Panphone distance learning.
+
+The suite contains the following tasks:
+- Correlation with Panphone
+- Nearest neighbour retrieval with Panphone
+- Rhyme detection
+- Cognate detection
+- Sound analogies
+- MT usefulness
+
+Instructions WIP.
+
+<!-- 
 Learning a continuous representation for a sequence of discrete vectors of articulatory features.
 
 ## Installation
-Code was tested on python 3.8
+Code was tested with python 3.9
 ```bash
 pip install -r requirements.txt
 ```
@@ -32,4 +45,4 @@ python inference.py \
 --input_path  ./data/inference_example.txt \
 --output_path ./predictions/test_inference.npy \
 --model_path  ./checkpoints/<your_model>.pt
-```
+``` -->
