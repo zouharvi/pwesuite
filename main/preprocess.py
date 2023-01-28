@@ -4,8 +4,8 @@ from collections import Counter
 import epitran
 import panphon
 import re
-from tqdm import tqdm
 import lzma
+import tqdm
 
 # https://www.w3.org/TR/elreq/#ethiopic_punctuation
 amharic_symb = '፠፡።፣፤፥፦፧፨‘’“”‹›«»€…'
@@ -17,72 +17,90 @@ punctuations = english_punc + amharic_symb + bengali_symb
 
 ft = panphon.FeatureTable()
 
-def transliterate_lang(lang, ortho_name, min_occur=5):
-    vocab = set()
-    print(f'=== Processing language: {lang} ===')
-    vocab_counter = Counter()
-    fpath = f'data/raw/{lang}.txt.xz'
-    print(f'Gathering tokens for {lang}...')
-    # num_lines = sum(1 for line in lzma.open(fpath))
-    with lzma.open(fpath) as f:
-        for i, line in enumerate(tqdm(f)):
-            # tokens = re.sub(f'[0-9{punctuations}]', ' ', line.decode('utf-8')).split()
-            if i > 1e7:
-                break
-            tokens = line.decode('utf-8').split()
-            vocab_counter.update(tokens)
 
-    print(i)
-    print('_ number of tokens', len(vocab_counter))
-    frequent_tokens = [k for k, v in vocab_counter.items() if v >= min_occur]
-    print(
-        f'- number of tokens with min {min_occur} occurrences',
-        len(frequent_tokens))
+def save_lang(lang, vocab_all, vocab_chars):
+    vocab_all = list(set(vocab_all))
+    # sort by token form
+    vocab_all.sort(key=lambda x: x[0])
 
-    epi = epitran.Epitran(ortho_name)
-
-    vocab_all = []
-    print('Converting to IPA...')
-    for token in tqdm(frequent_tokens):
-        # doing ''.join(ipa_segs(s)) removes non-ipa characters from the string
-        segments = ft.ipa_segs(epi.transliterate(token))
-        vocab.update(segments)
-        if segments:
-            vocab_all.append((
-                "",
-                ''.join(segments),
-                lang,
-                ""
-            ))
-
-    vocab_all = set(vocab_all)
-    print('- number of tokens after cleaning up', len(vocab_all))
+    print(f'- number of tokens after cleaning up: {len(vocab_all)}')
     with open(f"data/ipa_tokens_{lang}.txt", 'w') as f:
-        f.write('\n'.join(vocab_all))
+        f.write('\n'.join([x[1] for x in vocab_all]))
 
     with open(f"data/multi.tsv", 'a') as f:
         f.write('\n'.join(["\t".join(x) for x in vocab_all]))
 
     with open(f"data/vocab_{lang}.txt", 'w') as f:
-        f.write('\n'.join(sorted(list(vocab))))
+        f.write('\n'.join(sorted(list(vocab_chars))))
 
-    print(f'Saved {lang}')
+    print(f'- saved {lang}')
 
 
-def process_ipa_cmu_dict():
+def process_non_en(lang, ortho_name, min_freq=5):
+    vocab_chars = set()
+    print(f'\n=== Processing language: {lang} ===')
+    vocab_counter = Counter()
+    print(f'Gathering tokens for {lang}')
+
+    with lzma.open(f'data/raw/{lang}.txt.xz') as f:
+        for i, line in enumerate(tqdm.tqdm(f)):
+            # take only first 10M lines
+            if i > 10_000_000:
+                break
+            # take until we have 250k tokens (English has 125k)
+            if i % 100_000 == 0 and len([k for k, v in vocab_counter.items() if v >= min_freq]) >= 210_000:
+                break
+            tokens = line.decode('utf-8').split()
+            # strip punctuation around tokens
+            tokens = [token.strip(punctuations) for token in tokens]
+            vocab_counter.update(tokens)
+
+    print(f"- loaded {i} lines")
+    print('- number of tokens', len(vocab_counter))
+    frequent_tokens = [k for k, v in vocab_counter.items() if v >= min_freq]
+
+    print(
+        f'- number of tokens with min {min_freq} occurrences: {len(frequent_tokens)}',
+    )
+
+    epi = epitran.Epitran(ortho_name)
+
+    vocab_all = []
+    print('- converting to IPA')
+    for token in tqdm.tqdm(frequent_tokens):
+        # doing ''.join(ipa_segs(s)) removes non-ipa characters from the string
+        segments = ft.ipa_segs(epi.transliterate(token))
+        vocab_chars.update(segments)
+        if segments:
+            vocab_all.append((
+                token,
+                ''.join(segments),
+                lang,
+                # CMU pronunciation is not possible
+                ""
+            ))
+            if len(vocab_all) >= 200_000:
+                break
+
+    save_lang(lang, vocab_all, vocab_chars)
+
+
+def process_en():
     cmu_pronunciation = [
         x.rstrip("\n").split("  ")
-        for x in open('data/raw/cmudict-0.7b.txt') if x[0].isalpha()
+        for x in open('data/raw/cmudict-0.7b.txt')
+        if x[0] != ";"
     ]
     cmu_pronunciation = {x[0]: x[1] for x in cmu_pronunciation}
 
     vocab_all = []
     vocab_chars = set()
-    print('Gathering tokens for en...')
+    print('Gathering tokens for en')
     with open('data/raw/cmudict-0.7b-ipa.txt') as f:
-        for line in tqdm(f):
+        for line in tqdm.tqdm(f):
             if line[0].isalpha():
                 token, ipa = line.rstrip("\n").split('\t')
+
                 # if multiple pronunciations, take first one
                 ipa = ipa.split(' ')[0]
                 # remove stress marks and commas
@@ -98,19 +116,8 @@ def process_ipa_cmu_dict():
                         "en",
                         cmu_pronunciation[token],
                     ))
-    vocab_all = set(vocab_all)
 
-    print('   number of tokens after cleaning up', len(vocab_all))
-    with open(f"data/ipa_tokens_en.txt", 'w') as f:
-        f.write('\n'.join([x[1] for x in vocab_all]))
-
-    with open(f"data/multi.tsv", 'a') as f:
-        f.write('\n'.join(["\t".join(x) for x in vocab_all]))
-
-    with open(f"data/vocab_en.txt", 'w') as f:
-        f.write('\n'.join(sorted(list(vocab_chars))))
-
-    print(f'Saved en')
+    save_lang("en", vocab_all, vocab_chars)
 
 
 if __name__ == '__main__':
@@ -119,7 +126,7 @@ if __name__ == '__main__':
 
     # for english, we use the IPA version of the CMU pronunciation dict from
     # https://github.com/menelik3/cmudict-ipa
-    process_ipa_cmu_dict()
+    process_en()
 
     LANG_TO_ORTHO = {
         'am': 'amh-Ethi',
@@ -130,7 +137,7 @@ if __name__ == '__main__':
         'sw': 'swa-Latn',
     }
     for lang, ortho_name in LANG_TO_ORTHO.items():
-        transliterate_lang(lang, ortho_name)
+        process_non_en(lang, ortho_name)
 
     # consolidate vocab
     vocab_multi = set()
@@ -138,6 +145,8 @@ if __name__ == '__main__':
     for lang in langs:
         with open(f"data/vocab_{lang}.txt") as f:
             vocab_multi.update(f.read().split())
+
+    print()
 
     with open(f"data/vocab_multi.txt", 'w') as f:
         f.write('\n'.join(sorted(list(vocab_multi))))
