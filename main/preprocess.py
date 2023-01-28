@@ -29,7 +29,7 @@ def save_lang(lang, vocab_all, vocab_chars):
         f.write('\n'.join([x[1] for x in vocab_all]))
 
     with open(f"data/multi.tsv", 'a') as f:
-        f.write('\n'.join(["\t".join(x) for x in vocab_all]))
+        f.write('\n'.join(["\t".join(x) for x in vocab_all])+"\n")
 
     with open(f"data/vocab_{lang}.txt", 'w') as f:
         f.write('\n'.join(sorted(list(vocab_chars))))
