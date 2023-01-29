@@ -11,6 +11,7 @@ class Evaluator():
         self.panphon_rank_cache = {}
 
     def evaluate_corr(self, data, data_sims, key=None):
+        # TODO: change from microaverage to macroaverage
         # flatten
         data_sims = np.ravel(data_sims)
 
@@ -20,11 +21,11 @@ class Evaluator():
         else:
             def _compute_panphon_distance(y, data):
                 fed = panphon2.FeatureTable().feature_edit_distance
-                return [fed(x, y) for x, _ in data]
+                return [fed(tok_ipa, y) for tok_features, tok_ipa in data]
             # parallelization
             with mp.Pool() as pool:
                 data_dists_true = pool.map(
-                    lambda y: _compute_panphon_distance(y[0], data), data
+                    lambda y: _compute_panphon_distance(y[1], data), data
                 )
         if key is not None and key not in self.panphon_dist_cache:
             self.panphon_dist_cache[key] = data_dists_true

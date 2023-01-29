@@ -54,7 +54,7 @@ class RNNMetricLearner(torch.nn.Module):
         self.eval()
         data_loader = DataLoader(
             data, batch_size=self.batch_size_eval, shuffle=False,
-            collate_fn=lambda x: [y[1] for y in x]
+            collate_fn=lambda x: [y[0] for y in x]
         )
 
         # compute embeddings in batches on GPU
@@ -92,7 +92,7 @@ class RNNMetricLearner(torch.nn.Module):
 
         return output
 
-    def train_step(self, ws1i, ws1, ws2, dist_true):
+    def train_step(self, ws1, ws2, dist_true):
         w1embd = self.forward(ws1)
         w2embd = self.forward(ws2)
 
@@ -107,23 +107,28 @@ class RNNMetricLearner(torch.nn.Module):
         losses = []
 
         data_loader = DataLoader(
-            data_dev, batch_size=self.batch_size_eval, shuffle=True,
-            collate_fn=lambda x: ([y[0] for y in x], [y[1] for y in x])
+            list(data_dev), batch_size=self.batch_size_train, shuffle=True,
+            collate_fn=lambda x: (
+                # tok_features
+                [y[0] for y in x],
+                # tok_ipa
+                [y[1] for y in x],
+            )
         )
 
-        for (ws1, ws1f) in tqdm.tqdm(data_loader):
+        for (tok1_features, tok1_ipa) in tqdm.tqdm(data_loader):
             # pick w2 at random
-            ws2_all = random.choices(data_dev, k=len(ws1))
-            ws2 = [x[0] for x in ws2_all]
-            ws2f = [x[1] for x in ws2_all]
+            tok2 = random.choices(data_dev, k=len(tok1_features))
+            tok2_features = [x[0] for x in tok2]
+            tok2_ipa = [x[1] for x in tok2]
 
             dist_true = [
                 self.panphon_distance(w1, w2)
-                for w1, w2 in zip(ws1, ws2)
+                for w1, w2 in zip(tok1_ipa, tok2_ipa)
             ]
             # create micro-batches of one element
             # TODO: create proper batches here
-            loss = self.train_step(None, ws1f, ws2f, dist_true)
+            loss = self.train_step(tok1_features, tok2_features, dist_true)
             losses.append(loss.cpu().detach())
 
         return np.average(losses)
@@ -136,25 +141,31 @@ class RNNMetricLearner(torch.nn.Module):
             self.train()
 
             data_loader = DataLoader(
-                list(enumerate(data_train)), batch_size=self.batch_size_train, shuffle=True,
-                collate_fn=lambda x: ([y[0] for y in x], [y[1][0] for y in x], [y[1][1] for y in x])
+                list(data_train), batch_size=self.batch_size_train, shuffle=True,
+                collate_fn=lambda x: (
+                    # tok_features
+                    [y[0] for y in x],
+                    # tok_ipa
+                    [y[1] for y in x],
+                )
             )
 
             losses = []
 
-            for (ws1i, ws1, ws1f) in tqdm.tqdm(data_loader):
-                # pick w2 completely at random
+            # it's singular names here but actually is full batches
+            for (tok1_features, tok1_ipa) in tqdm.tqdm(data_loader):
+                # pick tok2 completely at random
                 # TODO: there may be a smarter strategy to do this such as prefering local space
-                ws2_all = random.choices(data_train, k=len(ws1))
-                ws2 = [x[0] for x in ws2_all]
-                ws2f = [x[1] for x in ws2_all]
+                tok2 = random.choices(data_train, k=len(tok1_features))
+                tok2_features = [x[0] for x in tok2]
+                tok2_ipa = [x[1] for x in tok2]
 
                 # compute true distances for the selected pairs
                 dist_true = [
                     self.panphon_distance(w1, w2)
-                    for w1, w2 in zip(ws1, ws2)
+                    for w1, w2 in zip(tok1_ipa, tok2_ipa)
                 ]
-                loss = self.train_step(ws1i, ws1f, ws2f, dist_true)
+                loss = self.train_step(tok1_features, tok2_features, dist_true)
 
                 self.optimizer.zero_grad()
                 loss.backward()

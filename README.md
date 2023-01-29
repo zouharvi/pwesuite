@@ -29,7 +29,7 @@ The data structure can be either (1) list of list or numpy arrays or (2) numpy a
 If your model is unable to provide an embedding for a particular word, replace it with an empty array `[]` or `None`.
 The loader will automatically parse the file and check that the dimensions are consistent.
 
-After this, you are all set to run all the evaluations using `./evaluation/all.py --data your_embd.pkl`.
+After this, you are all set to run all the evaluations using `./suite_evaluation/all.py --embd your_embd.pkl`.
 Alternatively, you can invoke individual tasks (TODO).
 
 

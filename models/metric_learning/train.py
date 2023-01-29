@@ -1,11 +1,10 @@
 #!/usr/bin/env python3
 
-import panphon2
 import torch
 import argparse
-import tqdm
 from models.metric_learning.model import RNNMetricLearner
 from main.utils import load_multi_data
+from preprocessor import preprocess_dataset
 
 args = argparse.ArgumentParser()
 args.add_argument("-d", "--data", default="data/multi.tsv")
@@ -24,18 +23,19 @@ args.add_argument(
     help="Compute correlations also for full the training data instead of just 1k sample. This will be significantly slower."
 )
 args.add_argument("-tm", "--target-metric", default="l2")
+args.add_argument("--features", default="panphon")
 args.add_argument("--dimension", type=int, default=300)
 args = args.parse_args()
 
+# token_ort, token_ipa, lang, pronunc
 data = [
-    x[1] for x in load_multi_data(args.data)
+    x[:2] for x in load_multi_data(args.data)
     if x[2] == args.lang
 ][:1000 + args.number_thousands * 1000]
 
-print(f"Loaded {len(data)//1000}k words")
+data = preprocess_dataset(data, args.features)
 
-f = panphon2.FeatureTable()
-data = [(w, f.word_to_binary_vectors(w)) for w in tqdm.tqdm(data)]
+print(f"Loaded {len(data)//1000}k words")
 
 data_dev = data[:1000]
 data_train = data[1000:]
@@ -44,6 +44,7 @@ data_train = data[1000:]
 model = RNNMetricLearner(
     target_metric=args.target_metric,
     dimension=args.dimension,
+    feature_size=data[0][0].shape[1],
 )
 model.train_epochs(
     data_train=data_train, data_dev=data_dev,
