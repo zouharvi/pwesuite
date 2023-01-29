@@ -10,7 +10,7 @@ from main.utils import load_embd_data, load_multi_data
 import collections
 import tqdm
 
-def evaluate_correlations(data_multi, data_embd):
+def evaluate_correlations(data_multi, data_embd, data_size=1000):
     data_langs = collections.defaultdict(list)
 
     for (token_ort, token_ipa, lang, pronunciation), emdb in zip(data_multi, data_embd):
@@ -27,7 +27,7 @@ def evaluate_correlations(data_multi, data_embd):
 
     for lang, data in tqdm.tqdm(data_langs.items()):
         # Take only dev data
-        data = data[:1000]
+        data = data[:data_size]
 
         with mp.Pool() as pool:
             data_dists_fed = np.array(pool.map(
@@ -63,8 +63,8 @@ def evaluate_correlations(data_multi, data_embd):
 
 
     return {
-        "pearson_L2": corr_pearson_l2_all, "pearson_cos": corr_pearson_cos_all,
-        "spearman_L2": corr_spearman_l2_all, "spearman_cos": corr_spearman_cos_all,
+        "pearson L2": corr_pearson_l2_all, "pearson cos": corr_pearson_cos_all,
+        "spearman L2": corr_spearman_l2_all, "spearman cos": corr_spearman_cos_all,
     }
 
 if __name__ == "__main__":

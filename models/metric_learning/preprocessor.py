@@ -21,6 +21,8 @@ def preprocess_dataset_token(data, index):
     import torch
     import torch.nn.functional as F
 
+    # TODO: this should be across all langs so that the vocabulary is the same
+    # or use vocab multi?
     vocab = build_vocab_from_iterator([x[index] for x in data])
 
     def token_onehot(characters):

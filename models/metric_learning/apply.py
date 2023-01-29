@@ -26,10 +26,10 @@ args = args.parse_args()
 data = [
     x[:2] for x in load_multi_data(args.data)
     if x[2] == args.lang
-][:1000 + args.number_thousands * 1000]
+]
 
 data = preprocess_dataset(data, args.features)
-BATCH_SIZE = 1000
+BATCH_SIZE = 2000
 
 print(f"Loaded {len(data)//1000}k words")
 
@@ -37,7 +37,8 @@ print(f"Loaded {len(data)//1000}k words")
 model = RNNMetricLearner(
     target_metric="l2",
     dimension=args.dimension,
-    feature_size=data[0][0].shape[1],
+    # TODO: this will fail for cross-language unless we replace unknown characters with UNK
+    feature_size=data[0][0].shape[1] if args.features != "panphon" else 24,
 )
 model.load_state_dict(torch.load(args.model_path))
 model.eval()
