@@ -67,12 +67,10 @@ class RNNMetricLearner(torch.nn.Module):
         data_sims = cosine_distances(data_embd)
         # data_sims = np.ravel(data_sims)
 
-        print("running corr")
         pearson_corr, spearman_corr = self.evaluator.evaluate_corr(
             data, data_sims, key=key
         )
 
-        print("running rank")
         retrieval_rank = self.evaluator.evaluate_retrieval(
             data, data_sims, key=key
         )

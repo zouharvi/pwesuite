@@ -19,14 +19,13 @@ class Evaluator():
             data_dists_true = self.panphon_dist_cache[key]
         else:
             def _compute_panphon_distance(y, data):
-                # tok_features break pipe in multiprocess
                 fed = panphon2.FeatureTable().feature_edit_distance
                 return [fed(tok_ipa, y) for tok_ipa in data]
+                
             # parallelization
             with mp.Pool() as pool:
+                # tok_features break pipe in multiprocess
                 data_ipa = [x[1] for x in data]
-                # TODO instead of this guard we could simply create a list of tok_ipa because we don't
-                # need tok_features
                 data_dists_true = list(pool.map(
                     lambda y: (
                         _compute_panphon_distance(y, data_ipa)

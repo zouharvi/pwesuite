@@ -134,7 +134,6 @@ def process_en():
         for line in tqdm.tqdm(f):
             if line[0].isalpha():
                 token, ipa = line.rstrip("\n").split('\t')
-                vocab_ort.update(token)
 
                 # if multiple pronunciations, take first one
                 ipa = ipa.split(' ')[0]
@@ -144,12 +143,16 @@ def process_en():
 
                 vocab_ipa.update(segments)
                 if segments and token in cmu_pronunciation:
+                    pronunciation = cmu_pronunciation[token]
+                    token = token.lower()
+                    vocab_ort.update(token)
+
                     # append a triplet of (token, ipa, cmu pronunciation)
                     tokens_all.append((
                         token,
                         ''.join(segments),
                         "en",
-                        cmu_pronunciation[token],
+                        pronunciation,
                     ))
 
     save_lang("en", tokens_all, vocab_ort, vocab_ipa)
