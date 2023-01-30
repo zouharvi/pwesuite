@@ -7,7 +7,6 @@ import tqdm
 from models.metric_learning.model import RNNMetricLearner
 import pickle
 from preprocessor import preprocess_dataset
-from main.utils import load_multi_data
 
 args = argparse.ArgumentParser()
 args.add_argument("-d", "--data", default="data/multi.tsv")
@@ -31,7 +30,7 @@ model = RNNMetricLearner(
     target_metric="l2",
     dimension=args.dimension,
     # TODO: this will fail for cross-language unless we replace unknown characters with UNK
-    feature_size=data[0][0].shape[1] if args.features != "panphon" else 24,
+    feature_size=data[0][0].shape[1],
 )
 model.load_state_dict(torch.load(args.model_path))
 model.eval()

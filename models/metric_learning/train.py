@@ -35,6 +35,8 @@ data_train = random.sample(
     data,
     k=min(args.number_thousands * 1000, len(data))
 )
+# free up memory
+del data
 
 print(f"Loaded {len(data_train)//1000}k words for training")
 
@@ -42,7 +44,7 @@ print(f"Loaded {len(data_train)//1000}k words for training")
 model = RNNMetricLearner(
     target_metric=args.target_metric,
     dimension=args.dimension,
-    feature_size=data[0][0].shape[1],
+    feature_size=data_train[0][0].shape[1]
 )
 model.train_epochs(
     data_train=data_train, data_dev=data_dev,

@@ -4,10 +4,10 @@ mkdir -p computed/models
 
 # hack to overshadow system LDPATH with custom bashrc
 # source /cluster/home/vzouhar/.bashrc; 
-for FEATURES in "panphon" "tokenort" "tokenipa"; do
-    for LANG in 'multi' 'en' 'am' 'bn' 'uz' 'pl' 'es' 'sw'; do
+for FEATURES in "tokenort" "tokenipa"; do
+    for LANG in 'multi'; do
         SIGNATURE="train_rnn_${FEATURES}_${LANG}"
-        sbatch --time=01-00 --ntasks=8 --mem-per-cpu=4G --gpus=1 \
+        sbatch --time=01-00 --ntasks=12 --mem-per-cpu=4G --gpus=1 \
             --job-name="${SIGNATURE}" \
             --output="logs/${SIGNATURE}.log" \
             --wrap="CUDA_VISIBLE_DEVICES=0 python3 \
@@ -23,14 +23,15 @@ for FEATURES in "panphon" "tokenort" "tokenipa"; do
     done;
 done;
 
-
-# python3 \
-#     ./models/metric_learning/train.py \
-#         --data "data/multi.tsv" \
-#         --lang ${LANG} \
-#         --save-model-path "computed/models/rnn_metric_learning_${FEATURES}_${LANG}.pt" \
-#         --number-thousands 200 \
-#         --target-metric "l2" \
-#         --features ${FEATURES} \
-#         --epochs 20 \
-#     ;
+FEATURES=tokenort
+LANG=multi
+python3 \
+    ./models/metric_learning/train.py \
+        --data "data/multi.tsv" \
+        --lang ${LANG} \
+        --save-model-path "computed/models/rnn_metric_learning_${FEATURES}_${LANG}.pt" \
+        --number-thousands 1 \
+        --target-metric "l2" \
+        --features ${FEATURES} \
+        --epochs 20 \
+    ;

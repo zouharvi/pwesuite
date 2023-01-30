@@ -4,7 +4,6 @@ from scipy.stats import pearsonr, spearmanr
 from sklearn.metrics.pairwise import cosine_distances, euclidean_distances
 import numpy as np
 
-
 class Evaluator():
     def __init__(self):
         self.panphon_dist_cache = {}
@@ -20,13 +19,20 @@ class Evaluator():
             data_dists_true = self.panphon_dist_cache[key]
         else:
             def _compute_panphon_distance(y, data):
+                # tok_features break pipe in multiprocess
                 fed = panphon2.FeatureTable().feature_edit_distance
-                return [fed(tok_ipa, y) for tok_features, tok_ipa in data]
+                return [fed(tok_ipa, y) for tok_ipa in data]
             # parallelization
             with mp.Pool() as pool:
-                data_dists_true = pool.map(
-                    lambda y: _compute_panphon_distance(y[1], data), data
-                )
+                data_ipa = [x[1] for x in data]
+                # TODO instead of this guard we could simply create a list of tok_ipa because we don't
+                # need tok_features
+                data_dists_true = list(pool.map(
+                    lambda y: (
+                        _compute_panphon_distance(y, data_ipa)
+                    ),
+                    data_ipa
+                ))
         if key is not None and key not in self.panphon_dist_cache:
             self.panphon_dist_cache[key] = data_dists_true
 
@@ -70,6 +76,7 @@ class Evaluator():
             data_rank_hyp = pool.map(
                 self._compute_neighbour_rank, data_dists_hyp
             )
+
         data_rank_hyp = [
             row.index(nearest_neighbour_index)
             for row, nearest_neighbour_index in zip(data_rank_hyp, data_rank_true)

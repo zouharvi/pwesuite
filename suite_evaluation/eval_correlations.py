@@ -10,7 +10,7 @@ from main.utils import load_embd_data, load_multi_data
 import collections
 import tqdm
 
-def evaluate_correlations(data_multi, data_embd, data_size=1000):
+def evaluate_correlations(data_multi, data_embd, data_size=1000, jobs=20):
     data_langs = collections.defaultdict(list)
 
     for (token_ort, token_ipa, lang, pronunciation), emdb in zip(data_multi, data_embd):
@@ -29,7 +29,7 @@ def evaluate_correlations(data_multi, data_embd, data_size=1000):
         # Take only dev data
         data = data[:data_size]
 
-        with mp.Pool() as pool:
+        with mp.Pool(jobs) as pool:
             data_dists_fed = np.array(pool.map(
                 lambda y: compute_panphon_distance(y[0], data),
                 data
