@@ -3,7 +3,6 @@
 import torch
 import argparse
 from models.metric_learning.model import RNNMetricLearner
-from main.utils import load_multi_data
 from preprocessor import preprocess_dataset
 
 args = argparse.ArgumentParser()
@@ -27,13 +26,8 @@ args.add_argument("--features", default="panphon")
 args.add_argument("--dimension", type=int, default=300)
 args = args.parse_args()
 
-# token_ort, token_ipa, lang, pronunc
-data = [
-    x[:2] for x in load_multi_data(args.data)
-    if x[2] == args.lang
-][:1000 + args.number_thousands * 1000]
-
-data = preprocess_dataset(data, args.features)
+data = preprocess_dataset(args.data, args.features, args.lang)
+data = data[:1000 + args.number_thousands * 1000]
 
 print(f"Loaded {len(data)//1000}k words")
 

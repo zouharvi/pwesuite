@@ -2,7 +2,7 @@
 
 mkdir -p computed/models
 
-for LANG in 'en' 'am' 'bn' 'uz' 'pl' 'es' 'sw'; do
+for LANG in 'multi' 'en' 'am' 'bn' 'uz' 'pl' 'es' 'sw'; do
     ./models/metric_learning/train.py \
         --data "data/multi.tsv" \
         --lang ${LANG} \

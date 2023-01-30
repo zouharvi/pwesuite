@@ -19,16 +19,9 @@ args.add_argument(
 args.add_argument("-o", "--output", default="computed/tmp/multi_en.pkl")
 args.add_argument("--features", default="panphon")
 args.add_argument("--dimension", type=int, default=300)
-
 args = args.parse_args()
 
-# token_ort, token_ipa, lang, pronunc
-data = [
-    x[:2] for x in load_multi_data(args.data)
-    if x[2] == args.lang
-]
-
-data = preprocess_dataset(data, args.features)
+data = preprocess_dataset(args.data, args.features, args.lang)
 BATCH_SIZE = 2000
 
 print(f"Loaded {len(data)//1000}k words")
