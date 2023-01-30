@@ -9,7 +9,7 @@ from intrinsic_evaluator import Evaluator
 from main.utils import get_device
 
 DEVICE = get_device()
-
+print("Running on", DEVICE)
 
 class RNNMetricLearner(torch.nn.Module):
     def __init__(

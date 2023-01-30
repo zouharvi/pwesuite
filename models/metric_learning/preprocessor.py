@@ -1,6 +1,5 @@
-import panphon2
+import panphon, panphon2
 from main.utils import load_multi_data
-
 
 def preprocess_dataset(data, features, lang):
     # token_ort, token_ipa, lang, pronunc
@@ -42,6 +41,7 @@ def preprocess_dataset_token(data, features):
     if features == "tokenort":
         data = [(token_onehot(x[0]), x[1]) for x in data]
     elif features == "tokenipa":
-        data = [(token_onehot(x[1]), x[1]) for x in data]
+        ft = panphon.FeatureTable()
+        data = [(token_onehot(ft.ipa_segs(x[1])), x[1]) for x in data]
 
     return data

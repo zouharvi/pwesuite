@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 
+import random
 import torch
 import argparse
 from models.metric_learning.model import RNNMetricLearner
@@ -25,14 +26,17 @@ args.add_argument("-tm", "--target-metric", default="l2")
 args.add_argument("--features", default="panphon")
 args.add_argument("--dimension", type=int, default=300)
 args = args.parse_args()
+random.seed(0)
 
 data = preprocess_dataset(args.data, args.features, args.lang)
-data = data[:1000 + args.number_thousands * 1000]
-
-print(f"Loaded {len(data)//1000}k words")
-
 data_dev = data[:1000]
-data_train = data[1000:]
+data = data[1000:]
+data_train = random.sample(
+    data,
+    k=min(args.number_thousands * 1000, len(data))
+)
+
+print(f"Loaded {len(data_train)//1000}k words for training")
 
 # target_metric="ip" is not good for some reason
 model = RNNMetricLearner(

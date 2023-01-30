@@ -10,6 +10,7 @@ setup(
     packages=find_packages(),
     # the requirements here should only be for the evaluation, so e.g. transformers should not be here
     install_requires=[
+        "panphon2>=0.3",
         "numpy>=1.21",
         "transformers>=4.22",
         "wandb>=0.13",
