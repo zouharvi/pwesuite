@@ -8,6 +8,7 @@ import argparse
 from main.utils import load_embd_data, load_multi_data
 import collections
 import tqdm
+import random
 
 def evaluate_retrieval(data_multi, data_embd, data_size=1000, jobs=20):
     data_langs = collections.defaultdict(list)
@@ -24,7 +25,8 @@ def evaluate_retrieval(data_multi, data_embd, data_size=1000, jobs=20):
 
     for lang, data in tqdm.tqdm(data_langs.items()):
         # Take only dev data
-        data = data[:data_size]
+        r = random.Random(0)
+        data = r.sample(data, k=data_size)
 
         with mp.Pool(20) as pool:
             data_dists_fed = np.array(pool.map(

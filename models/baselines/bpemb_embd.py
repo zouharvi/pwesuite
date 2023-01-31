@@ -9,7 +9,7 @@ import tqdm
 
 args = argparse.ArgumentParser()
 args.add_argument("-d", "--data", default="data/multi.tsv")
-args.add_argument("-o", "--output", default="computed/embd_bpemb.pkl")
+args.add_argument("-o", "--output", default="computed/embd_baseline/bpemb.pkl")
 args = args.parse_args()
 
 data = load_multi_data(args.data)

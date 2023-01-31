@@ -12,7 +12,7 @@ BATCH_SIZE=5000
 
 args = argparse.ArgumentParser()
 args.add_argument("-d", "--data", default="data/multi.tsv")
-args.add_argument("-o", "--output", default="computed/embd_bert.pkl")
+args.add_argument("-o", "--output", default="computed/embd_baseline/bert.pkl")
 args = args.parse_args()
 
 data = load_multi_data(args.data)

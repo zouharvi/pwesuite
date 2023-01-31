@@ -10,7 +10,7 @@ import tqdm
 
 args = argparse.ArgumentParser()
 args.add_argument("-d", "--data", default="data/multi.tsv")
-args.add_argument("-o", "--output", default="computed/embd_spacy.pkl")
+args.add_argument("-o", "--output", default="computed/embd_baseline/spacy.pkl")
 args = args.parse_args()
 
 data = load_multi_data(args.data)

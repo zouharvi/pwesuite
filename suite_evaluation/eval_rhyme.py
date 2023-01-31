@@ -7,6 +7,7 @@ import tqdm
 import re
 from main.utils import load_multi_data, load_embd_data
 from sklearn.neural_network import MLPClassifier
+from sklearn.model_selection import train_test_split
 import random
 
 
@@ -57,8 +58,7 @@ def evaluate_rhyme(data_multi, data_embd):
         data_task.append((np.concatenate((embd1, embd2)), True))
         data_task.append((np.concatenate((embd1, embd3)), False))
 
-    data_dev = data_task[:1000]
-    data_train = data_task[1000:]
+    data_dev, data_train = train_test_split(data_task, test_size=1000)
 
     model = MLPClassifier(
         hidden_layer_sizes=(50, 20, 10),
