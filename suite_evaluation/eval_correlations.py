@@ -79,7 +79,8 @@ if __name__ == "__main__":
     data_multi = load_multi_data(args.data_multi)
     data_embd = load_embd_data(args.embd)
 
-    assert len(data_multi) == len(data_embd)
+    # this is no longer true because of analogies
+    # assert len(data_multi) == len(data_embd)
 
     output = evaluate_correlations(data_multi, data_embd)
     print("Overall:")

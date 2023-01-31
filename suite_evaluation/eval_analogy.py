@@ -1,65 +1,78 @@
 #!/usr/bin/env python3
 
-raise Exception("Not properly implemented with multi.tsv")
-
-import argparse
-import pickle
-import numpy as np
-import torch
 import panphon2
-from models.metric_learning.model import RNNMetricLearner
+import numpy as np
 from sklearn.metrics.pairwise import euclidean_distances
+import argparse
+from main.utils import load_embd_data, load_multi_data, LANGS
+from main.add_analogies import get_analogies
 
-args = argparse.ArgumentParser()
-args.add_argument("-i", "--input", default="computed/embds_pl.pkl")
-args.add_argument("-m", "--model", default="computed/models/model_pl.pt")
-args.add_argument("-n", "--n", type=int, default=1000)
-args = args.parse_args()
-ft = panphon2.FeatureTable()
+def evaluate_analogy_single_lang(data_local, data_local_analogies, jobs):
+    analogies = get_analogies(data_local)
 
-with open(args.input, "rb") as f:
-    data = pickle.load(f)
+    ipa_to_i = {x[1]:i for i,x in enumerate(data_local_analogies)}
+    embd_all = [x[5] for x in data_local_analogies]
 
-# use train data
-data = data[1000:1000 + args.n]
+    analogies_embd_indicies = []
+    for analogy in analogies:
+        if all([w in ipa_to_i for w in analogy]):
+            embd_a = data_local_analogies[ipa_to_i[analogy[0]]][5]
+            embd_b = data_local_analogies[ipa_to_i[analogy[1]]][5]
+            embd_c = data_local_analogies[ipa_to_i[analogy[2]]][5]
+            embd_d = embd_b-embd_a+embd_c
+            analogies_embd_indicies.append((ipa_to_i[analogy[3]], embd_d))
+    
+    dists_all = euclidean_distances(
+        [x[1] for x in analogies_embd_indicies],
+        embd_all
+    )
 
-model = RNNMetricLearner(target_metric="l2")
-model.load_state_dict(torch.load(args.model))
+    ranks = []
+    for dists, (index_d, _embd) in zip(dists_all, analogies_embd_indicies):
+        dists = sorted(range(len(dists)), key=lambda i: dists[i], reverse=False)
+        rank = dists.index(index_d)
+        ranks.append(rank)
 
-ANALOG_WORDS = [
-    "zadba", "ʐadba", # A, B
-    "sadba", "ʂadba", # C, D
-]
-# A-B = C-D
-# D = C-A+B
-# find similarities to D
+    print(np.average(ranks), len(embd_all), len(analogies_embd_indicies))
 
-def set_similarity(a, b):
-    return 2 * len(a.intersection(b)) / (len(a) + len(b))
+    return (len(data_local_analogies)-np.average(ranks))/len(data_local_analogies)
 
-set_D = set(ANALOG_WORDS[3])
-# take top 20 most similar ones
-data_hay = sorted(data, key=lambda x: set_similarity(set(x[0]), set_D), reverse=True)[:20]
 
-# process analog words
-data_analog = [(w, ft.word_to_binary_vectors(w)) for w in ANALOG_WORDS]
-data_analog = [
-    (w, b, model.forward([b])[0].detach().cpu().numpy())
-    for w,b in data_analog
-]
-needle = data_analog[2][2]-data_analog[0][2]+data_analog[1][2]
+def evaluate_analogy(data_multi, data_multi_analogies, jobs=20):
+    output = {}
+    for lang in LANGS:
+        data_local = [
+            x for x in data_multi
+            if x[2] == lang
+        ]
+        data_local_analogies = [
+            x for x in data_multi_analogies
+            if x[2] == lang
+        ]
+        print(lang, len(data_multi_analogies), len(data_local_analogies))
+        output[lang] = evaluate_analogy_single_lang(data_local, data_local_analogies, jobs)
 
-# add D to search data
-data_hay += [data_analog[3]]
+    output["all"] = np.average(list(output.values()))
+    return output
 
-data_hay = [
-    (x[0], x[1], x[2], euclidean_distances([needle], [x[2]])[0,0])
-    for x in data_hay
-]
+if __name__ == "__main__":
+    args = argparse.ArgumentParser()
+    args.add_argument("-d", "--data-multi", default="data/multi.tsv")
+    args.add_argument("-e", "--embd", default="computed/embd_rnn_metric_learning/panphon.pkl")
+    args = args.parse_args()
 
-print(f"Searching for v({ANALOG_WORDS[2]})-v({ANALOG_WORDS[0]})+v({ANALOG_WORDS[1]})")
-print(f"The correct word should be {ANALOG_WORDS[3]}")
-data_hay.sort(key=lambda x: x[3])
-for word, _bin_word, _vec, sim in data_hay:
-    extra = "*" if word == ANALOG_WORDS[3] else " "
-    print(f"{extra}{word:>15}: {sim:.5f}")
+    data_multi = load_multi_data(args.data_multi)
+    data_multi_all = load_multi_data(args.data_multi, purpose_key="all", keep_purpose=True)
+    data_embd = load_embd_data(args.embd)
+
+    assert len(data_multi_all) == len(data_embd)
+
+    data_multi_all = [
+        (*x, y) for x, y in zip(data_multi_all, data_embd)
+        if x[3] == "analogy"
+    ]
+
+    # TODO: why is it so high for Swahili?
+    output = evaluate_analogy(data_multi, data_multi_all)
+
+    print("Overall:", f"{output['all']:.3f}")
