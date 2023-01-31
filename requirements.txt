@@ -1,9 +1,0 @@
-# install pytorch following the official instructions https://pytorch.org/get-started/locally/
-numpy~=1.21.5
-transformers~=4.22.1
-wandb~=0.13.3
-panphon~=0.20.0
-epitran~=1.24
-tqdm~=4.64.1
-scikit-learn~=1.1.2
-scipy~=1.7.3

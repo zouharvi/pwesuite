@@ -1,27 +1,27 @@
 import panphon2
 import torch
 from torch.utils.data import DataLoader
+from sklearn.metrics.pairwise import cosine_distances
 import random
 import tqdm
 import numpy as np
-from scipy.stats import pearsonr, spearmanr
-from sklearn.metrics.pairwise import cosine_distances
-import multiprocess as mp
+from intrinsic_evaluator import Evaluator
+from main.utils import get_device
 
-DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
-
+DEVICE = get_device()
 
 class RNNMetricLearner(torch.nn.Module):
     def __init__(
         self,
         target_metric,
-        feature_size=24, panphon_vectors=True,
+        feature_size=24,
+        dimension=300,
     ):
         super().__init__()
 
         self.model = torch.nn.LSTM(
             input_size=feature_size,
-            hidden_size=128,
+            hidden_size=dimension//2,
             num_layers=2,
             batch_first=True,
             dropout=0.3,
@@ -29,9 +29,6 @@ class RNNMetricLearner(torch.nn.Module):
         )
         self.batch_size_eval = 2048
         self.batch_size_train = 128
-
-        # TODO: try to use characters instead of vectors but maybe that doesn't matter
-        self.panphon_vectors = panphon_vectors
 
         # TODO: contrastive learning
         self.loss = torch.nn.MSELoss()
@@ -45,10 +42,40 @@ class RNNMetricLearner(torch.nn.Module):
         else:
             raise Exception(f"Unknown metric {target_metric}")
 
+        self.evaluator = Evaluator()
+
         # move the model to GPU
         self.to(DEVICE)
 
-        self.panphon_dist_cache = {}
+    def evaluate_intrinsic(self, data, key=None):
+        print("Evaluating everything for", key)
+
+        self.eval()
+        data_loader = DataLoader(
+            data, batch_size=self.batch_size_eval, shuffle=False,
+            collate_fn=lambda x: [y[0] for y in x]
+        )
+
+        # compute embeddings in batches on GPU
+        data_embd = [
+            self.forward(x).cpu().detach().numpy()
+            for x in data_loader
+        ]
+
+        # flatten
+        data_embd = [x for y in data_embd for x in y]
+        data_sims = cosine_distances(data_embd)
+        # data_sims = np.ravel(data_sims)
+
+        pearson_corr, spearman_corr = self.evaluator.evaluate_corr(
+            data, data_sims, key=key
+        )
+
+        retrieval_rank = self.evaluator.evaluate_retrieval(
+            data, data_sims, key=key
+        )
+        out_str = f"ρp={pearson_corr:.0%} ρs={spearman_corr:.0%} rank={retrieval_rank:.0f}"
+        return out_str
 
     def forward(self, ws):
         # TODO: here we use -1 for padding because 0.0 is already
@@ -79,68 +106,31 @@ class RNNMetricLearner(torch.nn.Module):
         losses = []
 
         data_loader = DataLoader(
-            data_dev, batch_size=self.batch_size_eval, shuffle=True,
-            collate_fn=lambda x: ([y[0] for y in x], [y[1] for y in x])
+            list(data_dev), batch_size=self.batch_size_train, shuffle=True,
+            collate_fn=lambda x: (
+                # tok_features
+                [y[0] for y in x],
+                # tok_ipa
+                [y[1] for y in x],
+            )
         )
 
-        for (ws1, ws1f) in tqdm.tqdm(data_loader):
+        for (tok1_features, tok1_ipa) in tqdm.tqdm(data_loader):
             # pick w2 at random
-            ws2_all = random.choices(data_dev, k=len(ws1))
-            ws2 = [x[0] for x in ws2_all]
-            ws2f = [x[1] for x in ws2_all]
+            tok2 = random.choices(data_dev, k=len(tok1_features))
+            tok2_features = [x[0] for x in tok2]
+            tok2_ipa = [x[1] for x in tok2]
 
             dist_true = [
                 self.panphon_distance(w1, w2)
-                for w1, w2 in zip(ws1, ws2)
+                for w1, w2 in zip(tok1_ipa, tok2_ipa)
             ]
             # create micro-batches of one element
             # TODO: create proper batches here
-            loss = self.train_step(ws1f, ws2f, dist_true)
+            loss = self.train_step(tok1_features, tok2_features, dist_true)
             losses.append(loss.cpu().detach())
 
         return np.average(losses)
-
-    def evaluate_corr(self, data, key=None):
-        print("Evaluating correlation for", key)
-
-        self.eval()
-        data_loader = DataLoader(
-            data, batch_size=self.batch_size_eval, shuffle=False,
-            collate_fn=lambda x: [y[1] for y in x]
-        )
-
-        # compute embeddings in batches on GPU
-        data_embd = [
-            self.forward(x).cpu().detach().numpy()
-            for x in data_loader
-        ]
-
-        # flatten
-        data_embd = [x for y in data_embd for x in y]
-        data_sims = cosine_distances(data_embd)
-        data_sims = np.ravel(data_sims)
-
-        def compute_panphon_distance(y, data):
-            fed = panphon2.FeatureTable().feature_edit_distance
-            return [fed(x, y) for x, _ in data]
-
-        # scaffolding to compute it only once
-        if key is not None and key in self.panphon_dist_cache:
-            data_dists_true = self.panphon_dist_cache[key]
-        else:
-            # parallelization
-            with mp.Pool() as pool:
-                data_dists_true = pool.map(
-                    lambda y: compute_panphon_distance(y[0], data), data)
-                # flatten
-                data_dists_true = [x for y in data_dists_true for x in y]
-        if key is not None and key not in self.panphon_dist_cache:
-            self.panphon_dist_cache[key] = data_dists_true
-
-        # compute & return correlations
-        parson_corr, _pearson_p = pearsonr(data_sims, data_dists_true)
-        spearman_corr, _spearman_p = spearmanr(data_sims, data_dists_true)
-        return parson_corr, spearman_corr
 
     def train_epochs(
         self, data_train, data_dev,
@@ -150,25 +140,31 @@ class RNNMetricLearner(torch.nn.Module):
             self.train()
 
             data_loader = DataLoader(
-                data_train, batch_size=self.batch_size_train, shuffle=True,
-                collate_fn=lambda x: ([y[0] for y in x], [y[1] for y in x])
+                list(data_train), batch_size=self.batch_size_train, shuffle=True,
+                collate_fn=lambda x: (
+                    # tok_features
+                    [y[0] for y in x],
+                    # tok_ipa
+                    [y[1] for y in x],
+                )
             )
 
             losses = []
 
-            for (ws1, ws1f) in tqdm.tqdm(data_loader):
-                # pick w2 completely at random
+            # it's singular names here but actually is full batches
+            for (tok1_features, tok1_ipa) in tqdm.tqdm(data_loader):
+                # pick tok2 completely at random
                 # TODO: there may be a smarter strategy to do this such as prefering local space
-                ws2_all = random.choices(data_train, k=len(ws1))
-                ws2 = [x[0] for x in ws2_all]
-                ws2f = [x[1] for x in ws2_all]
+                tok2 = random.choices(data_train, k=len(tok1_features))
+                tok2_features = [x[0] for x in tok2]
+                tok2_ipa = [x[1] for x in tok2]
 
                 # compute true distances for the selected pairs
                 dist_true = [
                     self.panphon_distance(w1, w2)
-                    for w1, w2 in zip(ws1, ws2)
+                    for w1, w2 in zip(tok1_ipa, tok2_ipa)
                 ]
-                loss = self.train_step(ws1f, ws2f, dist_true)
+                loss = self.train_step(tok1_features, tok2_features, dist_true)
 
                 self.optimizer.zero_grad()
                 loss.backward()
@@ -184,20 +180,13 @@ class RNNMetricLearner(torch.nn.Module):
                 f"Dev loss {dev_loss_avg:8.5f}",
             )
 
-            if epoch % 10 == 0:
-                corr_dev_pearson, corr_dev_spearman = self.evaluate_corr(
+            if epoch % 5 == 0:
+                eval_dev = self.evaluate_intrinsic(
                     data_dev, key="dev"
                 )
                 # use only part of the training data for evaluation unless specified otherwise
-                corr_train_pearson, corr_train_spearman = self.evaluate_corr(
+                eval_train = self.evaluate_intrinsic(
                     data_train if eval_train_full else data_train[:1000], key="train"
                 )
 
-                print(
-                    f"Train pearson  {corr_train_pearson:6.2%}",
-                    f"Train spearman {corr_train_spearman:6.2%}",
-                )
-                print(
-                    f"Dev pearson    {corr_dev_pearson:6.2%}",
-                    f"Dev spearman   {corr_dev_spearman:6.2%}",
-                )
+                print("Train", eval_train, "|||", "dev", eval_dev)

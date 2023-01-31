@@ -9,7 +9,7 @@ import multiprocess as mp
 from sklearn.manifold import TSNE
 from sklearn.metrics.pairwise import cosine_distances
 import matplotlib.pyplot as plt
-import fig_utils
+import main.fig_utils as fig_utils
 
 args = argparse.ArgumentParser()
 args.add_argument("-i", "--input", default="computed/embds_en.pkl")

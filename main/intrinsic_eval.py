@@ -3,7 +3,7 @@ import os
 try:
     import panphon2
 except ImportError:
-    print("you don't have panphon2 installed. Defaulting to the slower PanPhon")
+    print("You don't have Panphon2 installed. Defaulting to the slower Panphon")
     import panphon.distance
     panphon2 = None
 
@@ -57,10 +57,13 @@ class IntrinsicEvaluator:
                 distances = np.ravel(np.array(distances))
 
                 # normalize for fair comparison against cosine distance?
-                distances = (distances - np.min(distances)) / (np.max(distances) - np.min(distances))
+                distances = (
+                    (distances - np.min(distances)) /
+                    (np.max(distances) - np.min(distances))
+                )
                 self.feat_edit_dist = distances
                 t1 = time.time()
-                print("feature edit distance took", t1-t0, "seconds")
+                print("feature edit distance took", t1 - t0, "seconds")
 
                 # save to pickle
                 with open(pickle_path, 'wb') as f:
@@ -73,8 +76,7 @@ class IntrinsicEvaluator:
             distances = np.ravel(distances)
             self.cos_dist = distances
             t1 = time.time()
-            print("cosine distance took", t1-t0, "seconds")
-
+            print("cosine distance took", t1 - t0, "seconds")
 
     def run(self):
         # compute pairwise feature edit distance of self.phon_feats using the
@@ -87,7 +89,8 @@ class IntrinsicEvaluator:
         # calculate pearson R correlation coefficient
         # print(len(cos_dist), len(feat_edit_dist))
         if self.cos_dist is None or self.feat_edit_dist is None:
-            raise ValueError("You must set the embedding and features before running eval")
+            raise ValueError(
+                "You must set the embedding and features before running eval")
         pearson_corr, _ = pearsonr(self.cos_dist, self.feat_edit_dist)
         spearman_corr, _ = spearmanr(self.cos_dist, self.feat_edit_dist)
 
