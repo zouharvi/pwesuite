@@ -76,7 +76,7 @@ class RNNMetricLearner(torch.nn.Module):
             data, data_sims, key=key
         )
         out_str = f"ρp={pearson_corr:.0%} ρs={spearman_corr:.0%} rank={retrieval_rank:.0f}"
-        return out_str
+        return out_str, retrieval_rank
 
     def forward(self, ws):
         # TODO: here we use -1 for padding because 0.0 is already
@@ -137,6 +137,9 @@ class RNNMetricLearner(torch.nn.Module):
         self, data_train, data_dev,
         epochs=1000, eval_train_full=False,
     ):
+        # set maximum prev_eval_dev_rank
+        prev_eval_dev_rank = len(data_dev)
+
         for epoch in range(epochs):
             self.train()
 
@@ -181,13 +184,18 @@ class RNNMetricLearner(torch.nn.Module):
                 f"Dev loss {dev_loss_avg:8.5f}",
             )
 
-            if epoch % 5 == 0:
-                eval_dev = self.evaluate_intrinsic(
-                    data_dev, key="dev"
+            if epoch % 3 == 0:
+                eval_dev, eval_dev_rank = self.evaluate_intrinsic(
+                    # use only 500 to speed things up
+                    data_dev[:500], key="dev"
                 )
+                # quit when we get worse
+                if eval_dev_rank > prev_eval_dev_rank:
+                    return
+                prev_eval_dev_rank = eval_dev_rank
                 # use only part of the training data for evaluation unless specified otherwise
-                eval_train = self.evaluate_intrinsic(
-                    data_train if eval_train_full else data_train[:1000], key="train"
+                eval_train, eval_train_rank = self.evaluate_intrinsic(
+                    data_train if eval_train_full else data_train[:500], key="train"
                 )
 
                 print("Train", eval_train, "|||", "dev", eval_dev)

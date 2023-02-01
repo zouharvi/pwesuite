@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 import argparse
+import json
 from main.utils import load_embd_data, load_multi_data
 from eval_correlations import evaluate_correlations
 from eval_retrieval import evaluate_retrieval
@@ -40,8 +41,8 @@ def evaluate_all(data_multi_all, data_embd, lang="all", jobs=20):
     output = evaluate_analogy(data_multi, data_multi_analogy)
     scores_all["analogy"] = output["all"]
 
-
-    return np.average(list(scores_all.values())), scores_all
+    scores_all["overall"] = np.average(list(scores_all.values()))
+    return scores_all["overall"], scores_all
 
 
 if __name__ == "__main__":
@@ -57,4 +58,5 @@ if __name__ == "__main__":
     score, scores_all = evaluate_all(data_multi, data_embd, args.lang)
     for key, val in scores_all.items():
         print(f"{key}: {val:.4f}")
+    print(f"JSON1!{json.dumps(scores_all)}")
     print(f"Score (multi): {score:.4f}")
