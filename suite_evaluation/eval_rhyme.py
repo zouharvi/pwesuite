@@ -10,10 +10,10 @@ from sklearn.neural_network import MLPClassifier
 from sklearn.model_selection import train_test_split
 import random
 
-
-def evaluate_rhyme(data_multi, data_embd):
+# TODO: cache this?
+def evaluate_rhyme(data_multi_all):
     data_multi = [
-        (embd, x[0], x[1], x[3]) for embd, x in zip(data_embd, data_multi)
+        (x[5], x[0], x[1], x[4]) for x in data_multi_all
         # we have pronunciation information only for English
         if x[2] == "en"
     ]
@@ -31,13 +31,9 @@ def evaluate_rhyme(data_multi, data_embd):
         # TODO: change this to different rhyme patterns
         rhyme_clusters[rhyme_part].append(embd)
 
-    # print(len(rhyme_clusters), "rhyme clusters")
-    # print(
-    #     f"average cluster size: {np.average([len(x) for x in rhyme_clusters.values()]):.1f}"
-    # )
-
     random.seed(0)
     rhyme_part_keys = list(rhyme_clusters.keys())
+
     data_task = []
     for rhyme_part, cluster in rhyme_clusters.items():
         if len(cluster) < 2:
@@ -84,11 +80,15 @@ if __name__ == "__main__":
     args.add_argument("-e", "--embd", default="computed/embd_bert.pkl")
     args = args.parse_args()
 
-    # This can't be unfortunately cached because of the zip here
-    data_multi = load_multi_data(args.data)
     data_embd = load_embd_data(args.embd)
+    data_multi_all = load_multi_data(args.data_multi, purpose_key="all", keep_purpose=True)
 
-    output = evaluate_rhyme(data_multi, data_embd)
+    data_multi = [
+        (*x, y) for x, y in zip(data_multi_all, data_embd)
+        if x[4] == "main"
+    ]
+
+    output = evaluate_rhyme(data_multi)
 
     print("Overall:")
     for key in output:

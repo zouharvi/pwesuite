@@ -1,10 +1,10 @@
 import panphon, panphon2
 from main.utils import load_multi_data
 
-def preprocess_dataset(data, features, lang):
+def preprocess_dataset(data, features, lang, purpose_key="main"):
     # token_ort, token_ipa, lang, pronunc
     data = [
-        x[:2] for x in load_multi_data(data)
+        x[:2] for x in load_multi_data(data, purpose_key=purpose_key)
         if lang == "multi" or x[2] == lang
     ]
     if features == "panphon":

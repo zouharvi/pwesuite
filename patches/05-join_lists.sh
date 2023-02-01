@@ -28,7 +28,7 @@ for FEATURES in "panphon" "tokenort" "tokenipa"; do
 done;
 
 # the lang order here is super important
-# for FEATURES in "panphon" "tokenipa"; do
+# for FEATURES in "panphon" "tokenipa" "tokenort"; do
 #     SIGNATURE="join_${FEATURES}"
 #     sbatch --time=00-04 --ntasks=8 --mem-per-cpu=4G \
 #         --job-name="${SIGNATURE}" \

@@ -7,21 +7,23 @@ import argparse
 from main.utils import load_embd_data, load_multi_data, LANGS
 from main.add_analogies import get_analogies
 
-def evaluate_analogy_single_lang(data_local, data_local_analogies, jobs):
-    analogies = get_analogies(data_local)
 
-    ipa_to_i = {x[1]:i for i,x in enumerate(data_local_analogies)}
+def evaluate_analogy_single_lang(data_local, data_local_analogies, lang):
+    analogies = get_analogies(data_local, lang)
+
+    ipa_to_i = {x[1]: i for i, x in enumerate(data_local_analogies)}
     embd_all = [x[5] for x in data_local_analogies]
 
     analogies_embd_indicies = []
     for analogy in analogies:
-        if all([w in ipa_to_i for w in analogy]):
-            embd_a = data_local_analogies[ipa_to_i[analogy[0]]][5]
-            embd_b = data_local_analogies[ipa_to_i[analogy[1]]][5]
-            embd_c = data_local_analogies[ipa_to_i[analogy[2]]][5]
-            embd_d = embd_b-embd_a+embd_c
-            analogies_embd_indicies.append((ipa_to_i[analogy[3]], embd_d))
-    
+        if all([w[1] in ipa_to_i for w in analogy]):
+            # 0 is ort, 1 is ipa
+            embd_a = data_local_analogies[ipa_to_i[analogy[0][1]]][5]
+            embd_b = data_local_analogies[ipa_to_i[analogy[1][1]]][5]
+            embd_c = data_local_analogies[ipa_to_i[analogy[2][1]]][5]
+            embd_d = embd_b - embd_a + embd_c
+            analogies_embd_indicies.append((ipa_to_i[analogy[3][1]], embd_d))
+
     dists_all = euclidean_distances(
         [x[1] for x in analogies_embd_indicies],
         embd_all
@@ -29,13 +31,15 @@ def evaluate_analogy_single_lang(data_local, data_local_analogies, jobs):
 
     ranks = []
     for dists, (index_d, _embd) in zip(dists_all, analogies_embd_indicies):
-        dists = sorted(range(len(dists)), key=lambda i: dists[i], reverse=False)
+        dists = sorted(
+            range(len(dists)),
+            key=lambda i: dists[i], reverse=False
+        )
         rank = dists.index(index_d)
-        ranks.append(rank)
+        # hit if rank==0 or rank==1
+        ranks.append(rank <= 1)
 
-    print(np.average(ranks), len(embd_all), len(analogies_embd_indicies))
-
-    return (len(data_local_analogies)-np.average(ranks))/len(data_local_analogies)
+    return np.average(ranks)
 
 
 def evaluate_analogy(data_multi, data_multi_analogies, jobs=20):
@@ -49,20 +53,25 @@ def evaluate_analogy(data_multi, data_multi_analogies, jobs=20):
             x for x in data_multi_analogies
             if x[2] == lang
         ]
-        print(lang, len(data_multi_analogies), len(data_local_analogies))
-        output[lang] = evaluate_analogy_single_lang(data_local, data_local_analogies, jobs)
+        output[lang] = evaluate_analogy_single_lang(
+            data_local, data_local_analogies, lang
+        )
 
     output["all"] = np.average(list(output.values()))
     return output
 
+
 if __name__ == "__main__":
     args = argparse.ArgumentParser()
     args.add_argument("-d", "--data-multi", default="data/multi.tsv")
-    args.add_argument("-e", "--embd", default="computed/embd_rnn_metric_learning/panphon.pkl")
+    args.add_argument(
+        "-e", "--embd", default="computed/embd_rnn_metric_learning/panphon.pkl")
     args = args.parse_args()
 
     data_multi = load_multi_data(args.data_multi)
-    data_multi_all = load_multi_data(args.data_multi, purpose_key="all", keep_purpose=True)
+    data_multi_all = load_multi_data(
+        args.data_multi, purpose_key="all", keep_purpose=True
+    )
     data_embd = load_embd_data(args.embd)
 
     assert len(data_multi_all) == len(data_embd)

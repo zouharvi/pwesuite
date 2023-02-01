@@ -16,6 +16,7 @@ class RNNMetricLearner(torch.nn.Module):
         target_metric,
         feature_size=24,
         dimension=300,
+        safe_eval=False,
     ):
         super().__init__()
 
@@ -42,7 +43,7 @@ class RNNMetricLearner(torch.nn.Module):
         else:
             raise Exception(f"Unknown metric {target_metric}")
 
-        self.evaluator = Evaluator()
+        self.evaluator = Evaluator(safe_eval=safe_eval)
 
         # move the model to GPU
         self.to(DEVICE)

@@ -15,7 +15,7 @@ args.add_argument("-d", "--data", default="data/multi.tsv")
 args.add_argument("-o", "--output", default="computed/embd_baseline/fasttext.pkl")
 args = args.parse_args()
 
-data = load_multi_data(args.data)
+data = load_multi_data(args.data, purpose_key="all")
 
 if not os.path.exists("computed/fasttext"):
     os.makedirs("computed/fasttext")
