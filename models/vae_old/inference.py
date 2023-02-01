@@ -5,7 +5,7 @@ import torch
 from torch.utils.data import DataLoader
 
 from dataset import IPATokenDataset
-from models.rnn_vae import RNN_VAE
+from models.vae_old.rnn_vae import RNN_VAE
 from main.utils import collate_fn
 import numpy as np
 

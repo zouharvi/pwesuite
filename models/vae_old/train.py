@@ -8,7 +8,7 @@ import wandb
 from dataset import IPATokenDataset
 from intrinsic_eval import IntrinsicEvaluator
 from vocab import *
-from models.rnn_vae import RNN_VAE
+from models.vae_old.rnn_vae import RNN_VAE
 from main.utils import *
 
 device = 'cuda' if torch.cuda.is_available() else 'cpu'

@@ -15,7 +15,7 @@ def str2bool(v):
 def collate_fn(batch):
     import torch
     from torch.nn.utils.rnn import pad_sequence
-    from vocab import PAD_IDX
+    from models.vae_old.vocab import PAD_IDX
 
     feature_array = [torch.tensor(b['feature_array']) for b in batch]
     tokens = [torch.tensor(b['tokens']) for b in batch]
@@ -29,10 +29,6 @@ def collate_fn(batch):
     }
 
 
-def reparameterize(mu, logvar):
-    std = logvar.mul(0.5).exp_()
-    eps = std.data.new(std.size()).normal_()
-    return eps.mul(std).add_(mu)
 
 
 def get_kl_loss(mu, logvar):

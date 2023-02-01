@@ -2,7 +2,11 @@ import torch
 from torch import nn
 from torch.nn import functional as F
 import numpy as np
-from main.utils import reparameterize
+
+def reparameterize(mu, logvar):
+    std = logvar.mul(0.5).exp_()
+    eps = std.data.new(std.size()).normal_()
+    return eps.mul(std).add_(mu)
 
 class RNN_VAE(nn.Module):
     def __init__(self,
