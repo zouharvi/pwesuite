@@ -4,7 +4,7 @@ import math
 import torch
 import argparse
 import tqdm
-from models.metric_learning.model import RNNMetricLearner
+from model import RNNAutoencoder
 import pickle
 from models.metric_learning.preprocessor import preprocess_dataset
 
@@ -13,7 +13,7 @@ args.add_argument("-d", "--data", default="data/multi.tsv")
 args.add_argument("-l", "--lang", default="en")
 args.add_argument(
     "-mp", "--model-path",
-    default="computed/models/rnn_metric_learning_en.pt"
+    default="computed/models/rnn_autoencoder_en.pt"
 )
 args.add_argument("-o", "--output", default="computed/tmp/multi_en.pkl")
 args.add_argument("--features", default="panphon")
@@ -25,11 +25,8 @@ BATCH_SIZE = 2000
 
 print(f"Loaded {len(data)//1000}k words")
 
-# target metric here doesn't play a role
-model = RNNMetricLearner(
-    target_metric="l2",
+model = RNNAutoencoder(
     dimension=args.dimension,
-    # TODO: this will fail for cross-language unless we replace unknown characters with UNK
     feature_size=data[0][0].shape[1],
 )
 model.load_state_dict(torch.load(args.model_path))

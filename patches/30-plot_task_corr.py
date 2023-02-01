@@ -17,7 +17,7 @@ data = [
     for line in data
 ]
 
-plt.figure(figsize=(3,2))
+plt.figure(figsize=(3, 1.7))
 ax = plt.gca()
 img = np.full((len(tasks), len(tasks)), np.nan)
 

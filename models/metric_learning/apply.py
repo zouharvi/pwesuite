@@ -29,7 +29,6 @@ print(f"Loaded {len(data)//1000}k words")
 model = RNNMetricLearner(
     target_metric="l2",
     dimension=args.dimension,
-    # TODO: this will fail for cross-language unless we replace unknown characters with UNK
     feature_size=data[0][0].shape[1],
 )
 model.load_state_dict(torch.load(args.model_path))

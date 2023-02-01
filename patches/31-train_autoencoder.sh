@@ -2,8 +2,8 @@
 
 mkdir -p computed/models
 
-for FEATURES in "panphon" "tokenort" "tokenipa"; do
-    for LANG in 'en' 'am' 'bn' 'uz' 'pl' 'es' 'sw'; do
+for FEATURES in "tokenipa"; do
+    for LANG in 'sw'; do
         SIGNATURE="train_rnn_autoencoder_${FEATURES}_${LANG}"
         sbatch --time=01-00 --ntasks=12 --mem-per-cpu=4G --gpus=1 \
             --job-name="${SIGNATURE}" \
