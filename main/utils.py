@@ -15,7 +15,7 @@ def str2bool(v):
 def collate_fn(batch):
     import torch
     from torch.nn.utils.rnn import pad_sequence
-    from vocab import PAD_IDX
+    from models.vae_old.vocab import PAD_IDX
 
     feature_array = [torch.tensor(b['feature_array']) for b in batch]
     tokens = [torch.tensor(b['tokens']) for b in batch]
@@ -29,10 +29,6 @@ def collate_fn(batch):
     }
 
 
-def reparameterize(mu, logvar):
-    std = logvar.mul(0.5).exp_()
-    eps = std.data.new(std.size()).normal_()
-    return eps.mul(std).add_(mu)
 
 
 def get_kl_loss(mu, logvar):
@@ -55,13 +51,28 @@ def save_model(model, optimizer, args, ipa_vocab, epoch, filepath):
     torch.save(save_info, filepath)
     print(f'\t>> saved model to {filepath}')
 
-def load_multi_data(path="data/multi.tsv"):
+def load_multi_data(path="data/multi.tsv", purpose_key="main", keep_purpose=False):
     print("Loading data")
-    return [
+    data = [
         l.rstrip("\n").split("\t")
         for l in open(path, "r")
         if len(l) > 1
     ]
+    if purpose_key == "all":
+        if keep_purpose:
+            return data
+        else:
+            data = [
+                (x[0], x[1], x[2], x[4])
+                for x in data
+            ]
+    else:
+        data = [
+            (x[0], x[1], x[2], x[4])
+            for x in data
+            if x[3] == purpose_key
+        ]
+    return data
 
 def load_embd_data(path):
     if path.endswith(".pkl") or path.endswith(".pickle"):
@@ -81,3 +92,5 @@ def load_embd_data(path):
 def get_device():
     import torch
     return "cuda:0" if torch.cuda.is_available() else "cpu"
+
+LANGS = ['en', 'am', 'bn', 'uz', 'pl', 'es', 'sw']

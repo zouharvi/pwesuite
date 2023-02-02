@@ -3,17 +3,18 @@ import multiprocess as mp
 from scipy.stats import pearsonr, spearmanr
 from sklearn.metrics.pairwise import cosine_distances, euclidean_distances
 import numpy as np
+import base64
 
 class Evaluator():
-    def __init__(self):
+    def __init__(self, safe_eval=False):
         self.panphon_dist_cache = {}
         self.panphon_rank_cache = {}
+        self.safe_eval = safe_eval
 
     def evaluate_corr(self, data, data_sims, key=None):
         # TODO: change from microaverage to macroaverage
         # flatten
         data_sims = np.ravel(data_sims)
-
         # scaffolding to compute it only once
         if key is not None and key in self.panphon_dist_cache:
             data_dists_true = self.panphon_dist_cache[key]
@@ -26,7 +27,11 @@ class Evaluator():
             with mp.Pool() as pool:
                 # tok_features break pipe in multiprocess
                 data_ipa = [x[1] for x in data]
-                data_dists_true = list(pool.map(
+                if self.safe_eval:
+                    iterator = map
+                else:
+                    iterator = pool.map
+                data_dists_true = list(iterator(
                     lambda y: (
                         _compute_panphon_distance(y, data_ipa)
                     ),

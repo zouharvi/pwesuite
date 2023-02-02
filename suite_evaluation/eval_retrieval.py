@@ -10,11 +10,11 @@ import collections
 import tqdm
 import random
 
-def evaluate_retrieval(data_multi, data_embd, data_size=1000, jobs=20):
+def evaluate_retrieval(data_multi_all, data_size=1000, jobs=20):
     data_langs = collections.defaultdict(list)
 
-    for (token_ort, token_ipa, lang, pronunciation), emdb in zip(data_multi, data_embd):
-        data_langs[lang].append((token_ipa, emdb))
+    for (token_ort, token_ipa, lang, pronunciation, purpose, embd) in data_multi_all:
+        data_langs[lang].append((token_ipa, embd))
 
     def compute_panphon_distance(y, data):
         fed = panphon2.FeatureTable().feature_edit_distance
@@ -80,12 +80,15 @@ if __name__ == "__main__":
     args.add_argument("-e", "--embd", default="computed/embd_bpemb.pkl")
     args = args.parse_args()
 
-    data_multi = load_multi_data(args.data_multi)
     data_embd = load_embd_data(args.embd)
+    data_multi_all = load_multi_data(args.data_multi, purpose_key="all", keep_purpose=True)
 
-    assert len(data_multi) == len(data_embd)
+    data_multi = [
+        (*x, y) for x, y in zip(data_multi_all, data_embd)
+        if x[3] == "main"
+    ]
 
-    output = evaluate_retrieval(data_multi, data_embd)
+    output = evaluate_retrieval(data_multi)
 
     print("Overall:")
     for key in output:

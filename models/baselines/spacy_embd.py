@@ -1,5 +1,7 @@
 #!/usr/bin/env python3
 
+raise Exception("Deprecated")
+
 import argparse
 from main.utils import load_multi_data
 import pickle
@@ -13,7 +15,7 @@ args.add_argument("-d", "--data", default="data/multi.tsv")
 args.add_argument("-o", "--output", default="computed/embd_baseline/spacy.pkl")
 args = args.parse_args()
 
-data = load_multi_data(args.data)
+data = load_multi_data(args.data, purpose_key="all")
 
 def get_model(lang):
     if lang in {"en"}:

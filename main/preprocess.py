@@ -29,7 +29,7 @@ def save_lang(lang, tokens_all, vocab_ort, vocab_ipa):
     with open(f"data/ipa_tokens/{lang}.txt", 'w') as f:
         f.write('\n'.join([x[1] for x in tokens_all]))
 
-    with open(f"data/multi.tsv", 'a') as f:
+    with open(f"data/multi_0.tsv", 'a') as f:
         f.write('\n'.join(["\t".join(x) for x in tokens_all]) + "\n")
 
     with open(f"data/vocab/ort_{lang}.txt", 'w') as f:
@@ -108,6 +108,7 @@ def process_non_en(lang, ortho_name, min_freq=6):
             "".join([c if c in vocab_ort else "😕" for c in token]),
             ipa,
             lang,
+            "main",
             pronunciation,
         )
         for token, ipa, lang, pronunciation in tokens_all
@@ -152,6 +153,7 @@ def process_en():
                         token,
                         ''.join(segments),
                         "en",
+                        "main",
                         pronunciation,
                     ))
 
@@ -161,7 +163,7 @@ def process_en():
 
 if __name__ == '__main__':
     # clear multi file
-    open(f"data/multi.tsv", 'w').close()
+    open(f"data/multi_0.tsv", 'w').close()
     os.makedirs("data/vocab/", exist_ok=True)
     os.makedirs("data/ipa_tokens/", exist_ok=True)
 

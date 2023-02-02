@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
 import argparse
-from main.utils import load_embd_data, load_multi_data
+from main.utils import load_embd_data, load_multi_data, LANGS
 from eval_all import evaluate_all
 import numpy as np
 import json
@@ -18,7 +18,7 @@ if __name__ == "__main__":
     output_scores = {}
     output_all = {}
 
-    lang_pairs = list(product(['en', 'am', 'bn', 'uz', 'pl', 'es', 'sw'], repeat=2))
+    lang_pairs = list(product(LANGS, repeat=2))
     # lang_pairs = list(product(['en', 'am'], repeat=2))
 
     def evaluate_single_pair(langs):

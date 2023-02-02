@@ -44,7 +44,8 @@ print(f"Loaded {len(data_train)//1000}k words for training")
 model = RNNMetricLearner(
     target_metric=args.target_metric,
     dimension=args.dimension,
-    feature_size=data_train[0][0].shape[1]
+    feature_size=data_train[0][0].shape[1],
+    safe_eval=args.lang == "multi" and args.features in {"tokenort", "tokenipa"}
 )
 model.train_epochs(
     data_train=data_train, data_dev=data_dev,

@@ -20,7 +20,7 @@ args.add_argument("--features", default="panphon")
 args.add_argument("--dimension", type=int, default=300)
 args = args.parse_args()
 
-data = preprocess_dataset(args.data, args.features, args.lang)
+data = preprocess_dataset(args.data, args.features, args.lang, purpose_key="all")
 BATCH_SIZE = 2000
 
 print(f"Loaded {len(data)//1000}k words")
@@ -29,7 +29,6 @@ print(f"Loaded {len(data)//1000}k words")
 model = RNNMetricLearner(
     target_metric="l2",
     dimension=args.dimension,
-    # TODO: this will fail for cross-language unless we replace unknown characters with UNK
     feature_size=data[0][0].shape[1],
 )
 model.load_state_dict(torch.load(args.model_path))
