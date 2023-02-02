@@ -70,7 +70,7 @@ if __name__ == "__main__":
 
     data_multi = load_multi_data(args.data_multi)
     data_multi_all = load_multi_data(
-        args.data_multi, purpose_key="all", keep_purpose=True
+        args.data_multi, purpose_key="all"
     )
     data_embd = load_embd_data(args.embd)
 

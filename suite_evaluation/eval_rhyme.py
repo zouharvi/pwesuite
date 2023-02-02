@@ -81,11 +81,11 @@ if __name__ == "__main__":
     args = args.parse_args()
 
     data_embd = load_embd_data(args.embd)
-    data_multi_all = load_multi_data(args.data_multi, purpose_key="all", keep_purpose=True)
+    data_multi_all = load_multi_data(args.data_multi, purpose_key="all")
 
     data_multi = [
         (*x, y) for x, y in zip(data_multi_all, data_embd)
-        if x[4] == "main"
+        if x[3] == "main"
     ]
 
     output = evaluate_rhyme(data_multi)

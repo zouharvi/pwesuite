@@ -52,7 +52,7 @@ if __name__ == "__main__":
     args.add_argument("-l", "--lang", default="all")
     args = args.parse_args()
 
-    data_multi = load_multi_data(args.data_multi, purpose_key="all", keep_purpose=True)
+    data_multi = load_multi_data(args.data_multi, purpose_key="all")
     data_embd = load_embd_data(args.embd)
 
     score, scores_all = evaluate_all(data_multi, data_embd, args.lang)

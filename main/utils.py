@@ -51,7 +51,7 @@ def save_model(model, optimizer, args, ipa_vocab, epoch, filepath):
     torch.save(save_info, filepath)
     print(f'\t>> saved model to {filepath}')
 
-def load_multi_data(path="data/multi.tsv", purpose_key="main", keep_purpose=False):
+def load_multi_data(path="data/multi.tsv", purpose_key="main"):
     print("Loading data")
     data = [
         l.rstrip("\n").split("\t")
@@ -59,16 +59,10 @@ def load_multi_data(path="data/multi.tsv", purpose_key="main", keep_purpose=Fals
         if len(l) > 1
     ]
     if purpose_key == "all":
-        if keep_purpose:
-            return data
-        else:
-            data = [
-                (x[0], x[1], x[2], x[4])
-                for x in data
-            ]
+        return data
     else:
         data = [
-            (x[0], x[1], x[2], x[4])
+            x
             for x in data
             if x[3] == purpose_key
         ]

@@ -213,7 +213,8 @@ if __name__ == '__main__':
     data_langs = collections.defaultdict(list)
     for line in data:
         data_langs[line[2]].append(
-            ([line[0], line[1], line[2], "main", line[3]]))
+            ([line[0], line[1], line[2], "main", line[3]])
+        )
     for line in data_analogies:
         data_langs[line[2]].append(line)
 
