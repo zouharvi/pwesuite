@@ -2,7 +2,7 @@
 
 mkdir -p computed/models
 
-for FEATURES in "panphon" "tokenort" "tokenipa"; do
+for FEATURES in "panphon" "tokenipa" "tokenort"; do
     for LANG in 'en' 'am' 'bn' 'uz' 'pl' 'es' 'sw'; do
         SIGNATURE="train_rnn_${FEATURES}_${LANG}"
         sbatch --time=01-00 --ntasks=12 --mem-per-cpu=4G --gpus=1 \

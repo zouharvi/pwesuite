@@ -2,10 +2,15 @@ Model,Human Sim.,Art. Dist.,Retrieval,Analogies,Rhyme,Cognate,Overall
 Metric Learning Panphon,0.55,0.94,0.98,0.81,0.8,,0.82
 Metric Learning IPA,0.45,0.9,0.95,0.23,0.71,,0.68
 Metric Learning Characters,0.3,0.89,0.94,0.21,0.72,,0.6
-Autoencoder Panphon,0,0.17,0.77,0.77,0.5,,0.55
-Autoencoder IPA,0,0.2,0.62,0.13,0.5,,0.36
-Autoencoder Characters,0,0.16,0.67,0.22,0.56,,0.4
+Autoencoder Panphon,0.43,0.17,0.77,0.77,0.5,,0.53
+Autoencoder IPA,0.41,0.2,0.62,0.13,0.5,,0.39
+Autoencoder Characters,0.41,0.16,0.67,0.22,0.56,,0.4
+Count TFIDF nopca IPA,0.85,0.12,0.84,0.15,0.8,,0.55
+Count TFIDF nopca Characters,0.84,0.1,0.8,0.03,0.73,,0.5
+Count Count nopca IPA,0.84,0.82,0.92,0.19,0.84,,0.72
+Count Count nopca Characters,0.85,0.73,0.88,0.03,0.79,,0.66
+Poetic Sound Sim.,0.73,0.13,0.77,0.41,0.6,,0.55
 fastText,0.17,0.13,0.65,0.02,0.57,,0.31
 BPEmb,0.22,0.08,0.61,0.05,0.53,,0.3
-BERT,0,0.34,0.69,0.04,0.57,,0.41
+BERT,0.06,0.34,0.69,0.04,0.57,,0.28
 INSTRUCTOR,0.59,0.13,0.73,0.04,0.55,,0.41

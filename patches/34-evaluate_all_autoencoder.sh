@@ -1,6 +1,6 @@
 #!/usr/bin/bash
 
-for FEATURES in "panphon" "tokenort" "tokenipa"; do
+for FEATURES in "panphon" "tokenipa" "tokenort"; do
     SIGNATURE="eval_all_rnn_autoencoder_${FEATURES}"
     sbatch --time=00-01 --ntasks=30 --mem-per-cpu=1G  \
         --job-name="${SIGNATURE}" \
