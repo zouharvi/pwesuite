@@ -1,6 +1,7 @@
 import torch
 from torch import nn
 from vocab import BOS_IDX, EOS_IDX
+from transformers.models.bert.modeling_bert import BertEncoder
 
 
 class AutoregressiveLM(nn.Module):
@@ -30,7 +31,7 @@ class AutoregressiveLM(nn.Module):
     def forward(self, segment_features, hidden, cell):
         '''
         Inputs:
-            token - (B,) token indices for one index in the sequence, across all batches
+            token - (B, S) token indices for one index in the sequence, across all batches
             segment_features - (B, 1, 24) one token's panphon features from each batch
             hidden - previous token's hidden state
             cell - previous token's cell state
@@ -68,3 +69,38 @@ class AutoregressiveLM(nn.Module):
         #   this will correspond to <PAD> for sequences shorter than the longest seq in the batch
         # TODO: within each batch, take the representation of the token without padding
         return outputs[:, -1, :]
+
+
+class MaskedLM(nn.Module):
+    def __init__(self, num_layers, input_dim, num_heads, hidden_dim, dropout, classifier_dropout, vocab_size, predict_vector):
+        super().__init__()
+        encoder_layer = nn.TransformerEncoderLayer(d_model=input_dim, nhead=num_heads, dim_feedforward=hidden_dim,
+                                                   batch_first=True, dropout=dropout)
+        self.transformer = nn.TransformerEncoder(encoder_layer, num_layers=num_layers)
+        self.classifier_dropout = nn.Dropout(classifier_dropout)
+        if predict_vector:
+            # predict a panphon vector
+            self.linear = nn.Linear(input_dim, input_dim)   # to predict a panphon vector
+        else:
+            # predict a phoneme
+            self.linear = nn.Linear(input_dim, vocab_size)  # to predict a phoneme
+
+    def forward(self, segment_features):
+        '''
+        Inputs:
+            segment_features - (B, 1, 24) one token's panphon features from each batch
+        '''
+        encoded_input = self.transformer(segment_features)
+        encoded_input = self.classifier_dropout(encoded_input)
+        return self.linear(encoded_input)
+
+    def pool(self, segment_features):
+        # [CLS] pooling
+        # currently, we don't have a [CLS] token
+        # https://github.com/huggingface/transformers/blob/31d452c68b34c2567b62924ee0df40a83cbc52d5/src/transformers/models/bert/modeling_bert.py#L652
+        # no linear Transformation because it's not trained
+        encoded_input = self.transformer(segment_features)
+
+        # TODO: check dimensions
+        # TODO: return index 0 when we add [CLS] token
+        return encoded_input[:, 0, :]
