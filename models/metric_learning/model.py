@@ -189,13 +189,13 @@ class RNNMetricLearner(torch.nn.Module):
                     # use only 500 to speed things up
                     data_dev[:500], key="dev"
                 )
-                # quit when we get worse
-                if eval_dev_rank > prev_eval_dev_rank:
-                    return
-                prev_eval_dev_rank = eval_dev_rank
                 # use only part of the training data for evaluation unless specified otherwise
                 eval_train, eval_train_rank = self.evaluate_intrinsic(
                     data_train if eval_train_full else data_train[:500], key="train"
                 )
-
                 print("Train", eval_train, "|||", "dev", eval_dev)
+
+                # quit when we get worse
+                if eval_dev_rank > prev_eval_dev_rank:
+                    return
+                prev_eval_dev_rank = eval_dev_rank

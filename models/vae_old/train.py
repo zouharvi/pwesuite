@@ -55,6 +55,14 @@ def train_step(vae_model, train_loader, optimizer, loss_multipliers, limit_iter_
     }
 
 
+def get_kl_loss(mu, logvar):
+    import torch
+    if logvar is None:
+        return torch.tensor(0., device=mu.device)
+    kl_loss = (-0.5 * (1 + logvar - mu.pow(2) - logvar.exp())).mean()
+    return kl_loss
+
+
 @torch.no_grad()
 def validate_step(vae_model, val_loader, loss_multipliers, evaluator):
     vae_model.eval()
@@ -92,6 +100,18 @@ def validate_step(vae_model, val_loader, loss_multipliers, evaluator):
         'val/intrinsic_pearson_correlation': intrinsic_eval['pearson'],
         'val/intrinsic_spearman_correlation': intrinsic_eval['spearman'],
     }
+
+def save_model(model, optimizer, args, ipa_vocab, epoch, filepath):
+    import torch
+    save_info = {
+        'model': model.state_dict(),
+        'optim': optimizer.state_dict(),
+        'args': args,
+        'epoch': epoch,
+        'ipa_vocab': ipa_vocab,
+    }
+    torch.save(save_info, filepath)
+    print(f'\t>> saved model to {filepath}')
 
 
 def train(args, vocab, vae_model, loss_multipliers):
@@ -153,6 +173,17 @@ def train(args, vocab, vae_model, loss_multipliers):
 
         # scheduler.step()
 
+
+def str2bool(v):
+    import argparse
+    if isinstance(v, bool):
+        return v
+    if v.lower() in ('yes', 'true', 't', 'y', '1'):
+        return True
+    elif v.lower() in ('no', 'false', 'f', 'n', '0'):
+        return False
+    else:
+        raise argparse.ArgumentTypeError('Boolean value expected.')
 
 def parse_args():
     parser = argparse.ArgumentParser()

@@ -7,6 +7,7 @@ from eval_correlations import evaluate_correlations
 from eval_retrieval import evaluate_retrieval
 from eval_rhyme import evaluate_rhyme
 from eval_analogy import evaluate_analogy
+from eval_human_similarity import evaluate_human_similarity
 import numpy as np
 
 
@@ -17,11 +18,23 @@ def evaluate_all(data_multi_all, data_embd, lang="all", jobs=20):
         if x[3] == "main"
     ]
 
+    print("Human similarity")
+    # currently only English is supported
+    data_multi_hs = [
+        (*x, y) for x, y in zip(data_multi_all, data_embd)
+        if x[3] == "human_similarity"
+    ]
+    output = evaluate_human_similarity(data_multi_hs)
+    scores_all["human_similarity"] = max(
+        output["pearson L2"], output["pearson cos"]
+    )
+
     print("Correlations")
     output = evaluate_correlations(data_multi, jobs=jobs)
     scores_all["correlation"] = max(
         output["pearson L2"][lang], output["pearson cos"][lang]
     )
+
     print("Retrieval")
     output = evaluate_retrieval(data_multi, jobs=jobs)
     scores_all["retrieval"] = max(

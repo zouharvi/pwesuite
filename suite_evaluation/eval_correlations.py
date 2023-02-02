@@ -59,10 +59,10 @@ def evaluate_correlations(data_multi, data_size=1000, jobs=20):
         corr_spearman_cos_all[lang] = abs(np.average(corr_spearman_cos))
 
 
-    corr_pearson_l2_all["all"] = np.average(list(corr_pearson_l2_all.values()))
-    corr_pearson_cos_all["all"] = np.average(list(corr_pearson_cos_all.values()))
-    corr_spearman_l2_all["all"] = np.average(list(corr_spearman_l2_all.values()))
-    corr_spearman_cos_all["all"] = np.average(list(corr_spearman_cos_all.values()))
+    corr_pearson_l2_all["all"] = abs(np.average(list(corr_pearson_l2_all.values())))
+    corr_pearson_cos_all["all"] = abs(np.average(list(corr_pearson_cos_all.values())))
+    corr_spearman_l2_all["all"] = abs(np.average(list(corr_spearman_l2_all.values())))
+    corr_spearman_cos_all["all"] = abs(np.average(list(corr_spearman_cos_all.values())))
 
 
     return {
