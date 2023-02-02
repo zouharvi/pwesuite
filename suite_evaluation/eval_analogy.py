@@ -49,6 +49,8 @@ def evaluate_analogy(data_multi, data_multi_analogies, jobs=20):
             x for x in data_multi
             if x[2] == lang
         ]
+        if len(data_local) == 0:
+            continue
         data_local_analogies = [
             x for x in data_multi_analogies
             if x[2] == lang

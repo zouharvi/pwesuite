@@ -41,11 +41,6 @@ def evaluate_all(data_multi_all, data_embd, lang="all", jobs=20):
         output["rank L2"][lang], output["rank cos"][lang]
     )
 
-    print("Rhyme")
-    # currently only English is supported
-    output = evaluate_rhyme(data_multi)
-    scores_all["rhyme"] = output["dev"]
-
     print("Sound analogies")
     data_multi_analogy = [
         (*x, y) for x, y in zip(data_multi_all, data_embd)
@@ -53,6 +48,11 @@ def evaluate_all(data_multi_all, data_embd, lang="all", jobs=20):
     ]
     output = evaluate_analogy(data_multi, data_multi_analogy)
     scores_all["analogy"] = output["all"]
+
+    print("Rhyme")
+    # currently only English is supported
+    output = evaluate_rhyme(data_multi)
+    scores_all["rhyme"] = output["dev"]
 
     scores_all["overall"] = np.average(list(scores_all.values()))
     return scores_all["overall"], scores_all
