@@ -25,7 +25,7 @@ def mask_phoneme(tokens, features):
     """
     # https://towardsdatascience.com/how-to-train-a-bert-model-from-scratch-72cfce554fc6
     # generate mask (15% tokens), then apply to inputs
-    rand = torch.rand(tokens.shape)
+    rand = torch.rand(tokens.shape).to(device)
     mask = (rand < MASK_PERCENT) * (tokens != PAD_IDX) * (tokens != CLS_IDX) * (tokens != SEP_IDX)
     # each sequence within a batch
     for b in range(tokens.shape[0]):
@@ -34,8 +34,8 @@ def mask_phoneme(tokens, features):
         tokens[b, selection] = MASK_IDX
 
     # prepend features for CLS and SEP along given dimensions
-    cls_features = torch.ones(features.shape[0], 1, features.shape[2]) * (MASK_IDX + CLS_IDX)
-    sep_features = torch.ones(features.shape[0], 1, features.shape[2]) * (MASK_IDX + SEP_IDX)
+    cls_features = torch.ones(features.shape[0], 1, features.shape[2]).to(device) * (MASK_IDX + CLS_IDX)
+    sep_features = torch.ones(features.shape[0], 1, features.shape[2]).to(device) * (MASK_IDX + SEP_IDX)
     features = torch.cat((cls_features, features, sep_features), dim=1)
     for b in range(features.shape[0]):
         selection = torch.flatten(mask[b].nonzero()).tolist()
