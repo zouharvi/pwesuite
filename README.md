@@ -1,4 +1,4 @@
-# Phonetic Representation
+# Phonetic Word Embeddings Suite (`PWESuite`)
 
 Evaluation suite for phonetic (phonological) word embeddings and an additional model based on Panphone distance learning.
 
