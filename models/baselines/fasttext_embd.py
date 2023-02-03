@@ -4,7 +4,6 @@ import argparse
 import os
 from main.utils import load_multi_data
 import pickle
-import numpy as np
 import tqdm
 import fasttext.util
 import fasttext
@@ -35,13 +34,12 @@ loaded_lang = None
 
 data_out = []
 
-for (word, _, lang, _) in tqdm.tqdm(data):
-    if loaded_lang != lang:
-        loaded_lang = lang
-        model = get_model(lang) 
+for x in tqdm.tqdm(data):
+    if loaded_lang != x[2]:
+        loaded_lang = x[2]
+        model = get_model(x[2]) 
 
-    vector = model.get_word_vector(word)
-    # print(vector.shape, type(vector))
+    vector = model.get_word_vector(x[0])
     data_out.append(vector)
 
 # make sure dimensions fit

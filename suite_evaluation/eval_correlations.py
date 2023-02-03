@@ -59,10 +59,10 @@ def evaluate_correlations(data_multi, data_size=1000, jobs=20):
         corr_spearman_cos_all[lang] = abs(np.average(corr_spearman_cos))
 
 
-    corr_pearson_l2_all["all"] = np.average(list(corr_pearson_l2_all.values()))
-    corr_pearson_cos_all["all"] = np.average(list(corr_pearson_cos_all.values()))
-    corr_spearman_l2_all["all"] = np.average(list(corr_spearman_l2_all.values()))
-    corr_spearman_cos_all["all"] = np.average(list(corr_spearman_cos_all.values()))
+    corr_pearson_l2_all["all"] = abs(np.average(list(corr_pearson_l2_all.values())))
+    corr_pearson_cos_all["all"] = abs(np.average(list(corr_pearson_cos_all.values())))
+    corr_spearman_l2_all["all"] = abs(np.average(list(corr_spearman_l2_all.values())))
+    corr_spearman_cos_all["all"] = abs(np.average(list(corr_spearman_cos_all.values())))
 
 
     return {
@@ -77,7 +77,7 @@ if __name__ == "__main__":
     args = args.parse_args()
 
     data_embd = load_embd_data(args.embd)
-    data_multi_all = load_multi_data(args.data_multi, purpose_key="all", keep_purpose=True)
+    data_multi_all = load_multi_data(args.data_multi, purpose_key="all")
 
     data_multi = [
         (*x, y) for x, y in zip(data_multi_all, data_embd)

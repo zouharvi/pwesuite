@@ -5,7 +5,6 @@ import math
 from InstructorEmbedding import INSTRUCTOR
 from main.utils import load_multi_data, get_device
 import pickle
-import numpy as np
 import tqdm
 
 BATCH_SIZE=500

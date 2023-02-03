@@ -1,0 +1,1 @@
+The code in this folder is mostly based on the [work of Allison Parrish](https://github.com/aparrish/phonetic-similarity-vectors).

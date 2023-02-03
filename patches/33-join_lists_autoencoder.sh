@@ -3,7 +3,7 @@
 mkdir -p computed/embd_rnn_metric_learning/
 
 # the lang order here is super important
-for FEATURES in "panphon" "tokenort" "tokenipa"; do
+for FEATURES in "panphon" "tokenipa" "tokenort"; do
     SIGNATURE="join_rnn_autoencoder_${FEATURES}"
     sbatch --time=00-04 --ntasks=8 --mem-per-cpu=4G \
         --job-name="${SIGNATURE}" \

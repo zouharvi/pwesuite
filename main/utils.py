@@ -1,15 +1,7 @@
 # Imports are done within functions so that they are not needlessly loaded when a different function is used
 
-def str2bool(v):
-    import argparse
-    if isinstance(v, bool):
-        return v
-    if v.lower() in ('yes', 'true', 't', 'y', '1'):
-        return True
-    elif v.lower() in ('no', 'false', 'f', 'n', '0'):
-        return False
-    else:
-        raise argparse.ArgumentTypeError('Boolean value expected.')
+LANGS = ['en', 'am', 'bn', 'uz', 'pl', 'es', 'sw']
+UNK_SYMBOL = "😕"
 
 
 def collate_fn(batch):
@@ -28,30 +20,7 @@ def collate_fn(batch):
         'tokens': tokens,
     }
 
-
-
-
-def get_kl_loss(mu, logvar):
-    import torch
-    if logvar is None:
-        return torch.tensor(0., device=mu.device)
-    kl_loss = (-0.5 * (1 + logvar - mu.pow(2) - logvar.exp())).mean()
-    return kl_loss
-
-
-def save_model(model, optimizer, args, ipa_vocab, epoch, filepath):
-    import torch
-    save_info = {
-        'model': model.state_dict(),
-        'optim': optimizer.state_dict(),
-        'args': args,
-        'epoch': epoch,
-        'ipa_vocab': ipa_vocab,
-    }
-    torch.save(save_info, filepath)
-    print(f'\t>> saved model to {filepath}')
-
-def load_multi_data(path="data/multi.tsv", purpose_key="main", keep_purpose=False):
+def load_multi_data(path="data/multi.tsv", purpose_key="main"):
     print("Loading data")
     data = [
         l.rstrip("\n").split("\t")
@@ -59,16 +28,10 @@ def load_multi_data(path="data/multi.tsv", purpose_key="main", keep_purpose=Fals
         if len(l) > 1
     ]
     if purpose_key == "all":
-        if keep_purpose:
-            return data
-        else:
-            data = [
-                (x[0], x[1], x[2], x[4])
-                for x in data
-            ]
+        return data
     else:
         data = [
-            (x[0], x[1], x[2], x[4])
+            x
             for x in data
             if x[3] == purpose_key
         ]
@@ -92,5 +55,3 @@ def load_embd_data(path):
 def get_device():
     import torch
     return "cuda:0" if torch.cuda.is_available() else "cpu"
-
-LANGS = ['en', 'am', 'bn', 'uz', 'pl', 'es', 'sw']

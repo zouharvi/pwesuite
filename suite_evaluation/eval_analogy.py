@@ -49,6 +49,8 @@ def evaluate_analogy(data_multi, data_multi_analogies, jobs=20):
             x for x in data_multi
             if x[2] == lang
         ]
+        if len(data_local) == 0:
+            continue
         data_local_analogies = [
             x for x in data_multi_analogies
             if x[2] == lang
@@ -70,7 +72,7 @@ if __name__ == "__main__":
 
     data_multi = load_multi_data(args.data_multi)
     data_multi_all = load_multi_data(
-        args.data_multi, purpose_key="all", keep_purpose=True
+        args.data_multi, purpose_key="all"
     )
     data_embd = load_embd_data(args.embd)
 

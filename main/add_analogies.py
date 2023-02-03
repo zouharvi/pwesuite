@@ -198,8 +198,8 @@ if __name__ == '__main__':
     data_analogies = []
 
     for lang in LANGS:
-        print(lang)
         data_local = [x for x in data if x[2] == lang]
+        print(lang, "prev", len(data_local))
         # this will run it across all languages
         output = get_analogies(data_local, lang)
         for analogy in output:
@@ -209,15 +209,13 @@ if __name__ == '__main__':
                     token_ort, token_ipa, lang, "analogy", ""
                 ))
 
-    print(len(data), len(data_analogies))
+    print("Adding", len(data_analogies), "words")
     data_langs = collections.defaultdict(list)
-    for line in data:
-        data_langs[line[2]].append(
-            ([line[0], line[1], line[2], "main", line[3]]))
-    for line in data_analogies:
+    for line in data+data_analogies:
         data_langs[line[2]].append(line)
 
-    with open("data/multi.tsv", "w") as f:
+    with open("data/multi_1.tsv", "w") as f:
         for lang in LANGS:
+            print(lang, "now", len(data_langs[lang]))
             for line in data_langs[lang]:
                 f.write("\t".join(line) + "\n")

@@ -8,6 +8,7 @@ import re
 import lzma
 import tqdm
 from emoji import is_emoji
+from utils import UNK_SYMBOL
 
 # https://www.w3.org/TR/elreq/#ethiopic_punctuation
 amharic_symb = '፠፡።፣፤፥፦፧፨‘’“”‹›«»€…'
@@ -92,20 +93,20 @@ def process_non_en(lang, ortho_name, min_freq=6):
             ))
 
     # accept all IPA
-    vocab_ipa = {k for k, v in vocab_ipa.most_common()}
+    vocab_ipa = {k for k, v in vocab_ipa.most_common()} | {UNK_SYMBOL}
     # accept only frequent enough characters into the vocabulary
     print("- size of vocab ort before pruning", len(vocab_ort))
     vocab_ort = {
         k
         for k, v in vocab_ort.most_common()
         if v >= 20 and not k.isspace() and len(k) > 0
-    } | {"😕"}
+    } | {UNK_SYMBOL}
     print("- size vocab ort after pruning", len(vocab_ort))
 
     # filter bad characters and use unsure emoji in their place
     tokens_all = [
         (
-            "".join([c if c in vocab_ort else "😕" for c in token]),
+            "".join([c if c in vocab_ort else UNK_SYMBOL for c in token]),
             ipa,
             lang,
             "main",

@@ -12,7 +12,9 @@ import random
 
 # TODO: cache this?
 def evaluate_rhyme(data_multi_all):
+    # token_ort, token_ipa, lang, purpose, token_pron, embd
     data_multi = [
+        # embd, token_ort, token_ipa, token_pron
         (x[5], x[0], x[1], x[4]) for x in data_multi_all
         # we have pronunciation information only for English
         if x[2] == "en"
@@ -81,11 +83,11 @@ if __name__ == "__main__":
     args = args.parse_args()
 
     data_embd = load_embd_data(args.embd)
-    data_multi_all = load_multi_data(args.data_multi, purpose_key="all", keep_purpose=True)
+    data_multi_all = load_multi_data(args.data_multi, purpose_key="all")
 
     data_multi = [
         (*x, y) for x, y in zip(data_multi_all, data_embd)
-        if x[4] == "main"
+        if x[3] == "main"
     ]
 
     output = evaluate_rhyme(data_multi)

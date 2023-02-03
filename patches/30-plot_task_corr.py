@@ -11,7 +11,7 @@ with open("meta/evaluation_all.csv", "r") as f:
     data = list(csv.DictReader(f))
 
 # tasks = ["Correlation","Retrieval", "Analogies", "Rhyme", "Cognate"]
-tasks = ["Correlation","Retrieval", "Analogies", "Rhyme"]
+tasks = ["Human Sim.", "Art. Dist.","Retrieval", "Analogies", "Rhyme"]
 data = [
     {task:float(line[task]) for task in tasks}
     for line in data
@@ -79,7 +79,13 @@ plt.imshow(
     img, aspect="auto", cmap=cmap,
     vmin=vmin, vmax=vmax,
 )
-plt.xticks(range(len(tasks)-1), tasks[:-1])
+plt.xticks(
+    range(len(tasks)-1),
+    [
+        f"\n{t}" if t_i % 2 == 0 else t
+        for t_i, t in enumerate(tasks[:-1])
+    ]
+)
 plt.yticks(range(len(tasks)-1), tasks[1:])
 plt.tight_layout()
 plt.tight_layout(pad=0.2)

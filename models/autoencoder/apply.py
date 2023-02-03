@@ -23,7 +23,7 @@ args = args.parse_args()
 data = preprocess_dataset(args.data, args.features, args.lang, purpose_key="all")
 BATCH_SIZE = 2000
 
-print(f"Loaded {len(data)//1000}k words")
+print(f"Loaded {len(data)} words")
 
 model = RNNAutoencoder(
     dimension=args.dimension,

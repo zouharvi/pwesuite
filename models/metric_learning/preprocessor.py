@@ -34,6 +34,8 @@ def preprocess_dataset_token(data, features):
         vocab_raw = open("data/vocab/ipa_multi.txt", "r").read().split("\n")
         vocab = build_vocab_from_iterator([[x] for x in vocab_raw])
 
+    # TODO: add a default pointer to vocab to point to utils.UNK_SYMBOL
+
     def token_onehot(word):
         return F.one_hot(torch.tensor(vocab(list(word))), num_classes=len(vocab)).float()
 
