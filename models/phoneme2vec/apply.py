@@ -3,10 +3,10 @@
 import pickle
 import numpy as np
 import tqdm
-from main.ipa2cmu import IPA2CMU
+from main.ipa2arp import IPA2ARP
 from main.utils import load_multi_data
 
-ipa2cmu = IPA2CMU().convert
+ipa2cmu = IPA2ARP().convert
 
 with open("computed/phoneme2vec", "rb") as f:
     phonemes, vecs = pickle.load(f)

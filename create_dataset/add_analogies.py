@@ -154,7 +154,8 @@ class PhonemeAnalogy:
 
         feature_vectors = defaultdict(list)
         for x in symbols:
-            feature_vectors[tuple(ft.fts(x).numeric())].append(x)
+            if ft.fts(x) is not None:
+                feature_vectors[tuple(ft.fts(x).numeric())].append(x)
         for feat_i, feat_name in enumerate(FEATURE_NAMES):
             for vec, symb in feature_vectors.items():
                 if vec[feat_i] == -1:

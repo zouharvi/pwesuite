@@ -1,12 +1,12 @@
 from setuptools import setup, find_packages
 
 setup(
-    name='PhoneticRepresentation',
+    name='PWESuite',
     version='0.0.0',
     url='https://github.com/cuichenx/phonetic-representation',
     author='CMU & ETH Affiliates',
     author_email='TODO',
-    description='Evaluation suite for phonetic word embeddings and a distance learning model.',
+    description='Evaluation suite for phonetic word embeddings and provides a few models.',
     packages=find_packages(),
     # the requirements here should only be for the evaluation, so e.g. transformers should not be here
     install_requires=[

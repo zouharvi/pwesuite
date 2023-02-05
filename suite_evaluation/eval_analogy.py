@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
 
-import panphon2
 import numpy as np
 from sklearn.metrics.pairwise import euclidean_distances
 import argparse

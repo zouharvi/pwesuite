@@ -1,6 +1,7 @@
 #!/usr/bin/bash
 
 mkdir -p data/raw
+mkdir -p data/cache
 
 for LANG in 'am' 'bn' 'uz' 'pl' 'es' 'sw'; do
   wget "https://data.statmt.org/cc-100/${LANG}.txt.xz" -P data/raw
@@ -11,7 +12,8 @@ wget "https://github.com/Alexir/CMUdict/raw/master/cmudict-0.7b" -O "data/raw/cm
 iconv -c -t utf8 "data/raw/cmudict.tmp" > "data/raw/cmudict-0.7b.txt"
 wget "https://github.com/menelik3/cmudict-ipa/raw/master/cmudict-0.7b-ipa.txt" -O "data/raw/cmudict-0.7b-ipa.txt"
 
-python3 ./main/preprocess.py
-python3 ./main/add_analogies.py
-python3 ./main/add_human_similarity.py
+python3 ./create_dataset/preprocess.py
+python3 ./create_dataset/add_analogies.py
+python3 ./create_dataset/add_human_similarity.py
 
+python3 ./patches/35-tsv_to_csv.py
