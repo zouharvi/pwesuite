@@ -20,6 +20,7 @@ def collate_fn(batch):
         'tokens': tokens,
     }
 
+# TODO: use huggingface
 def load_multi_data(path="data/multi.tsv", purpose_key="main"):
     print("Loading data")
     data = [

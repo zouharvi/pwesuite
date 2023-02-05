@@ -1,5 +1,7 @@
-import panphon, panphon2
+import panphon
+import panphon2
 from main.utils import load_multi_data
+
 
 def preprocess_dataset(data, features, lang, purpose_key="main"):
     # token_ort, token_ipa, lang, pronunc
@@ -25,6 +27,7 @@ def preprocess_dataset_token(data, features):
     import torch
     import torch.nn.functional as F
 
+    # TODO: use huggingface and create own vocabulary instead of relying on the one on the disk
     # use the same multi vocabulary across all models
     # a nice side effect is the same number of parameters everywhere
     if features == "tokenort":
