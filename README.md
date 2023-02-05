@@ -15,15 +15,19 @@ Run `pip3 install -e .` to install this repository and its dependencies.
 ## Embedding evaluation
 
 In order to run all the evaluations, you first need to run the embedding on provided words.
-These are found in `data/multi.tsv` (tab-separated values) in the format of:
+These can be downloaded from Huggingface:
 ```
-word_ortho	word_ipa	language	word_purpose	pronunciation_information
+>>> from datasets import load_dataset
+>>> dataset = load_dataset("zouharvi/pwesuite-eval")
+>>> dataset["train"][10]
+{'token_ort': 'aachener', 'token_ipa': 'ɑːkən', 'lang': 'en', 'purpose': 'main', 'token_arp': 'AA1 K AH0 N ER0'}
 ```
-Not all of the informations are provided for all languages, though `word_ortho` and `word_ipa` is guaranteed to be present.
-Specifically, currently only English words contain all the aforementioned fields.
-You can download the `multi.tsv` file from TODO (huggingface) or generate it locally by running `main/prepare_data.sh`.
+Note that each line contains `token_ort`, `token_ipa`, `token_arp` and `lang`.
+For training, only the words marked with `purpose=="main"` should be used.
+Note that unknown/low frequency phonemes or letters are replaced with `😕`.
+You can also generate the `data/multi.csv` file locally by running `main/prepare_data.sh`.
 
-After running the embedding on each word, save it as either a Pickle or NPZ. 
+After running the embedding **for each line/word**, save it as either a Pickle or NPZ. 
 The data structure can be either (1) list of list or numpy arrays or (2) numpy array.
 The loader will automatically parse the file and check that the dimensions are consistent.
 

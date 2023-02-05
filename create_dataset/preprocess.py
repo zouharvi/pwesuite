@@ -8,7 +8,10 @@ import re
 import lzma
 import tqdm
 from emoji import is_emoji
-from utils import UNK_SYMBOL
+from main.utils import UNK_SYMBOL
+from main.ipa2arp import IPA2ARP
+
+ipa2arp = IPA2ARP().convert
 
 # https://www.w3.org/TR/elreq/#ethiopic_punctuation
 amharic_symb = '፠፡።፣፤፥፦፧፨‘’“”‹›«»€…'
@@ -83,13 +86,14 @@ def process_non_en(lang, ortho_name, min_freq=6):
         if segments:
             vocab_ort.update(token)
             vocab_ipa.update(segments)
+            token_ipa = ''.join(segments)
 
             tokens_all.append((
                 token,
-                ''.join(segments),
+                token_ipa,
                 lang,
-                # CMU pronunciation is not possible
-                ""
+                # automatic ARPabet
+                " ".join(ipa2arp(token_ipa))
             ))
 
     # accept all IPA
@@ -99,7 +103,7 @@ def process_non_en(lang, ortho_name, min_freq=6):
     vocab_ort = {
         k
         for k, v in vocab_ort.most_common()
-        if v >= 20 and not k.isspace() and len(k) > 0
+        if v >= 15 and not k.isspace() and len(k) > 0
     } | {UNK_SYMBOL}
     print("- size vocab ort after pruning", len(vocab_ort))
 

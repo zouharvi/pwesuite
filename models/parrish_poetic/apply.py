@@ -7,9 +7,9 @@ import pickle
 from sklearn.decomposition import PCA
 from main.utils import load_multi_data, LANGS
 from featurephone import feature_bigrams
-from main.ipa2cmu import IPA2CMU
+from main.ipa2arp import IPA2ARP
 
-ipa2cmu = IPA2CMU().convert
+ipa2cmu = IPA2ARP().convert
 
 def normalize(vec):
     """Return unit vector for parameter vec.
