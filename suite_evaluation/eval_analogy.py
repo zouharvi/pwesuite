@@ -4,7 +4,7 @@ import numpy as np
 from sklearn.metrics.pairwise import euclidean_distances
 import argparse
 from main.utils import load_embd_data, load_multi_data, LANGS
-from main.add_analogies import get_analogies
+from create_dataset.add_analogies import get_analogies
 
 
 def evaluate_analogy_single_lang(data_local, data_local_analogies, lang):

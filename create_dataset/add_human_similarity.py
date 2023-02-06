@@ -5,6 +5,9 @@ import csv
 from main.utils import load_multi_data, LANGS, UNK_SYMBOL
 import panphon
 import epitran
+from main.ipa2arp import IPA2ARP
+
+ipa2arp = IPA2ARP().convert
 
 ft = panphon.FeatureTable()
 
@@ -26,13 +29,14 @@ if __name__ == '__main__':
         for word in data_hs_words:
             segments = ft.ipa_segs(epi.transliterate(word))
             segments = [s if s in vocab_ipa_multi else UNK_SYMBOL for s in segments]
+            token_ipa = ''.join(segments)
 
             data_langs["en"].append((
                 word,
-                ''.join(segments),
+                token_ipa,
                 "en",
                 "human_similarity",
-                "",
+                " ".join(ipa2arp(token_ipa)),
             ))
         print("now en", len(data_langs["en"]))
 
