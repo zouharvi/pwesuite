@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
 import numpy as np
-from sklearn.metrics.pairwise import euclidean_distances
+from sklearn.metrics.pairwise import euclidean_distances, cosine_distances
 import argparse
 from main.utils import load_embd_data, load_multi_data, LANGS
 from create_dataset.add_analogies import get_analogies
@@ -23,22 +23,36 @@ def evaluate_analogy_single_lang(data_local, data_local_analogies, lang):
             embd_d = embd_b - embd_a + embd_c
             analogies_embd_indicies.append((ipa_to_i[analogy[3][1]], embd_d))
 
-    dists_all = euclidean_distances(
+    dists_all_l2 = euclidean_distances(
+        [x[1] for x in analogies_embd_indicies],
+        embd_all
+    )
+    dists_all_cos = cosine_distances(
         [x[1] for x in analogies_embd_indicies],
         embd_all
     )
 
-    ranks = []
-    for dists, (index_d, _embd) in zip(dists_all, analogies_embd_indicies):
+    hits_l2 = []
+    for dists, (index_d, _embd) in zip(dists_all_l2, analogies_embd_indicies):
         dists = sorted(
             range(len(dists)),
             key=lambda i: dists[i], reverse=False
         )
         rank = dists.index(index_d)
         # hit if rank==0 or rank==1
-        ranks.append(rank <= 1)
+        hits_l2.append(rank <= 1)
 
-    return np.average(ranks)
+    hits_cos = []
+    for dists, (index_d, _embd) in zip(dists_all_cos, analogies_embd_indicies):
+        dists = sorted(
+            range(len(dists)),
+            key=lambda i: dists[i], reverse=False
+        )
+        rank = dists.index(index_d)
+        # hit if rank==0 or rank==1
+        hits_cos.append(rank <= 1)
+
+    return min(np.average(hits_l2), np.average(hits_cos))
 
 
 def evaluate_analogy(data_multi, data_multi_analogies, jobs=20):
@@ -78,7 +92,7 @@ if __name__ == "__main__":
     assert len(data_multi_all) == len(data_embd)
 
     data_multi_all = [
-        (*x, y) for x, y in zip(data_multi_all, data_embd)
+        (*x, np.array(y)) for x, y in zip(data_multi_all, data_embd)
         if x[3] == "analogy"
     ]
 

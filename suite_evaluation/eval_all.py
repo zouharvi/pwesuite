@@ -26,7 +26,7 @@ def evaluate_all(data_multi_all, data_embd, lang="all", jobs=20):
     ]
     output = evaluate_human_similarity(data_multi_hs)
     scores_all["human_similarity"] = max(
-        output["pearson L2"], output["pearson cos"]
+        output["pearson L2"], output["pearson cos"], output["pearson IP"],
     )
 
     print("Correlations")
@@ -66,7 +66,7 @@ if __name__ == "__main__":
     args = args.parse_args()
 
     data_multi = load_multi_data(args.data_multi, purpose_key="all")
-    data_embd = load_embd_data(args.embd)
+    data_embd = [np.array(x) for x in load_embd_data(args.embd)]
 
     score, scores_all = evaluate_all(data_multi, data_embd, args.lang)
     for key, val in scores_all.items():

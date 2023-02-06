@@ -74,7 +74,7 @@ def evaluate_rhyme(data_multi_all):
         [x[1] for x in data_dev],
     )
 
-    return {"train": acc_train, "dev": acc_dev}
+    return {"train": max(acc_train, 1-acc_train), "dev": max(acc_dev, 1-acc_dev)}
 
 if __name__ == "__main__":
     args = argparse.ArgumentParser()
@@ -83,10 +83,10 @@ if __name__ == "__main__":
     args = args.parse_args()
 
     data_embd = load_embd_data(args.embd)
-    data_multi_all = load_multi_data(args.data_multi, purpose_key="all")
+    data_multi_all = load_multi_data(args.data, purpose_key="all")
 
     data_multi = [
-        (*x, y) for x, y in zip(data_multi_all, data_embd)
+        (*x, np.array(y)) for x, y in zip(data_multi_all, data_embd)
         if x[3] == "main"
     ]
 

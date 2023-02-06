@@ -53,7 +53,7 @@ optimizer = torch.optim.Adam([embds], lr=5e-2)
 loss_fn = torch.nn.MSELoss()
 loss_last = 99999
 
-for epoch in range(10000):
+for epoch in range(100000):
     random_batch = torch.randint(0, len(data)-1, (args.batch_size,))
 
     data_sims = get_similarity_fast([data[i][0] for i in random_batch])
