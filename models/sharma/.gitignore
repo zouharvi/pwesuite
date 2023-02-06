@@ -1,0 +1,3 @@
+wsim/build
+wsim/*.so
+wsim/wsim_wrapper.cpp

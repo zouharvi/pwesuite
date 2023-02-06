@@ -6,11 +6,12 @@ import pickle
 import random
 from collections import defaultdict
 from functools import lru_cache
-
 import tqdm
 from main.utils import load_multi_data, LANGS
 import panphon
+from main.ipa2arp import IPA2ARP
 
+ipa2arp = IPA2ARP().convert
 ft = panphon.FeatureTable()
 FEATURE_NAMES = ft.fts('a').names
 
@@ -207,7 +208,7 @@ if __name__ == '__main__':
             # append only IPA
             for token_ort, token_ipa in analogy:
                 data_analogies.append((
-                    token_ort, token_ipa, lang, "analogy", ""
+                    token_ort, token_ipa, lang, "analogy", " ".join(ipa2arp(token_ipa))
                 ))
 
     print("Adding", len(data_analogies), "words")

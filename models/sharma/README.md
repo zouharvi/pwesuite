@@ -1,0 +1,1 @@
+The code in this folder is partially adopted from [rahulsrma26/phonetic-word-embedding](https://github.com/rahulsrma26/phonetic-word-embedding) by Rahul Sharma, Kunal Dhawan, Balakrishna Pailla who published [a paper about it](https://arxiv.org/abs/2109.14796).

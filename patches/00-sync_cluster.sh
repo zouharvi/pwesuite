@@ -8,3 +8,4 @@ rsync -azP --filter=":- .gitignore" --exclude .git/ . euler:/cluster/work/sachan
 # rsync -azP euler:/cluster/work/sachan/vilem/phonetic-representation/computed/embd_baseline/bert.pkl computed/embd_baseline/bert.pkl
 # rsync -azP euler:/cluster/work/sachan/vilem/phonetic-representation/logs/eval_all_rnn_panphon_d*.log logs/
 # rsync -azP euler:/cluster/work/sachan/vilem/phonetic-representation/computed/embd_rnn_metric_learning/{panphon,tokenipa,tokenort}.pkl computed/embd_rnn_metric_learning/
+# rsync -azP euler:/cluster/work/sachan/vilem/phonetic-representation/computed/embd_other/sharma.pkl computed/embd_other/
