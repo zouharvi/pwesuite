@@ -172,6 +172,8 @@ class PhonemeAnalogy:
 
 
 def get_analogies(data, lang):
+    os.makedirs("data/cache/", exists_ok=True)
+
     CACHE_PATH = f"data/cache/analogies_{lang}.pkl"
     if os.path.exists(CACHE_PATH):
         with open(CACHE_PATH, "rb") as f:

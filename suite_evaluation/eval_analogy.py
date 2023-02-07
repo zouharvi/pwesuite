@@ -96,7 +96,6 @@ if __name__ == "__main__":
         if x[3] == "analogy"
     ]
 
-    # TODO: why is it so high for Swahili?
     output = evaluate_analogy(data_multi, data_multi_all)
 
     print("Overall:", f"{output['all']:.3f}")
