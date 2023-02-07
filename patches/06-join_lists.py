@@ -10,7 +10,7 @@ args.add_argument("-o", "--output")
 args = args.parse_args()
 
 data = []
-for lang in LANGS:
+for lang in LANGS + ["multi"]:
     fname = args.input.replace("LANG", lang)
     data_local = load_embd_data(fname)
     print(fname, len(data_local))

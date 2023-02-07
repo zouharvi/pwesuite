@@ -30,7 +30,7 @@ for FEATURES in "panphon" "tokenipa" "tokenort"; do
                     --data \"data/multi.tsv\" \
                     --lang ${LANG} \
                     --save-model-path \"computed/models/rnn_metric_learning_${FEATURES}_${LANG}.pt\" \
-                    --number-thousands 12000 \
+                    --number-thousands 10000 \
                     --target-metric \"l2\" \
                     --features ${FEATURES} \
                     --epochs 20 \

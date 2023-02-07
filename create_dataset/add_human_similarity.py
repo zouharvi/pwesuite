@@ -40,7 +40,7 @@ if __name__ == '__main__':
             ))
         print("now en", len(data_langs["en"]))
 
-    with open("data/multi.tsv", "w") as f:
+    with open("data/multi_2.tsv", "w") as f:
         for lang in LANGS:
             for line in data_langs[lang]:
                 f.write("\t".join(line) + "\n")

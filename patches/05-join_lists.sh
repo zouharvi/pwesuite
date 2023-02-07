@@ -14,9 +14,9 @@ for FEATURES in "panphon" "tokenipa" "tokenort"; do
             ;"
 
     # the lang order here is super important
-    SIGNATURE="join_${FEATURES}_f${LANGFROM}"
-    # for LANGFROM in 'multi' 'en' 'am' 'bn' 'uz' 'pl' 'es' 'sw' 'fr' 'de'; do
-    for LANGFROM in 'multi'; do
+    # for LANGFROM in 'multi'; do
+    for LANGFROM in 'multi' 'en' 'am' 'bn' 'uz' 'pl' 'es' 'sw' 'fr' 'de'; do
+        SIGNATURE="join_${FEATURES}_f${LANGFROM}"
         sbatch --time=00-04 --ntasks=12 --mem-per-cpu=4G --gpus=1 \
         --job-name="${SIGNATURE}" \
         --output="logs/${SIGNATURE}.log" \

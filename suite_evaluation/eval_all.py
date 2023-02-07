@@ -8,6 +8,7 @@ from eval_retrieval import evaluate_retrieval
 from eval_rhyme import evaluate_rhyme
 from eval_analogy import evaluate_analogy
 from eval_human_similarity import evaluate_human_similarity
+from eval_cognate import evaluate_cognate
 import numpy as np
 
 
@@ -16,6 +17,9 @@ def evaluate_all(data_multi_all, data_embd, lang="all", jobs=20):
     data_multi = [
         (*x, y) for x, y in zip(data_multi_all, data_embd)
         if x[3] == "main"
+    ]
+    data_multi_all_all = [
+        (*x, y) for x, y in zip(data_multi_all, data_embd)
     ]
 
     print("Human similarity")
@@ -54,6 +58,10 @@ def evaluate_all(data_multi_all, data_embd, lang="all", jobs=20):
     output = evaluate_rhyme(data_multi)
     scores_all["rhyme"] = output["dev"]
 
+    print("Cognate")
+    output = evaluate_cognate(data_multi_all_all)
+    scores_all["cognate"] = output["dev"]
+
     scores_all["overall"] = np.average(list(scores_all.values()))
     return scores_all["overall"], scores_all
 
@@ -68,8 +76,11 @@ if __name__ == "__main__":
     data_multi = load_multi_data(args.data_multi, purpose_key="all")
     data_embd = [np.array(x) for x in load_embd_data(args.embd)]
 
+    if len(data_multi) != len(data_embd):
+        print(f"Length mismatch ({len(data_multi)}, {len(data_embd)}), the suite will continue but the results will not be valid.")
+
     score, scores_all = evaluate_all(data_multi, data_embd, args.lang)
     for key, val in scores_all.items():
         print(f"{key}: {val:.4f}")
     print(f"JSON1!{json.dumps(scores_all)}")
-    print(f"Score (multi): {score:.4f}")
+    print(f"Score (overall): {score:.4f}")

@@ -2,17 +2,20 @@ import panphon
 import panphon2
 from main.utils import load_multi_data
 
-
-def preprocess_dataset(data, features, lang, purpose_key="main"):
+def preprocess_dataset(data, features, lang, purpose_key="all"):
     # token_ort, token_ipa, lang, pronunc
     data = [
-        x[:2] for x in load_multi_data(data, purpose_key=purpose_key)
-        if lang == "multi" or x[2] == lang
+        x[:3] for x in load_multi_data(data, purpose_key=purpose_key)
+    ]
+    data_all = data
+    data = [
+        x for x in data
+        if lang == "all" or x[2] == lang
     ]
     if features == "panphon":
         return preprocess_dataset_panphon(data)
     else:
-        return preprocess_dataset_token(data, features)
+        return preprocess_dataset_token(data_all, data, features)
 
 
 def preprocess_dataset_panphon(data):
@@ -22,7 +25,7 @@ def preprocess_dataset_panphon(data):
     return [(np.array(f.word_to_binary_vectors(x[1])), x[1]) for x in data]
 
 
-def preprocess_dataset_token(data, features):
+def preprocess_dataset_token(data_all, data, features):
     from torchtext.vocab import build_vocab_from_iterator
     import torch
     import torch.nn.functional as F
@@ -31,10 +34,11 @@ def preprocess_dataset_token(data, features):
     # use the same multi vocabulary across all models
     # a nice side effect is the same number of parameters everywhere
     if features == "tokenort":
-        vocab_raw = open("data/vocab/ort_multi.txt", "r").read().split("\n")
+        vocab_raw = [c for word in data_all for c in word[0]]
         vocab = build_vocab_from_iterator([[x] for x in vocab_raw])
     elif features == "tokenipa":
-        vocab_raw = open("data/vocab/ipa_multi.txt", "r").read().split("\n")
+        ft = panphon.FeatureTable()
+        vocab_raw = [c for word in data_all for c in ft.ipa_segs(word[1])]
         vocab = build_vocab_from_iterator([[x] for x in vocab_raw])
 
     # TODO: add a default pointer to vocab to point to utils.UNK_SYMBOL

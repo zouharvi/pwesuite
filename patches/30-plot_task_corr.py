@@ -10,8 +10,7 @@ import csv
 with open("meta/evaluation_all.csv", "r") as f:
     data = list(csv.DictReader(f))
 
-# tasks = ["Correlation","Retrieval", "Analogies", "Rhyme", "Cognate"]
-tasks = ["Human Sim.", "Art. Dist.","Retrieval", "Analogies", "Rhyme"]
+tasks = ["Human Sim.", "Art. Dist.","Retrieval", "Analogies", "Rhyme", "Cognate"]
 data = [
     {task:float(line[task]) for task in tasks}
     for line in data
