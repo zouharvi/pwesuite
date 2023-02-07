@@ -84,7 +84,7 @@ if __name__ == "__main__":
     data_multi_all = load_multi_data(args.data_multi, purpose_key="all")
 
     data_multi = [
-        (*x, y) for x, y in zip(data_multi_all, data_embd)
+        (*x, np.array(y)) for x, y in zip(data_multi_all, data_embd)
         if x[3] == "main"
     ]
 

@@ -4,7 +4,7 @@ mkdir -p computed/tmp
 
 for DIMS in "50" "100" "150" "200" "300" "500" "700"; do
 for FEATURES in "panphon"; do
-for LANG in 'en' 'am' 'bn' 'uz' 'pl' 'es' 'sw'; do
+for LANG in 'en' 'am' 'bn' 'uz' 'pl' 'es' 'sw' 'fr' 'de'; do
     SIGNATURE="apply_rnn_${FEATURES}_${LANG}_d${DIMS}"
     sbatch --time=00-01 --ntasks=8 --mem-per-cpu=4G --gpus=1 \
         --job-name="${SIGNATURE}" \

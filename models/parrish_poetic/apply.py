@@ -63,7 +63,7 @@ def process_one_lang(lang):
 
 
 data_out = []
-for lang in LANGS:
+for lang in LANGS + ["multi"]:
     print(lang)
     data_out += process_one_lang(lang)
 

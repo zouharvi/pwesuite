@@ -20,6 +20,10 @@ if not os.path.exists("computed/fasttext"):
     os.makedirs("computed/fasttext")
 
 def get_model(lang):
+    # use English as a fallback model
+    if lang == "multi":
+        lang = "en"
+
     model_path = f'cc.{lang}.300.bin'
     if not os.path.isfile("computed/fasttext/" + model_path):
         fasttext.util.download_model(lang, if_exists='ignore')

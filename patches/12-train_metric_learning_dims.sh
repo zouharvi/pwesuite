@@ -5,7 +5,7 @@ mkdir -p computed/models/dims
 for DIMS in "50" "100" "150" "200" "300" "500" "700"; do
     mkdir -p "computed/models/dims/${DIMS}"
 for FEATURES in "panphon"; do
-    for LANG in 'en' 'am' 'bn' 'uz' 'pl' 'es' 'sw'; do
+    for LANG in 'en' 'am' 'bn' 'uz' 'pl' 'es' 'sw' 'fr' 'de'; do
         SIGNATURE="train_rnn_${FEATURES}_${LANG}_d${DIMS}"
         sbatch --time=01-00 --ntasks=12 --mem-per-cpu=4G --gpus=1 \
             --job-name="${SIGNATURE}" \

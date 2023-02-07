@@ -19,7 +19,6 @@ if __name__ == "__main__":
     output_all = {}
 
     lang_pairs = list(product(LANGS, repeat=2))
-    # lang_pairs = list(product(['en', 'am'], repeat=2))
 
     def evaluate_single_pair(langs):
         langFrom, lang = langs

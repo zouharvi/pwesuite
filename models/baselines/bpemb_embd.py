@@ -14,6 +14,9 @@ args = args.parse_args()
 data = load_multi_data(args.data, purpose_key="all")
 
 def get_model(lang):
+    # use the English model for multi language
+    if lang == "multi":
+        lang = "en"
     # the loader will fall back to largest available
     return BPEmb(lang=lang, dim=300, vs=200000)
 

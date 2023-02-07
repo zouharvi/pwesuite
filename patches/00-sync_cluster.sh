@@ -3,6 +3,7 @@
 rsync -azP --filter=":- .gitignore" --exclude .git/ . euler:/cluster/work/sachan/vilem/phonetic-representation/
 
 # rsync -azP data/multi.tsv euler:/cluster/work/sachan/vilem/phonetic-representation/data/multi.tsv
+# rsync -azP data/vocab euler:/cluster/work/sachan/vilem/phonetic-representation/data/vocab
 # rsync -azP data/human_similarity.csv euler:/cluster/work/sachan/vilem/phonetic-representation/data/
 # rsync -azP data/cache/ euler:/cluster/work/sachan/vilem/phonetic-representation/data/cache/
 # rsync -azP euler:/cluster/work/sachan/vilem/phonetic-representation/computed/embd_baseline/bert.pkl computed/embd_baseline/bert.pkl

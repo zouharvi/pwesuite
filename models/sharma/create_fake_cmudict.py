@@ -44,7 +44,7 @@ def normalize_arp(txt):
 
     return " ".join(arps)
 
-for lang in LANGS:
+for lang in LANGS + ["multi"]:
     print(lang)
     data_local = [
         x for x in data if x[2] == lang

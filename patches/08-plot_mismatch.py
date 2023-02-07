@@ -4,6 +4,7 @@ import main.fig_utils
 import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.patches import Rectangle
+from main.utils import LANGS
 
 data = open("computed/mismatch_tokenort.log", "r").readlines()
 data1 = [json.loads(l[len("JSON1!"):]) for l in data if l.startswith("JSON1!")][0]
@@ -13,17 +14,16 @@ for task_key in data2["en-en"].keys():
     scores = [v[task_key] for  k, v in data2.items()]
     print(f"{task_key}: {np.average(scores):.2f}")
 
-langs_all = ['en', 'am', 'bn', 'uz', 'pl', 'es', 'sw']
 
-img = np.zeros((len(langs_all), len(langs_all)))
+img = np.zeros((len(LANGS), len(LANGS)))
 
 plt.figure(figsize=(3.5,2.5))
 ax = plt.gca()
 
 for langs, score in data1.items():
     lang1, lang2 = langs.split("-")
-    lang1_i = langs_all.index(lang1)
-    lang2_i = langs_all.index(lang2)
+    lang1_i = LANGS.index(lang1)
+    lang2_i = LANGS.index(lang2)
     
     # print(lang1, lang2, lang1_i, lang2_i, score)
     # the intensity shows how much better it is than itself (in column)
@@ -48,8 +48,8 @@ for langs, score in data1.items():
 
 # reverse values
 plt.imshow(-img, aspect="auto", cmap="summer")
-plt.xticks(range(len(langs_all)), [x.upper() for x in langs_all])
-plt.yticks(range(len(langs_all)), [x.upper() for x in langs_all])
+plt.xticks(range(len(LANGS)), [x.upper() for x in LANGS])
+plt.yticks(range(len(LANGS)), [x.upper() for x in LANGS])
 plt.ylabel("Train language")
 plt.xlabel("Eval language")
 

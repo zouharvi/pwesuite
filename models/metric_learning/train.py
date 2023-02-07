@@ -28,7 +28,7 @@ args.add_argument("--dimension", type=int, default=300)
 args = args.parse_args()
 random.seed(0)
 
-data = preprocess_dataset(args.data, args.features, args.lang)
+data = preprocess_dataset(args.data, args.features, args.lang, purpose_key="all")
 data_dev = data[:1000]
 data = data[1000:]
 data_train = random.sample(
@@ -45,7 +45,7 @@ model = RNNMetricLearner(
     target_metric=args.target_metric,
     dimension=args.dimension,
     feature_size=data_train[0][0].shape[1],
-    safe_eval=args.lang == "multi" and args.features in {"tokenort", "tokenipa"}
+    safe_eval=args.lang == "all" and args.features in {"tokenort", "tokenipa"}
 )
 model.train_epochs(
     data_train=data_train, data_dev=data_dev,

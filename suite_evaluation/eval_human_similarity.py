@@ -28,6 +28,8 @@ def evaluate_human_similarity(data_multi_hs):
     corr_spearman_l2_all = []
     corr_pearson_cos_all = []
     corr_spearman_cos_all = []
+    corr_pearson_ip_all = []
+    corr_spearman_ip_all = []
     for batch in batches.values():
         predicted_cos = [
             cosine_distances([e1], [e2])[0,0]
@@ -37,16 +39,24 @@ def evaluate_human_similarity(data_multi_hs):
             -euclidean_distances([e1], [e2])[0,0]
             for e1, e2, _ in batch
         ]
+        predicted_ip = [
+            np.multiply(e1, e2).sum()
+            for e1, e2, _ in batch
+        ]
         obtained = [float(o) for _, _, o in batch]
 
+        corr_pearson_ip_all.append(pearsonr(predicted_ip, obtained)[0])
         corr_pearson_l2_all.append(pearsonr(predicted_l2, obtained)[0])
         corr_pearson_cos_all.append(pearsonr(predicted_cos, obtained)[0])
+        corr_spearman_ip_all.append(spearmanr(predicted_ip, obtained)[0])
         corr_spearman_l2_all.append(spearmanr(predicted_l2, obtained)[0])
         corr_spearman_cos_all.append(spearmanr(predicted_cos, obtained)[0])
 
     return {
+        "pearson IP": abs(np.average(corr_pearson_ip_all)),
         "pearson L2": abs(np.average(corr_pearson_l2_all)),
         "pearson cos": abs(np.average(corr_pearson_cos_all)),
+        "spearman IP": abs(np.average(corr_spearman_ip_all)),
         "spearman L2": abs(np.average(corr_spearman_l2_all)),
         "spearman cos": abs(np.average(corr_spearman_cos_all)),
     }
@@ -61,7 +71,7 @@ if __name__ == "__main__":
     data_multi_all = load_multi_data(args.data_multi, purpose_key="all")
 
     data_multi = [
-        (*x, y) for x, y in zip(data_multi_all, data_embd)
+        (*x, np.array(y)) for x, y in zip(data_multi_all, data_embd)
         if x[3] == "human_similarity"
     ]
 

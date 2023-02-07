@@ -1,6 +1,6 @@
 # Imports are done within functions so that they are not needlessly loaded when a different function is used
 
-LANGS = ['en', 'am', 'bn', 'uz', 'pl', 'es', 'sw']
+LANGS = ['en', 'am', 'bn', 'uz', 'pl', 'es', 'sw', 'fr', 'de']
 UNK_SYMBOL = "😕"
 
 
