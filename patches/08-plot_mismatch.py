@@ -6,7 +6,7 @@ import matplotlib.pyplot as plt
 from matplotlib.patches import Rectangle
 from main.utils import LANGS
 
-data = open("computed/mismatch_tokenort.log", "r").readlines()
+data = open("computed/mismatch_panphon.log", "r").readlines()
 data1 = [json.loads(l[len("JSON1!"):]) for l in data if l.startswith("JSON1!")][0]
 data2 = [json.loads(l[len("JSON2!"):]) for l in data if l.startswith("JSON2!")][0]
 
@@ -20,6 +20,8 @@ img = np.zeros((len(LANGS), len(LANGS)))
 plt.figure(figsize=(3.5,2.5))
 ax = plt.gca()
 
+langs_all = [x.split("-")[0] for x in data1.keys()]
+
 for langs, score in data1.items():
     lang1, lang2 = langs.split("-")
     lang1_i = LANGS.index(lang1)
@@ -27,12 +29,14 @@ for langs, score in data1.items():
     
     # print(lang1, lang2, lang1_i, lang2_i, score)
     # the intensity shows how much better it is than itself (in column)
-    val = score/data1[lang1+"-"+lang1]
+    # val = score/data1[lang1+"-"+lang1]
+    val = score
+    # /max(data1[lang1+"-"+lang] for lang in langs_all)
     img[lang2_i, lang1_i] = val
     plt.text(
-        lang1_i, lang2_i, f"{score:.2f}",
+        lang1_i, lang2_i, f"{score:.2f}".replace("0.", "."),
         va="center", ha="center",
-        color="white" if val >= 0.99 else "black"
+        color="white" if val >= 1.1 else "black"
     )
 
     if lang1_i == lang2_i:

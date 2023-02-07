@@ -50,7 +50,7 @@ for lang in LANGS + ["multi"]:
         x for x in data if x[2] == lang
     ]
     data_local = [
-        x[0].upper() + "  " + normalize_arp(x[4])
+        x[0].upper().replace(" ", "-") + "  " + normalize_arp(x[4])
         for x in data_local
     ]
     with open(f"data/tmp/cmu_{lang}.txt", "w") as f:

@@ -16,7 +16,7 @@ data = [
     for line in data
 ]
 
-plt.figure(figsize=(3, 1.7))
+plt.figure(figsize=(3.5, 2.1))
 ax = plt.gca()
 img = np.full((len(tasks), len(tasks)), np.nan)
 
@@ -43,7 +43,7 @@ for task1_i, task1 in enumerate(tasks):
         task2vals = [line[task2] for line in data]
         corr_s = spearmanr(task1vals, task2vals)[0]
         corr_p = pearsonr(task1vals, task2vals)[0]
-        img[task2_i+task1_i+1][task1_i] = corr_s
+        img[task2_i+task1_i+1][task1_i] = abs(corr_s)
 
         plt.text(
             x=task1_i-0.20,

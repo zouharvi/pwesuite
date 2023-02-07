@@ -2,7 +2,8 @@
 
 mkdir -p computed/tmp/
 
-for LANG in 'en' 'am' 'bn' 'uz' 'pl' 'es' 'sw' 'fr' 'de' 'multi'; do
+# for LANG in 'en' 'am' 'bn' 'uz' 'pl' 'es' 'sw' 'fr' 'de' 'multi'; do
+for LANG in 'multi'; do
     SIGNATURE="sharma_embd_${LANG}"
     sbatch --time=07-00 --ntasks=60 --mem-per-cpu=4G --gpus=1 \
         --job-name="${SIGNATURE}" \

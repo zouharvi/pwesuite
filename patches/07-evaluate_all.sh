@@ -19,12 +19,12 @@ for FEATURES in "panphon" "tokenipa" "tokenort"; do
                 --embd \"computed/embd_rnn_metric_learning/${FEATURES}_fmulti.pkl\" \
             ;"
 
-    # SIGNATURE="eval_mismatch_rnn_${FEATURES}"
-    # sbatch --time=01-00 --ntasks=100 --mem-per-cpu=500M  \
-    #     --job-name="${SIGNATURE}" \
-    #     --output="logs/${SIGNATURE}.log" \
-    #     --wrap="\
-    #         ./suite_evaluation/eval_mismatch.py \
-    #             --embd \"computed/embd_rnn_metric_learning/${FEATURES}_fLANG.pkl\" \
-    #         ;"
+    SIGNATURE="eval_mismatch_rnn_${FEATURES}"
+    sbatch --time=01-00 --ntasks=100 --mem-per-cpu=500M  \
+        --job-name="${SIGNATURE}" \
+        --output="logs/${SIGNATURE}.log" \
+        --wrap="\
+            ./suite_evaluation/eval_mismatch.py \
+                --embd \"computed/embd_rnn_metric_learning/${FEATURES}_fLANG.pkl\" \
+            ;"
 done;

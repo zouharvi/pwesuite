@@ -14,7 +14,7 @@ if __name__ == "__main__":
     args.add_argument("-e", "--embd", default="computed/embd_rnn_metric_learning/panphon_fLANG.pkl")
     args = args.parse_args()
 
-    data_multi = load_multi_data(args.data_multi)
+    data_multi = load_multi_data(args.data_multi, purpose_key="all")
     output_scores = {}
     output_all = {}
 

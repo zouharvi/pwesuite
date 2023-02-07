@@ -47,6 +47,8 @@ def get_similarity_fast(data_batch):
 with open(f'data/tmp/cmu_{args.lang}.txt', "r") as f:
     data = [x.upper().rstrip("\n").split("  ") for x in f.readlines()]
 
+print([x[1] for x in data if "PAS" in x[1]])
+
 embds = torch.randn((len(data), args.dimensions), requires_grad=True, device=DEVICE)
 
 optimizer = torch.optim.Adam([embds], lr=5e-2)
