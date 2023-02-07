@@ -12,6 +12,7 @@ mkdir -p data/cache
 # iconv -c -t utf8 "data/raw/cmudict.tmp" > "data/raw/cmudict-0.7b.txt"
 # wget "https://github.com/menelik3/cmudict-ipa/raw/master/cmudict-0.7b-ipa.txt" -O "data/raw/cmudict-0.7b-ipa.txt"
 
+rm -rf data/cache/analogies_*.pkl
 python3 ./create_dataset/preprocess.py
 python3 ./create_dataset/add_analogies.py
 python3 ./create_dataset/add_human_similarity.py

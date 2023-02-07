@@ -15,7 +15,7 @@ Run `pip3 install -e .` to install this repository and its dependencies.
 ## Embedding evaluation
 
 In order to run all the evaluations, you first need to run the embedding on provided words.
-These can be downloaded from Huggingface:
+These can be downloaded from [our Huggingface dataset](https://huggingface.co/datasets/zouharvi/pwesuite-eval):
 ```
 >>> from datasets import load_dataset
 >>> dataset = load_dataset("zouharvi/pwesuite-eval")
