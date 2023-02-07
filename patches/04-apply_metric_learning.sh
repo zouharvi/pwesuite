@@ -3,7 +3,7 @@
 mkdir -p computed/tmp
 
 for FEATURES in "panphon" "tokenipa" "tokenort"; do
-for LANG in 'en' 'am' 'bn' 'uz' 'pl' 'es' 'sw'; do
+for LANG in 'en' 'am' 'bn' 'uz' 'pl' 'es' 'sw' 'fr' 'de'; do
     SIGNATURE="apply_rnn_${FEATURES}_${LANG}"
     sbatch --time=00-01 --ntasks=8 --mem-per-cpu=4G --gpus=1 \
         --job-name="${SIGNATURE}" \
@@ -17,7 +17,7 @@ for LANG in 'en' 'am' 'bn' 'uz' 'pl' 'es' 'sw'; do
                 --output \"computed/tmp/multi_${FEATURES}_${LANG}.pkl\" \
             ;"
 
-        # for LANGFROM in 'multi' 'en' 'am' 'bn' 'uz' 'pl' 'es' 'sw'; do
+        # for LANGFROM in 'multi' 'en' 'am' 'bn' 'uz' 'pl' 'es' 'sw' 'fr' 'de'; do
         for LANGFROM in 'multi' ; do
             SIGNATURE="apply_rnn_${FEATURES}_${LANG}_f${LANGFROM}"
             sbatch --time=01-00 --ntasks=8 --mem-per-cpu=4G --gpus=1 \

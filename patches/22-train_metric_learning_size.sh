@@ -5,7 +5,7 @@ mkdir -p computed/models/size
 for SIZE in "1" "5" "10" "50" "100" "150" "200"; do
 mkdir -p "computed/models/size/${SIZE}"
 for FEATURES in "panphon"; do
-    for LANG in 'en' 'am' 'bn' 'uz' 'pl' 'es' 'sw'; do
+    for LANG in 'en' 'am' 'bn' 'uz' 'pl' 'es' 'sw' 'fr' 'de'; do
         SIGNATURE="train_rnn_${FEATURES}_${LANG}_s${SIZE}"
         sbatch --time=01-00 --ntasks=12 --mem-per-cpu=4G --gpus=1 \
             --job-name="${SIGNATURE}" \

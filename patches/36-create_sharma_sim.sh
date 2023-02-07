@@ -2,7 +2,7 @@
 
 mkdir -p computed/tmp/
 
-for LANG in 'en' 'am' 'bn' 'uz' 'pl' 'es' 'sw'; do
+for LANG in 'en' 'am' 'bn' 'uz' 'pl' 'es' 'sw' 'fr' 'de'; do
     SIGNATURE="sharma_sim_${LANG}"
     sbatch --time=00-10 --ntasks=70 --mem-per-cpu=4G \
         --job-name="${SIGNATURE}" \

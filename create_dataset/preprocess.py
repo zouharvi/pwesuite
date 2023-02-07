@@ -188,6 +188,8 @@ if __name__ == '__main__':
         'pl': 'pol-Latn',
         'es': 'spa-Latn',
         'sw': 'swa-Latn',
+        'fr': 'fra-Latn',
+        'de': 'deu-Latn',
     }
     for lang, ortho_name in LANG_TO_ORTHO.items():
         vocab_ort, vocab_ipa = process_non_en(lang, ortho_name)
