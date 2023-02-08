@@ -3,7 +3,7 @@ from setuptools import setup, find_packages
 setup(
     name='PWESuite',
     version='0.0.0',
-    url='https://github.com/cuichenx/phonetic-representation',
+    url='https://github.com/cuichenx/pwesuite',
     author='CMU & ETH Affiliates',
     author_email='TODO',
     description='Evaluation suite for phonetic word embeddings and provides a few models.',

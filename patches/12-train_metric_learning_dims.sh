@@ -2,11 +2,12 @@
 
 mkdir -p computed/models/dims
 
+for SEED in "0" "1" "2" "3" "4"; do
 for DIMS in "50" "100" "150" "200" "300" "500" "700"; do
     mkdir -p "computed/models/dims/${DIMS}"
 for FEATURES in "panphon"; do
-    for LANG in 'en' 'am' 'bn' 'uz' 'pl' 'es' 'sw' 'fr' 'de'; do
-        SIGNATURE="train_rnn_${FEATURES}_${LANG}_d${DIMS}"
+    for LANG in 'en' 'am' 'bn' 'uz' 'pl' 'es' 'sw' 'fr' 'de' 'multi'; do
+        SIGNATURE="train_rnn_${FEATURES}_${LANG}_d${DIMS}_s${SEED}"
         sbatch --time=01-00 --ntasks=12 --mem-per-cpu=4G --gpus=1 \
             --job-name="${SIGNATURE}" \
             --output="logs/${SIGNATURE}.log" \
@@ -14,14 +15,16 @@ for FEATURES in "panphon"; do
                 ./models/metric_learning/train.py \
                     --data \"data/multi.tsv\" \
                     --lang ${LANG} \
-                    --save-model-path \"computed/models/dims/${DIMS}/rnn_metric_learning_${FEATURES}_${LANG}.pt\" \
+                    --save-model-path \"computed/models/dims/${DIMS}/rnn_metric_learning_${FEATURES}_${LANG}_s${SEED}.pt\" \
                     --number-thousands 200 \
                     --target-metric \"l2\" \
                     --features ${FEATURES} \
                     --dimension ${DIMS} \
                     --epochs 20 \
+                    --seed ${SEED} \
                 ;"
     done;
+done;
 done;
 done;
 
