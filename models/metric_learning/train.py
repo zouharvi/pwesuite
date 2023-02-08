@@ -14,6 +14,7 @@ args.add_argument(
     default="computed/models/rnn_metric_learning_en.pt"
 )
 args.add_argument("-e", "--epochs", type=int, default=20)
+args.add_argument("-s", "--seed", type=int, default=0)
 args.add_argument(
     "-nk", "--number-thousands", type=int, default=200,
     help="Number of training data to use (in thousands) for training",
@@ -26,7 +27,9 @@ args.add_argument("-tm", "--target-metric", default="l2")
 args.add_argument("--features", default="panphon")
 args.add_argument("--dimension", type=int, default=300)
 args = args.parse_args()
-random.seed(0)
+
+random.seed(args.seed)
+torch.manual_seed(args.seed)
 
 data = preprocess_dataset(args.data, args.features, args.lang, purpose_key="all")
 data_dev = data[:1000]
