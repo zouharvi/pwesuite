@@ -1,6 +1,5 @@
 import matplotlib as mpl
 from cycler import cycler
-import matplotlib.font_manager
 
 FONT_MONOSPACE = {'fontname':'monospace'}
 MARKERS = "o^s*DP1"
@@ -9,9 +8,9 @@ COLORS = [
     "darkseagreen",
     "salmon",
     "orange",
-    "seagreen",
     "dimgray",
     "purple",
+    "seagreen",
 ]
 COLORS_EXTRA = ["#9c2963", "#fb9e07"]
 

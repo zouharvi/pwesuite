@@ -3,7 +3,7 @@
 import random
 import torch
 import argparse
-from models.metric_learning.model import RNNMetricLearner
+from model import RNNMetricLearner
 from preprocessor import preprocess_dataset
 
 args = argparse.ArgumentParser()

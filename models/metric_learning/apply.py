@@ -4,7 +4,7 @@ import math
 import torch
 import argparse
 import tqdm
-from models.metric_learning.model import RNNMetricLearner
+from model import RNNMetricLearner
 import pickle
 from preprocessor import preprocess_dataset
 
