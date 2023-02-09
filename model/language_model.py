@@ -72,35 +72,37 @@ class AutoregressiveLM(nn.Module):
 
 
 class MaskedLM(nn.Module):
-    def __init__(self, num_layers, input_dim, num_heads, hidden_dim, dropout, classifier_dropout, vocab_size, predict_vector):
+    def __init__(self, num_layers, input_dim, embedding_dim, num_heads, dim_feedforward, dropout, classifier_dropout, vocab_size, predict_vector):
         super().__init__()
-        encoder_layer = nn.TransformerEncoderLayer(d_model=input_dim, nhead=num_heads, dim_feedforward=hidden_dim,
+        self.dense = nn.Linear(input_dim, embedding_dim)
+        encoder_layer = nn.TransformerEncoderLayer(d_model=embedding_dim, nhead=num_heads, dim_feedforward=dim_feedforward,
                                                    batch_first=True, dropout=dropout)
         self.transformer = nn.TransformerEncoder(encoder_layer, num_layers=num_layers)
         self.classifier_dropout = nn.Dropout(classifier_dropout)
         if predict_vector:
             # predict a panphon vector
-            self.linear = nn.Linear(input_dim, input_dim)   # to predict a panphon vector
+            self.linear = nn.Linear(embedding_dim, input_dim)   # to predict a panphon vector
         else:
             # predict a phoneme
-            self.linear = nn.Linear(input_dim, vocab_size)  # to predict a phoneme
+            self.linear = nn.Linear(embedding_dim, vocab_size)  # to predict a phoneme
 
     def forward(self, segment_features):
         '''
         Inputs:
             segment_features - (B, 1, 24) one token's panphon features from each batch
         '''
-        encoded_input = self.transformer(segment_features)
+        # map panphon features to dense 300-layer features because we want 300-dimensional embeddings out of the Transformer
+            # and the Transformer's output is the same dimension as what goes into it
+        encoded_input = self.dense(segment_features)
+        encoded_input = self.transformer(encoded_input)
         encoded_input = self.classifier_dropout(encoded_input)
         return self.linear(encoded_input)
 
     def pool(self, segment_features):
-        # [CLS] pooling
-        # currently, we don't have a [CLS] token
+        # [CLS] pooling, similar to
         # https://github.com/huggingface/transformers/blob/31d452c68b34c2567b62924ee0df40a83cbc52d5/src/transformers/models/bert/modeling_bert.py#L652
         # no linear Transformation because it's not trained
-        encoded_input = self.transformer(segment_features)
+        encoded_input = self.dense(segment_features)
+        encoded_input = self.transformer(encoded_input)
 
-        # TODO: check dimensions
-        # TODO: return index 0 when we add [CLS] token
         return encoded_input[:, 0, :]

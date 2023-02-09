@@ -133,6 +133,9 @@ def validate_step(model, val_loader, objective, evaluator):
         # intrinsic evaluation - first obtain a pooled embedding (the useful part)
         # take the LSTM output corresponding to the final token
         embeddings = model.pool(feature_matrix)
+
+        assert embeddings.size()[-1] == args.embedding_dim
+
         pooled_phon_embs.append(embeddings)
 
         # language modeling objective - see train_step() for more details
@@ -220,7 +223,8 @@ def parse_args():
     parser.add_argument('--lr', type=float, default=0.0001)
     parser.add_argument('--num_layers', help='number of Transformer layers', type=int, default=2)
     parser.add_argument('--num_heads', help='number of Transformer attention heads', type=int, default=2)
-    parser.add_argument('--hidden_dim', type=int, default=128)
+    parser.add_argument('--embedding_dim', type=int, default=300, help='eventual embedding dimension')
+    parser.add_argument('--dim_feedforward', type=int, default=256, help='Transformer internal feedforward dimension')
     parser.add_argument('--dropout', type=float, default=0.3)
     parser.add_argument('--classifier_dropout', type=float, default=0.2)
     parser.add_argument('--epochs', type=int, default=10)
@@ -255,8 +259,9 @@ if __name__ == '__main__':
     model = MaskedLM(
         num_layers=args.num_layers,
         input_dim=PANPHON_FEATURE_DIM,
+        embedding_dim=args.embedding_dim,
         num_heads=args.num_heads,
-        hidden_dim=args.hidden_dim,
+        dim_feedforward=args.dim_feedforward,
         dropout=args.dropout,
         classifier_dropout=args.classifier_dropout,
         vocab_size=len(ipa_vocab),
