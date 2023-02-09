@@ -10,6 +10,7 @@ import tqdm
 from main.utils import load_multi_data, LANGS
 import panphon
 from main.ipa2arp import IPA2ARP
+from pathlib import Path
 
 ipa2arp = IPA2ARP().convert
 ft = panphon.FeatureTable()
@@ -189,6 +190,7 @@ def get_analogies(data, lang):
         analogies = analogy_model.run(100, num_perturbations=num_perturbations)
         output += analogies
 
+    Path("data/cache").mkdir(exist_ok=True)
     with open(CACHE_PATH, "wb") as f:
         pickle.dump(output, f)
 
