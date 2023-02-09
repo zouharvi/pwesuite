@@ -7,7 +7,7 @@ import wandb
 from dataset import IPATokenDataset
 from intrinsic_eval import IntrinsicEvaluator
 from vocab import *
-from model.language_model import AutoregressiveLM
+from models.language_modeling.language_model import AutoregressiveLM
 from util import *
 from tqdm import tqdm
 
