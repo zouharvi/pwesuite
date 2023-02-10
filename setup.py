@@ -20,6 +20,6 @@ setup(
         "scikit-learn>=1.1",
         "scipy>=1.7",
         "emoji>=2.2",
-        "python-Levenshtein>=0.12",
+        'Levenshtein>=0.20.9',
     ],
 )

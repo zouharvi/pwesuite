@@ -2,7 +2,7 @@
 
 import csv
 
-with open("data/multi.tsv", "r") as f:
+with open("data/multi_0.tsv", "r") as f:
     data = list(csv.reader(f, delimiter="\t"))
 
 print("loaded", len(data), "words")
