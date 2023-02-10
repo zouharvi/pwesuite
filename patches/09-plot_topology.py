@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 
+import os
 import argparse
 import random
 import panphon2
@@ -10,9 +11,23 @@ from sklearn.metrics.pairwise import euclidean_distances
 import matplotlib.pyplot as plt
 import main.fig_utils as fig_utils
 from main.utils import load_multi_data, load_embd_data
+import pickle
 
 CLUSTER_SIZE = 4
 CLUSTER_COUNT = 5
+
+import matplotlib as mpl
+from cycler import cycler
+COLORS = [
+    "cornflowerblue",
+    "darkseagreen",
+    "salmon",
+    "orange",
+    "purple",
+    "dimgray",
+    "seagreen",
+]
+mpl.rcParams['axes.prop_cycle'] = cycler(color=COLORS)
 
 args = argparse.ArgumentParser()
 args.add_argument(
@@ -27,23 +42,29 @@ args.add_argument(
     "-e3", "--embd-3",
     default="computed/embd_rnn_metric_learning/tokenort.pkl"
 )
-args.add_argument("--tsne-n", type=int, default=2000)
-args.add_argument("--plot-n", type=int, default=10)
+args.add_argument("--tsne-n", type=int, default=400)
+args.add_argument("--plot-n", type=int, default=200)
 args.add_argument("-s", "--seed", type=int, default=0)
+args.add_argument("-ts", "--tsne-seed", type=int, default=0)
 args = args.parse_args()
 
-data_multi = load_multi_data()
-data_embd_1 = load_embd_data(args.embd_1)
-data_embd_2 = load_embd_data(args.embd_2)
-data_embd_3 = load_embd_data(args.embd_3)
-data = [
-    (x, y)
-    for x, y in zip(data_multi, zip(data_embd_1, data_embd_2, data_embd_3))
-    if x[2] == "en"
-]
+CACHE_PATH = "computed/cache/topology_data.pkl"
+if os.path.exists(CACHE_PATH):
+    data = pickle.load(open(CACHE_PATH, "rb"))
+else:
+    data_multi = load_multi_data(purpose_key="all")
+    data_embd_1 = load_embd_data(args.embd_1)
+    data_embd_2 = load_embd_data(args.embd_2)
+    data_embd_3 = load_embd_data(args.embd_3)
+    data = [
+        (x, y)
+        for x, y in zip(data_multi, zip(data_embd_1, data_embd_2, data_embd_3))
+        if x[2] == "en"
+    ]
+    pickle.dump(data, open(CACHE_PATH, "wb"))
 
-random.seed(1)
-data = random.sample(data, k=300)
+random.seed(args.seed)
+data = random.sample(data, k=args.tsne_n)
 
 def _compute_panphon_distance(y, data):
     # tok_features break pipe in multiprocess
@@ -98,10 +119,13 @@ def plot_scatter(ax, data_dists, title):
     model = TSNE(
         n_components=2, metric="precomputed",
         learning_rate="auto", init="random",
-        random_state=1,
+        random_state=args.tsne_seed,
+        n_iter=2000,
     )
     data_2d = model.fit_transform(np.array(data_dists))
     data_2d -= np.mean(data_2d, axis=0)
+    # r = random.Random(args.seed)
+    # data_2d = r.sample(list(data_2d), k=args.plot_n)
 
     ax.scatter(
         [x[0] for x in data_2d],

@@ -13,7 +13,7 @@ import scipy.stats as st
 def get_interval(data):
     mean = np.mean(data)
     interval = st.t.interval(
-        confidence=0.90, df=len(data)-1,
+        confidence=0.95, df=len(data)-1,
         loc=mean,
         scale=st.sem(data)
     )
@@ -59,7 +59,7 @@ for task_i, task in enumerate(task_keys):
     ax.fill_between(
         DIMS,
         [x[0] for x in values],
-        [x[1] for x in values],
+        [x[2] for x in values],
         color="black" if task == "overall" else main.fig_utils.COLORS[task_i],
         alpha=0.3,
     )
