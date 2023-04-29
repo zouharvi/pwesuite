@@ -38,3 +38,14 @@ Alternatively, you can invoke individual tasks: `./suite_evaluation/eval_{correl
 ## Misc
 
 Contact the authors if you encounter any issues using this evaluation suite.
+Read the [associated paper](https://arxiv.org/abs/2304.02541) and for now cite as:
+
+```
+@article{zouhar2023pwesuite,
+  title={{PWESuite}: {P}honetic Word Embeddings and Tasks They Facilitate},
+  author={Zouhar, Vil{\'e}m and Chang, Kalvin and Cui, Chenxuan and Carlson, Nathaniel and Robinson, Nathaniel and Sachan, Mrinmaya and Mortensen, David},
+  journal={arXiv preprint arXiv:2304.02541},
+  year={2023},
+  url={https://arxiv.org/abs/2304.02541}
+}
+```
