@@ -1,6 +1,7 @@
 # Phonetic Word Embeddings Suite (`PWESuite`)
 
 Evaluation suite for phonetic (phonological) word embeddings and an additional model based on Panphone distance learning.
+This repository accompanies the paper [PWESuite: Phonetic Word Embeddings and Tasks They Facilitate](https://arxiv.org/abs/2304.02541).
 
 The suite contains the following tasks:
 - Correlation with human sound similarity judgement
