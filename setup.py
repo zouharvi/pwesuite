@@ -2,8 +2,8 @@ from setuptools import setup, find_packages
 
 setup(
     name='PWESuite',
-    version='0.0.0',
-    url='https://github.com/cuichenx/pwesuite',
+    version='0.0.1',
+    url='https://github.com/zouharvi/pwesuite',
     author='CMU & ETH Affiliates',
     author_email='TODO',
     description='Evaluation suite for phonetic word embeddings and provides a few models.',
