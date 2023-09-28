@@ -50,3 +50,17 @@ Read the [associated paper](https://arxiv.org/abs/2304.02541) and for now cite a
   url={https://arxiv.org/abs/2304.02541}
 }
 ```
+
+## Compute details
+
+The most compute-intensive tasks were training the Metric Learner and Triplet Margin, which took 1/4 and 2 hours on GTX 1080 Ti, respectively.
+For the research presented in this paper, we estimate 100 GPU hours overall.
+
+The BERT embeddings were extracted as an average across the last layer.
+The INSTRUCTOR embeddings were used with the prompt _"Represent the word for sound similarity retrieval:"_.
+For BPEmb and fastText, we used the best models (highest training data) and dimensionality of 300.
+
+The metric learner uses bidirectional LSTM with 2 layers, hidden state size of 150 and dropout of 30%.
+The batch size is 128 and the learning rate is 0.01.
+The autoencoder follows the same hyperparameters both for the encoder and decoder.
+The difference is its learning size, 0.005, which was chosen empirically.
