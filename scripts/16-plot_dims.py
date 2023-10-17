@@ -2,6 +2,8 @@
 import json
 
 import numpy as np
+import sys
+sys.path.append(".")
 import main.fig_utils
 import matplotlib.pyplot as plt
 import glob
@@ -11,6 +13,8 @@ from scipy.stats import pearsonr, spearmanr
 import scipy.stats as st
 
 def get_interval(data):
+    if all([x == data[0] for x in data]):
+        return [np.mean(data)]*3
     mean = np.mean(data)
     interval = st.t.interval(
         confidence=0.95, df=len(data)-1,
@@ -39,6 +43,9 @@ DIMS.sort()
 
 plt.figure(figsize=(3.5, 2.2))
 ax = plt.gca()
+# remove frame
+ax.spines['top'].set_visible(False)
+ax.spines['right'].set_visible(False)
 
 # sort by dims
 task_keys = list(data[DIMS[0]][0].keys())
@@ -88,7 +95,12 @@ print(f"Avg. Pearson {np.average(corr_pearson)}")
 plt.legend(
     ncol=3,
     bbox_to_anchor=(-0.13, 1.05, 1.15, 0), loc="lower left",
-    mode="expand",
+    mode="expand", frameon=False, handlelength=1
+)
+
+
+plt.yticks(
+    [1.0, 0.8, 0.6, 0.4]
 )
 
 

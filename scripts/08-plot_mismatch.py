@@ -1,9 +1,11 @@
 #!/usr/bin/env python3
+
 import json
-import main.fig_utils
 import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.patches import Rectangle
+import sys
+sys.path.append(".")
 from main.utils import LANGS
 
 data = open("computed/mismatch_panphon.log", "r").readlines()
@@ -19,6 +21,11 @@ img = np.zeros((len(LANGS), len(LANGS)))
 
 plt.figure(figsize=(3.5,2.5))
 ax = plt.gca()
+# remove frame
+ax.spines['top'].set_visible(False)
+ax.spines['right'].set_visible(False)
+ax.spines['bottom'].set_visible(False)
+ax.spines['left'].set_visible(False)
 
 langs_all = [x.split("-")[0] for x in data1.keys()]
 
@@ -36,7 +43,7 @@ for langs, score in data1.items():
     plt.text(
         lang1_i, lang2_i, f"{score:.2f}".replace("0.", "."),
         va="center", ha="center",
-        color="white" if val >= 1.1 else "black"
+        # color="white" if val <= 0.74 else "black"
     )
 
     if lang1_i == lang2_i:
@@ -51,7 +58,7 @@ for langs, score in data1.items():
 
 
 # reverse values
-plt.imshow(-img, aspect="auto", cmap="summer")
+plt.imshow(-img, aspect="auto", cmap="Greys", vmin=-0.81, vmax=-0.68)
 plt.xticks(range(len(LANGS)), [x.upper() for x in LANGS])
 plt.yticks(range(len(LANGS)), [x.upper() for x in LANGS])
 plt.ylabel("Train language")

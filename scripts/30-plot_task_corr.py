@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-import main.fig_utils
+
 import numpy as np
 import matplotlib
 import matplotlib.pyplot as plt
@@ -18,23 +18,17 @@ data = [
 
 plt.figure(figsize=(3.5, 2.1))
 ax = plt.gca()
+# remove frame
+ax.spines['top'].set_visible(False)
+ax.spines['right'].set_visible(False)
+ax.spines['bottom'].set_visible(False)
+ax.spines['left'].set_visible(False)
 img = np.full((len(tasks), len(tasks)), np.nan)
 
-cmap = matplotlib.cm.summer.copy().reversed()
+cmap = matplotlib.cm.Greys.copy().reversed()
 
-vmin = 1
-vmax = 0
-for task1_i, task1 in enumerate(tasks):
-    for task2_i, task2 in enumerate(tasks[task1_i+1:]):
-        task1vals = [line[task1] for line in data]
-        task2vals = [line[task2] for line in data]
-        corr_s = spearmanr(task1vals, task2vals)[0]
-        corr_p = pearsonr(task1vals, task2vals)[0]
-        vmin = min(vmin, corr_s)
-        vmin = min(vmin, corr_p)
-        vmax = max(vmax, corr_s)
-        vmax = max(vmax, corr_p)
-
+vmin = -0.1
+vmax = 1
 
 
 for task1_i, task1 in enumerate(tasks):
@@ -49,14 +43,16 @@ for task1_i, task1 in enumerate(tasks):
             x=task1_i-0.20,
             y=task2_i+task1_i-0.2,
             s=f"{corr_s:.2f}",
-            va="center", ha="center"
+            va="center", ha="center",
+            color="white" if corr_s <= 0.2 else "black",
         )
 
         plt.text(
             x=task1_i+0.2,
             y=task2_i+task1_i+0.2,
             s=f"{corr_p:.2f}",
-            va="center", ha="center"
+            va="center", ha="center",
+            color="white" if corr_p <= 0.2 else "black",
         )
         
         polygon_coords = np.array([

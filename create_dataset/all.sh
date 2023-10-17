@@ -33,4 +33,4 @@ python3 ./create_dataset/add_analogies.py
 python3 ./create_dataset/add_human_similarity.py
 python3 ./create_dataset/add_cognates.py
 
-python3 ./patches/35-tsv_to_csv.py
+python3 ./scripts/35-tsv_to_csv.py

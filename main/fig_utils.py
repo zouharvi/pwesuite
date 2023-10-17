@@ -18,5 +18,5 @@ mpl.rcParams['axes.prop_cycle'] = cycler(color=COLORS)
 mpl.rcParams['lines.linewidth'] = 2
 mpl.rcParams['lines.markersize'] = 7
 mpl.rcParams['axes.linewidth'] = 1.5
-mpl.rc('text', usetex=True)
-mpl.rcParams['font.family'] = "serif"
+# mpl.rc('text', usetex=True)
+# mpl.rcParams['font.family'] = "serif"

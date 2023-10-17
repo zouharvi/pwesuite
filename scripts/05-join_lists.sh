@@ -8,7 +8,7 @@ for FEATURES in "panphon" "tokenipa" "tokenort"; do
         --job-name="${SIGNATURE}" \
         --output="logs/${SIGNATURE}.log" \
         --wrap="\
-            ./patches/06-join_lists.py \
+            ./scripts/06-join_lists.py \
                 --input \"computed/tmp/multi_${FEATURES}_LANG.pkl\" \
                 --output \"computed/embd_rnn_metric_learning/${FEATURES}.pkl\" \
             ;"
@@ -21,7 +21,7 @@ for FEATURES in "panphon" "tokenipa" "tokenort"; do
         --job-name="${SIGNATURE}" \
         --output="logs/${SIGNATURE}.log" \
         --wrap="\
-            ./patches/06-join_lists.py \
+            ./scripts/06-join_lists.py \
                 --input \"computed/tmp/multi_${FEATURES}_LANG_f${LANGFROM}.pkl\" \
                 --output \"computed/embd_rnn_metric_learning/${FEATURES}_f${LANGFROM}.pkl\" \
             ;"

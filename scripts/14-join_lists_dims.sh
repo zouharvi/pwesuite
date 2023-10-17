@@ -10,7 +10,7 @@ for FEATURES in "panphon"; do
         --job-name="${SIGNATURE}" \
         --output="logs/${SIGNATURE}.log" \
         --wrap="\
-            ./patches/06-join_lists.py \
+            ./scripts/06-join_lists.py \
                 --input \"computed/tmp/multi_${FEATURES}_LANG_d${DIMS}_s${SEED}.pkl\" \
                 --output \"computed/embd_rnn_metric_learning/dims/${FEATURES}_d${DIMS}_s${SEED}.pkl\" \
             ;"

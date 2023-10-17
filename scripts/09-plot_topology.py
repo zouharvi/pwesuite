@@ -9,7 +9,9 @@ import multiprocess as mp
 from sklearn.manifold import TSNE
 from sklearn.metrics.pairwise import euclidean_distances
 import matplotlib.pyplot as plt
-import main.fig_utils as fig_utils
+# import main.fig_utils as fig_utils
+import sys
+sys.path.append(".")
 from main.utils import load_multi_data, load_embd_data
 import pickle
 
@@ -179,7 +181,7 @@ def plot_scatter(ax, data_dists, title, flip_x=False, flip_y=False):
 
 plot_scatter(ax1, data_dists_fed, "Art. Distance")
 # t-SNE is flip-invariant, so we have to fix it manually
-plot_scatter(ax2, data_dists_our1, "Art. Features", flip_x=True, flip_y=True)
+plot_scatter(ax2, data_dists_our1, "Art. Features", flip_x=True, flip_y=False)
 # plot_scatter(ax3, data_dists_our2, "IPA Features")
 plot_scatter(ax3, data_dists_our3, "Characters", flip_x=False, flip_y=True)
 

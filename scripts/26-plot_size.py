@@ -2,6 +2,8 @@
 import json
 
 import numpy as np
+import sys
+sys.path.append(".")
 import main.fig_utils
 import matplotlib.pyplot as plt
 import glob
@@ -40,6 +42,9 @@ DIMS.sort()
 plt.figure(figsize=(3.5, 2.2))
 ax = plt.gca()
 ax.set_xscale('log')
+# remove frame
+ax.spines['top'].set_visible(False)
+ax.spines['right'].set_visible(False)
 
 # sort by dims
 task_keys = list(data[DIMS[0]][0].keys())
@@ -89,7 +94,12 @@ print(f"Avg. Pearson {np.average(corr_pearson)}")
 plt.legend(
     ncol=3,
     bbox_to_anchor=(-0.13, 1.05, 1.15, 0), loc="lower left",
-    mode="expand",
+    mode="expand", handlelength=1,
+    frameon=False
+)
+
+plt.yticks(
+    [1.0, 0.75, 0.50, 0.25]
 )
 
 
