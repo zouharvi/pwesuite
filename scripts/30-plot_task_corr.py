@@ -3,7 +3,7 @@
 import numpy as np
 import matplotlib
 import matplotlib.pyplot as plt
-from matplotlib.patches import Polygon
+from matplotlib.scripts import Polygon
 from scipy.stats import pearsonr, spearmanr
 import csv
 
