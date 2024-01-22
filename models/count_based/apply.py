@@ -13,6 +13,7 @@ args.add_argument("--features", default="tokenort")
 args.add_argument("--vectorizer", default="tfidf")
 args.add_argument("--nopca", action="store_true")
 args.add_argument("--norm", action="store_true")
+args.add_argument("--force-dim", type=int, default=None)
 args = args.parse_args()
 
 data = load_multi_data(purpose_key="all")
@@ -29,7 +30,7 @@ def process_one_lang(lang):
         ]
 
     vectorizer_args = {
-        "max_features": 300 if args.nopca else 1024,
+        "max_features": args.force_dim if args.force_dim else (300 if args.nopca else 1024),
         "ngram_range": (1, 3),
         "stop_words": None,
         "analyzer": "char",
@@ -62,5 +63,5 @@ for lang in LANGS + ["multi"]:
     print(lang)
     data_out += process_one_lang(lang)
 
-with open(f"computed/embd_other/count_{args.features}_{args.vectorizer}{'_nopca' if args.nopca else ''}{'_norm' if args.norm else ''}.pkl", "wb") as f:
+with open(f"computed/embd_other/count_{args.features}_{args.vectorizer}{'_nopca' if args.nopca else ''}{'_norm' if args.norm else ''}{'_dim' + str(args.force_dim) if args.force_dim else ''}.pkl", "wb") as f:
     pickle.dump(data_out, f)
