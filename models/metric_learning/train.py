@@ -7,7 +7,6 @@ from model import RNNMetricLearner
 from preprocessor import preprocess_dataset
 
 args = argparse.ArgumentParser()
-args.add_argument("-d", "--data", default="data/multi.tsv")
 args.add_argument("-l", "--lang", default="en")
 args.add_argument(
     "-smp", "--save-model-path",
@@ -31,7 +30,7 @@ args = args.parse_args()
 random.seed(args.seed)
 torch.manual_seed(args.seed)
 
-data = preprocess_dataset(args.data, args.features, args.lang, purpose_key="all")
+data = preprocess_dataset(args.features, args.lang, purpose_key="all")
 data_dev = data[:1000]
 data = data[1000:]
 data_train = random.sample(

@@ -20,8 +20,7 @@ def collate_fn(batch):
         'tokens': tokens,
     }
 
-# TODO: use huggingface
-def load_multi_data(path="data/multi.tsv", purpose_key="main"):
+def load_multi_data_raw(path="data/multi.tsv", purpose_key="main"):
     print("Loading data")
     data = [
         l.rstrip("\n").split("\t")
@@ -37,6 +36,23 @@ def load_multi_data(path="data/multi.tsv", purpose_key="main"):
             if x[3] == purpose_key
         ]
     return data
+
+
+def load_multi_data(purpose_key="main"):
+    print("Loading data")
+    import datasets
+    data = datasets.load_dataset("zouharvi/pwesuite-eval", split="train")
+
+    if purpose_key == "all":
+        return list(data)
+    else:
+        data = [
+            x
+            for x in data
+            if x["purpose"] == purpose_key
+        ]
+    return data
+
 
 def load_embd_data(path):
     if path.endswith(".pkl") or path.endswith(".pickle"):

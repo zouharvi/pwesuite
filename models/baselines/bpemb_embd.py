@@ -7,11 +7,10 @@ from bpemb import BPEmb
 import tqdm
 
 args = argparse.ArgumentParser()
-args.add_argument("-d", "--data", default="data/multi.tsv")
 args.add_argument("-o", "--output", default="computed/embd_baseline/bpemb.pkl")
 args = args.parse_args()
 
-data = load_multi_data(args.data, purpose_key="all")
+data = load_multi_data(purpose_key="all")
 
 def get_model(lang):
     # use the English model for multi language

@@ -12,7 +12,6 @@ for LANG in 'en' 'am' 'bn' 'uz' 'pl' 'es' 'sw' 'fr' 'de' 'multi'; do
         --output="logs/${SIGNATURE}.log" \
         --wrap="\
             ./models/metric_learning/apply.py \
-                --data \"data/multi.tsv\" \
                 --lang ${LANG} \
                 --model-path \"computed/models/size/${SIZE}/rnn_metric_learning_${FEATURES}_${LANG}_s${SEED}.pt\" \
                 --features ${FEATURES} \

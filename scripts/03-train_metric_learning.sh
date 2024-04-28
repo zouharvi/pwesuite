@@ -10,7 +10,6 @@ for FEATURES in "panphon" "tokenipa" "tokenort"; do
             --output="logs/${SIGNATURE}.log" \
             --wrap="CUDA_VISIBLE_DEVICES=0 python3 \
                 ./models/metric_learning/train.py \
-                    --data \"data/multi.tsv\" \
                     --lang ${LANG} \
                     --save-model-path \"computed/models/rnn_metric_learning_${FEATURES}_${LANG}.pt\" \
                     --number-thousands 200 \
@@ -27,7 +26,6 @@ for FEATURES in "panphon" "tokenipa" "tokenort"; do
             --output="logs/${SIGNATURE}.log" \
             --wrap="CUDA_VISIBLE_DEVICES=0 python3 \
                 ./models/metric_learning/train.py \
-                    --data \"data/multi.tsv\" \
                     --lang ${LANG} \
                     --save-model-path \"computed/models/rnn_metric_learning_${FEATURES}_${LANG}.pt\" \
                     --number-thousands 10000 \

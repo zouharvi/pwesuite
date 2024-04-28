@@ -10,7 +10,6 @@ for LANG in 'en' 'am' 'bn' 'uz' 'pl' 'es' 'sw' 'fr' 'de' 'multi'; do
         --output="logs/${SIGNATURE}.log" \
         --wrap="\
             ./models/autoencoder/apply.py \
-                --data \"data/multi.tsv\" \
                 --lang ${LANG} \
                 --model-path \"computed/models/rnn_autoencoder_${FEATURES}_${LANG}.pt\" \
                 --features ${FEATURES} \

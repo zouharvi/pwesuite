@@ -79,12 +79,11 @@ def evaluate_rhyme(data_multi_all):
 
 if __name__ == "__main__":
     args = argparse.ArgumentParser()
-    args.add_argument("-d", "--data", default="data/multi.tsv")
     args.add_argument("-e", "--embd", default="computed/embd_bert.pkl")
     args = args.parse_args()
 
     data_embd = load_embd_data(args.embd)
-    data_multi_all = load_multi_data(args.data, purpose_key="all")
+    data_multi_all = load_multi_data(purpose_key="all")
 
     data_multi = [
         (*x, np.array(y)) for x, y in zip(data_multi_all, data_embd)

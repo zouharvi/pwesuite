@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 
+raise Exception("Deprecated")
 import csv
 
 with open("data/multi_0.tsv", "r") as f:

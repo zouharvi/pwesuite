@@ -78,14 +78,13 @@ def evaluate_analogy(data_multi, data_multi_analogies, jobs=20):
 
 if __name__ == "__main__":
     args = argparse.ArgumentParser()
-    args.add_argument("-d", "--data-multi", default="data/multi.tsv")
     args.add_argument(
         "-e", "--embd", default="computed/embd_rnn_metric_learning/panphon.pkl")
     args = args.parse_args()
 
     data_multi = load_multi_data(args.data_multi)
     data_multi_all = load_multi_data(
-        args.data_multi, purpose_key="all"
+        purpose_key="all"
     )
     data_embd = load_embd_data(args.embd)
 

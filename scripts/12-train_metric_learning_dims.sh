@@ -13,7 +13,6 @@ for FEATURES in "panphon"; do
             --output="logs/${SIGNATURE}.log" \
             --wrap="CUDA_VISIBLE_DEVICES=0 python3 \
                 ./models/metric_learning/train.py \
-                    --data \"data/multi.tsv\" \
                     --lang ${LANG} \
                     --save-model-path \"computed/models/dims/${DIMS}/rnn_metric_learning_${FEATURES}_${LANG}_s${SEED}.pt\" \
                     --number-thousands 200 \
@@ -32,7 +31,6 @@ done;
 # LANG=multi
 # python3 \
 #     ./models/metric_learning/train.py \
-#         --data "data/multi.tsv" \
 #         --lang ${LANG} \
 #         --save-model-path "computed/models/rnn_metric_learning_${FEATURES}_${LANG}.pt" \
 #         --number-thousands 200 \
@@ -49,7 +47,6 @@ done;
 #         --output="logs/${SIGNATURE}.log" \
 #         --wrap="CUDA_VISIBLE_DEVICES=0 python3 \
 #             ./models/metric_learning/train.py \
-#                 --data \"data/multi.tsv\" \
 #                 --lang ${LANG} \
 #                 --save-model-path \"computed/models/rnn_metric_learning_${FEATURES}_${LANG}.pt\" \
 #                 --number-thousands 12000 \

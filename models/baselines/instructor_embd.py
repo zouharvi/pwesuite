@@ -10,11 +10,10 @@ import tqdm
 BATCH_SIZE=500
 
 args = argparse.ArgumentParser()
-args.add_argument("-d", "--data", default="data/multi.tsv")
 args.add_argument("-o", "--output", default="computed/embd_baseline/instructor.pkl")
 args = args.parse_args()
 
-data = load_multi_data(args.data, purpose_key="all")
+data = load_multi_data(purpose_key="all")
 data = [x[0] for x in data]
 
 model = INSTRUCTOR('hkunlp/instructor-large').to(get_device())

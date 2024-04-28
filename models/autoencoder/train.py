@@ -7,7 +7,6 @@ from model import RNNAutoencoder
 from models.metric_learning.preprocessor import preprocess_dataset
 
 args = argparse.ArgumentParser()
-args.add_argument("-d", "--data", default="data/multi.tsv")
 args.add_argument("-l", "--lang", default="en")
 args.add_argument(
     "-smp", "--save-model-path",
@@ -27,7 +26,7 @@ args.add_argument("--dimension", type=int, default=300)
 args = args.parse_args()
 random.seed(0)
 
-data = preprocess_dataset(args.data, args.features, args.lang)
+data = preprocess_dataset(args.features, args.lang)
 data_dev = data[:1000]
 data = data[1000:]
 data_train = random.sample(

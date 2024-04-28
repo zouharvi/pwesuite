@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 
+raise Exception("Deprecated")
 import os
 import datasets
 import csv

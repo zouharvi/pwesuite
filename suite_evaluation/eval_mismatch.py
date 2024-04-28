@@ -2,7 +2,7 @@
 
 import argparse
 from main.utils import load_embd_data, load_multi_data, LANGS
-from eval_all import evaluate_all
+from .eval_all import evaluate_all
 import numpy as np
 import json
 import multiprocessing as mp
@@ -10,11 +10,10 @@ from itertools import product
 
 if __name__ == "__main__":
     args = argparse.ArgumentParser()
-    args.add_argument("-d", "--data-multi", default="data/multi.tsv")
     args.add_argument("-e", "--embd", default="computed/embd_rnn_metric_learning/panphon_fLANG.pkl")
     args = args.parse_args()
 
-    data_multi = load_multi_data(args.data_multi, purpose_key="all")
+    data_multi = load_multi_data(purpose_key="all")
     output_scores = {}
     output_all = {}
 

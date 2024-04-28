@@ -10,7 +10,6 @@ for FEATURES in "panphon" "tokenipa" "tokenort"; do
             --output="logs/${SIGNATURE}.log" \
             --wrap="CUDA_VISIBLE_DEVICES=0 python3 \
                 ./models/autoencoder/train.py \
-                    --data \"data/multi.tsv\" \
                     --lang ${LANG} \
                     --save-model-path \"computed/models/rnn_autoencoder_${FEATURES}_${LANG}.pt\" \
                     --number-thousands 200 \

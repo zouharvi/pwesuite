@@ -9,7 +9,6 @@ import pickle
 from preprocessor import preprocess_dataset
 
 args = argparse.ArgumentParser()
-args.add_argument("-d", "--data", default="data/multi.tsv")
 args.add_argument("-l", "--lang", default="en")
 args.add_argument(
     "-mp", "--model-path",
@@ -20,7 +19,7 @@ args.add_argument("--features", default="panphon")
 args.add_argument("--dimension", type=int, default=300)
 args = args.parse_args()
 
-data = preprocess_dataset(args.data, args.features, args.lang, purpose_key="all")
+data = preprocess_dataset(args.features, args.lang, purpose_key="all")
 BATCH_SIZE = 2000
 
 print(f"Loaded {len(data)} words")

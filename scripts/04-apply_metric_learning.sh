@@ -11,7 +11,6 @@ for LANG in 'en' 'am' 'bn' 'uz' 'pl' 'es' 'sw' 'fr' 'de' 'multi'; do
         --output="logs/${SIGNATURE}.log" \
         --wrap="\
             ./models/metric_learning/apply.py \
-                --data \"data/multi.tsv\" \
                 --lang ${LANG} \
                 --model-path \"computed/models/rnn_metric_learning_${FEATURES}_${LANG}.pt\" \
                 --features ${FEATURES} \
@@ -26,7 +25,6 @@ for LANG in 'en' 'am' 'bn' 'uz' 'pl' 'es' 'sw' 'fr' 'de' 'multi'; do
                 --output="logs/${SIGNATURE}.log" \
                 --wrap="\
                     ./models/metric_learning/apply.py \
-                        --data \"data/multi.tsv\" \
                         --lang ${LANG} \
                         --model-path \"computed/models/rnn_metric_learning_${FEATURES}_${LANGFROM}.pt\" \
                         --features ${FEATURES} \
