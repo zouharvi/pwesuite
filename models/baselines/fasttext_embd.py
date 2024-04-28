@@ -38,11 +38,11 @@ loaded_lang = None
 data_out = []
 
 for x in tqdm.tqdm(data):
-    if loaded_lang != x[2]:
-        loaded_lang = x[2]
-        model = get_model(x[2]) 
+    if loaded_lang != x["lang"]:
+        loaded_lang = x["lang"]
+        model = get_model(x["lang"]) 
 
-    vector = model.get_word_vector(x[0])
+    vector = model.get_word_vector(x["token_ort"])
     data_out.append(vector)
 
 # make sure dimensions fit

@@ -24,11 +24,11 @@ loaded_lang = None
 data_out = []
 
 for x in tqdm.tqdm(data):
-    if loaded_lang != x[2]:
-        loaded_lang = x[2]
-        model = get_model(x[2]) 
+    if loaded_lang != x["lang"]:
+        loaded_lang = x["lang"]
+        model = get_model(x["lang"]) 
 
-    vector = model.embed(x[0]).mean(axis=0)
+    vector = model.embed(x["token_ort"]).mean(axis=0)
     data_out.append(vector)
 
 # make sure dimensions fit

@@ -3,7 +3,6 @@ import multiprocess as mp
 from scipy.stats import pearsonr, spearmanr
 from sklearn.metrics.pairwise import cosine_distances, euclidean_distances
 import numpy as np
-import base64
 
 class Evaluator():
     def __init__(self, safe_eval=False):

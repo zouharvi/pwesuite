@@ -7,7 +7,7 @@ import random
 from collections import defaultdict
 from functools import lru_cache
 import tqdm
-from main.utils import load_multi_data_raw, LANGS
+from main.utils import load_multi_data, load_multi_data_raw, LANGS
 import panphon
 from main.ipa2arp import IPA2ARP
 from pathlib import Path

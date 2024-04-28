@@ -14,7 +14,7 @@ args.add_argument("-o", "--output", default="computed/embd_baseline/instructor.p
 args = args.parse_args()
 
 data = load_multi_data(purpose_key="all")
-data = [x[0] for x in data]
+data = [x["token_ort"] for x in data]
 
 model = INSTRUCTOR('hkunlp/instructor-large').to(get_device())
 instruction = "Represent the word for sound similarity retrieval:"

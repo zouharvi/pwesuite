@@ -15,7 +15,7 @@ args.add_argument("-o", "--output", default="computed/embd_baseline/bert.pkl")
 args = args.parse_args()
 
 data = load_multi_data(purpose_key="all")
-data = [x[0] for x in data]
+data = [x["token_ort"] for x in data]
 
 model = pipeline(
     'feature-extraction',

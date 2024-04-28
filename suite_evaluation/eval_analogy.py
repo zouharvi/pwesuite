@@ -7,8 +7,8 @@ from main.utils import load_embd_data, load_multi_data, LANGS
 from create_dataset.add_analogies import get_analogies
 
 
-def evaluate_analogy_single_lang(data_local, data_local_analogies, lang):
-    analogies = get_analogies(data_local, lang)
+def evaluate_analogy_single_lang(data_multi, data_local_analogies, lang):
+    analogies = get_analogies(data_multi, lang)
 
     ipa_to_i = {x["token_ipa"]: i for i, (x, embd) in enumerate(data_local_analogies)}
     embd_all = [embd for x, embd in data_local_analogies]
@@ -62,8 +62,6 @@ def evaluate_analogy(data_multi, data_multi_analogies, jobs=20):
             x for x in data_multi
             if x["lang"] == lang
         ]
-        if len(data_local) == 0:
-            continue
         data_local_analogies = [
             (x, embd) for x, embd in data_multi_analogies
             if x["lang"] == lang
@@ -82,7 +80,7 @@ if __name__ == "__main__":
         "-e", "--embd", default="computed/embd_rnn_metric_learning/panphon.pkl")
     args = args.parse_args()
 
-    data_multi = load_multi_data()
+    data_multi = load_multi_data(purpose_key="main")
     data_multi_all = load_multi_data(purpose_key="all")
     data_embd = load_embd_data(args.embd)
 

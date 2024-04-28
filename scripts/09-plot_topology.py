@@ -61,7 +61,7 @@ else:
     data = [
         (x, y)
         for x, y in zip(data_multi, zip(data_embd_1, data_embd_2, data_embd_3))
-        if x[2] == "en"
+        if x["lang"] == "en"
     ]
     pickle.dump(data, open(CACHE_PATH, "wb"))
 
@@ -73,7 +73,7 @@ def _compute_panphon_distance(y, data):
     fed = panphon2.FeatureTable().feature_edit_distance
     return [fed(tok_ipa, y) for tok_ipa in data]
 
-data_ipa = [x[1] for x, y in data]
+data_ipa = [x["token_ipa"] for x, y in data]
 with mp.Pool() as pool:
     data_dists_fed = list(pool.map(
         lambda y: (

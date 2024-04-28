@@ -50,7 +50,10 @@ def evaluate_all(data_multi_all, data_embd, lang="all", jobs=20):
         (x, y) for x, y in zip(data_multi_all, data_embd)
         if x["purpose"] == "analogy"
     ]
-    output = evaluate_analogy(data_multi, data_multi_analogy)
+    output = evaluate_analogy(
+        [x for x, embd in data_multi],
+        data_multi_analogy
+    )
     scores_all["analogy"] = output["all"]
 
     print("Rhyme")
