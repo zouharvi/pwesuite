@@ -29,11 +29,11 @@ data = load_multi_data(purpose_key="all")
 def process_one_lang(lang):
     all_features = Counter()
     entries = list()
-    data_local = [x for x in data if x[2] == lang]
+    data_local = [x for x in data if x["lang"] == lang]
 
     for line in tqdm.tqdm(data_local):
-        word = line[0]
-        phones = line[4].split()
+        word = line["token_ort"]
+        phones = line["token_arp"].split()
         if not phones:
             # fall back to automatic conversion for words that are not in CMU arpabet
             # this is true for some English and all non-English words

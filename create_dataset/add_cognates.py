@@ -58,10 +58,15 @@ def get_closest_distractor(word, word_trans, ban_concept, ban_lang, data_cognate
 
 
 def get_cognates():
+    from urllib.request import urlretrieve
     CACHE_PATH = f"data/cache/cognates.pkl"
     if os.path.exists(CACHE_PATH):
         with open(CACHE_PATH, "rb") as f:
             return pickle.load(f)
+
+    if not os.path.exists("data/raw/CogNet-v0.tsv"):
+        os.makedirs("data/raw", exist_ok=True)
+        urlretrieve("https://raw.githubusercontent.com/kbatsuren/CogNet/master/CogNet-v0.tsv", "data/raw/CogNet-v0.tsv")
 
     with open("data/raw/CogNet-v0.tsv", "r") as f:
         data_cognates_raw = [

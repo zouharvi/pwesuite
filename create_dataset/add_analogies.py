@@ -7,7 +7,7 @@ import random
 from collections import defaultdict
 from functools import lru_cache
 import tqdm
-from main.utils import load_multi_data, LANGS
+from main.utils import load_multi_data_raw, LANGS
 import panphon
 from main.ipa2arp import IPA2ARP
 from pathlib import Path
@@ -41,10 +41,10 @@ class PhonemeAnalogy:
         # TODO: paralelize
         for token_i in range(len(self.all_tokens)):
             token = self.all_tokens[token_i]
-            char_orths = token[0]
-            char_ipas = ft.ipa_segs(token[1])
+            char_orths = token["token_ort"]
+            char_ipas = ft.ipa_segs(token["token_ipa"])
             # store orth and ipa segments
-            self.all_tokens[token_i] = (token[0], char_ipas)
+            self.all_tokens[token_i] = (token["token_ort"], char_ipas)
             if len(char_orths) != len(char_ipas):
                 continue
             for char_orth, char_ipa in zip(char_orths, char_ipas):
@@ -200,7 +200,7 @@ def get_analogies(data, lang):
 
 
 if __name__ == '__main__':
-    data = load_multi_data(path="data/multi_0.tsv")
+    data = load_multi_data_raw(path="data/multi_0.tsv")
     data_analogies = []
 
     for lang in LANGS:

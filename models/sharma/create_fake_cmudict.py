@@ -47,10 +47,10 @@ def normalize_arp(txt):
 for lang in LANGS + ["multi"]:
     print(lang)
     data_local = [
-        x for x in data if x[2] == lang
+        x for x in data if x["lang"] == lang
     ]
     data_local = [
-        x[0].upper().replace(" ", "-") + "  " + normalize_arp(x[4])
+        x["token_ort"].upper().replace(" ", "-") + "  " + normalize_arp(x["token_arp"])
         for x in data_local
     ]
     with open(f"data/tmp/cmu_{lang}.txt", "w") as f:

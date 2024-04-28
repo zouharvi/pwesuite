@@ -41,7 +41,7 @@ data_out = []
 
 # TODO: multiprocess?
 for line in tqdm.tqdm(data):
-    phones = "".join([c for c in line[4].lower() if c.isalpha() or c==" "]).split()
+    phones = "".join([c for c in line["token_arp"].lower() if c.isalpha() or c==" "]).split()
     if not phones:
         # fall back to automatic conversion for words that are not in CMU arpabet
         # this is true for some English and all non-English words

@@ -10,9 +10,9 @@ from create_dataset.add_cognates import get_cognates
 def evaluate_cognate(data_multi_all):
     data_multi = [
         # embd, token_ort, token_ipa, token_pron
-        (x[5], x[0], x[1], x[4]) for x in data_multi_all
-        # we have pronunciation information only for English
-        if x[2] == "multi"
+        (embd, x["token_ort"], x["token_ipa"], x["token_arp"]) for x, embd in data_multi_all
+        # we have pronunciation information only for English but multi is a special fake lang
+        if x["lang"] == "multi"
     ]
 
     word2embd = {x[1]:x[0] for x in data_multi}
@@ -60,7 +60,7 @@ if __name__ == "__main__":
     data_multi_all = load_multi_data(purpose_key="all")
 
     data_multi = [
-        (*x, np.array(y)) for x, y in zip(data_multi_all, data_embd)
+        (x, np.array(y)) for x, y in zip(data_multi_all, data_embd)
     ]
 
     output = evaluate_cognate(data_multi)

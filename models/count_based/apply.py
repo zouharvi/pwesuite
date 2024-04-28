@@ -22,11 +22,11 @@ ft = panphon.FeatureTable()
 
 def process_one_lang(lang):
     if args.features == "tokenort":
-        data_local = [" ".join(x[0]) for x in data if x[2] == lang]
+        data_local = [" ".join(x["token_ort"]) for x in data if x["lang"] == lang]
     elif args.features == "tokenipa":
         data_local = [
-            " ".join(ft.ipa_segs(x[1]))
-            for x in data if x[2] == lang
+            " ".join(ft.ipa_segs(x["token_ipa"]))
+            for x in data if x["lang"] == lang
         ]
 
     vectorizer_args = {

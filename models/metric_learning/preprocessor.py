@@ -10,7 +10,7 @@ def preprocess_dataset(data, features, lang, purpose_key="all"):
     data_all = data
     data = [
         x for x in data
-        if lang == "all" or x[2] == lang
+        if lang == "all" or x["lang"] == lang
     ]
     if features == "panphon":
         return preprocess_dataset_panphon(data)

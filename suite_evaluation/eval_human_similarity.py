@@ -11,8 +11,8 @@ import collections
 
 def evaluate_human_similarity(data_multi_hs):
     tok_to_embd = {}
-    for (token_ort, token_ipa, lang, pronunciation, purpose, embd) in data_multi_hs:
-        tok_to_embd[token_ort] = embd
+    for (x, embd) in data_multi_hs:
+        tok_to_embd[x["token_ort"]] = embd
 
     with open("data/human_similarity.csv", "r") as f:
         data_hs = list(csv.DictReader(f))
@@ -70,8 +70,8 @@ if __name__ == "__main__":
     data_multi_all = load_multi_data(purpose_key="all")
 
     data_multi = [
-        (*x, np.array(y)) for x, y in zip(data_multi_all, data_embd)
-        if x[3] == "human_similarity"
+        (x, np.array(y)) for x, y in zip(data_multi_all, data_embd)
+        if x["purpose"] == "human_similarity"
     ]
 
     output = evaluate_human_similarity(data_multi)

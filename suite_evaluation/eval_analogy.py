@@ -10,16 +10,16 @@ from create_dataset.add_analogies import get_analogies
 def evaluate_analogy_single_lang(data_local, data_local_analogies, lang):
     analogies = get_analogies(data_local, lang)
 
-    ipa_to_i = {x[1]: i for i, x in enumerate(data_local_analogies)}
-    embd_all = [x[5] for x in data_local_analogies]
+    ipa_to_i = {x["token_ipa"]: i for i, (x, embd) in enumerate(data_local_analogies)}
+    embd_all = [embd for x, embd in data_local_analogies]
 
     analogies_embd_indicies = []
     for analogy in analogies:
         if all([w[1] in ipa_to_i for w in analogy]):
             # 0 is ort, 1 is ipa
-            embd_a = data_local_analogies[ipa_to_i[analogy[0][1]]][5]
-            embd_b = data_local_analogies[ipa_to_i[analogy[1][1]]][5]
-            embd_c = data_local_analogies[ipa_to_i[analogy[2][1]]][5]
+            embd_a = data_local_analogies[ipa_to_i[analogy[0][1]]][1]
+            embd_b = data_local_analogies[ipa_to_i[analogy[1][1]]][1]
+            embd_c = data_local_analogies[ipa_to_i[analogy[2][1]]][1]
             embd_d = embd_b - embd_a + embd_c
             analogies_embd_indicies.append((ipa_to_i[analogy[3][1]], embd_d))
 
@@ -60,13 +60,13 @@ def evaluate_analogy(data_multi, data_multi_analogies, jobs=20):
     for lang in LANGS:
         data_local = [
             x for x in data_multi
-            if x[2] == lang
+            if x["lang"] == lang
         ]
         if len(data_local) == 0:
             continue
         data_local_analogies = [
-            x for x in data_multi_analogies
-            if x[2] == lang
+            (x, embd) for x, embd in data_multi_analogies
+            if x["lang"] == lang
         ]
         output[lang] = evaluate_analogy_single_lang(
             data_local, data_local_analogies, lang
@@ -82,17 +82,15 @@ if __name__ == "__main__":
         "-e", "--embd", default="computed/embd_rnn_metric_learning/panphon.pkl")
     args = args.parse_args()
 
-    data_multi = load_multi_data(args.data_multi)
-    data_multi_all = load_multi_data(
-        purpose_key="all"
-    )
+    data_multi = load_multi_data()
+    data_multi_all = load_multi_data(purpose_key="all")
     data_embd = load_embd_data(args.embd)
 
     assert len(data_multi_all) == len(data_embd)
 
     data_multi_all = [
-        (*x, np.array(y)) for x, y in zip(data_multi_all, data_embd)
-        if x[3] == "analogy"
+        (x, np.array(y)) for x, y in zip(data_multi_all, data_embd)
+        if x["purpose"] == "analogy"
     ]
 
     output = evaluate_analogy(data_multi, data_multi_all)

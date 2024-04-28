@@ -15,18 +15,18 @@ import numpy as np
 def evaluate_all(data_multi_all, data_embd, lang="all", jobs=20):
     scores_all = {}
     data_multi = [
-        (*x, y) for x, y in zip(data_multi_all, data_embd)
-        if x[3] == "main"
+        (x, y) for x, y in zip(data_multi_all, data_embd)
+        if x["purpose"] == "main"
     ]
     data_multi_all_all = [
-        (*x, y) for x, y in zip(data_multi_all, data_embd)
+        (x, y) for x, y in zip(data_multi_all, data_embd)
     ]
 
     print("Human similarity")
     # currently only English is supported
     data_multi_hs = [
-        (*x, y) for x, y in zip(data_multi_all, data_embd)
-        if x[3] == "human_similarity"
+        (x, y) for x, y in zip(data_multi_all, data_embd)
+        if x["purpose"] == "human_similarity"
     ]
     output = evaluate_human_similarity(data_multi_hs)
     scores_all["human_similarity"] = max(
@@ -47,8 +47,8 @@ def evaluate_all(data_multi_all, data_embd, lang="all", jobs=20):
 
     print("Sound analogies")
     data_multi_analogy = [
-        (*x, y) for x, y in zip(data_multi_all, data_embd)
-        if x[3] == "analogy"
+        (x, y) for x, y in zip(data_multi_all, data_embd)
+        if x["purpose"] == "analogy"
     ]
     output = evaluate_analogy(data_multi, data_multi_analogy)
     scores_all["analogy"] = output["all"]

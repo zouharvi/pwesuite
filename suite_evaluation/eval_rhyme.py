@@ -15,19 +15,19 @@ def evaluate_rhyme(data_multi_all):
     # token_ort, token_ipa, lang, purpose, token_pron, embd
     data_multi = [
         # embd, token_ort, token_ipa, token_pron
-        (x[5], x[0], x[1], x[4]) for x in data_multi_all
+        (embd, x["token_ort"], x["token_ipa"], x["token_arp"]) for x, embd in data_multi_all
         # we have pronunciation information only for English
-        if x[2] == "en"
+        if x["lang"] == "en"
     ]
 
     RE_LAST_STRESSED = re.compile(r".* ([\w]+1.*)")
     rhyme_clusters = collections.defaultdict(list)
 
     # rules for determining what's a ryme and not
-    for embd, token_ort, token_ipa, pronunc in tqdm.tqdm(data_multi):
-        if "1" not in pronunc:
+    for embd, token_ort, token_ipa, token_arp in tqdm.tqdm(data_multi):
+        if "1" not in token_arp:
             continue
-        rhyme_part = RE_LAST_STRESSED.match(" " + pronunc).group(1)
+        rhyme_part = RE_LAST_STRESSED.match(" " + token_arp).group(1)
 
         # all the embeddings within one cluster should rhyme
         # TODO: change this to different rhyme patterns
@@ -86,8 +86,8 @@ if __name__ == "__main__":
     data_multi_all = load_multi_data(purpose_key="all")
 
     data_multi = [
-        (*x, np.array(y)) for x, y in zip(data_multi_all, data_embd)
-        if x[3] == "main"
+        (x, np.array(y)) for x, y in zip(data_multi_all, data_embd)
+        if x["purpose"] == "main"
     ]
 
     output = evaluate_rhyme(data_multi)
