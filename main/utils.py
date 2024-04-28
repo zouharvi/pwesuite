@@ -59,10 +59,9 @@ def load_embd_data(path):
         import pickle
         with open(path, "rb") as f:
             data = pickle.load(f)
-    elif path.endswith(".npz"):
+    elif path.endswith(".npz") or path.endswith(".npy"):
         import numpy as np
-        with open(path, "rb") as f:
-            data = np.load(f)
+        data = np.load(path, allow_pickle=True)
     else:
         raise Exception("Unknown file suffix: " + path)
 
