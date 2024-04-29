@@ -71,3 +71,8 @@ The metric learner uses bidirectional LSTM with 2 layers, hidden state size of 1
 The batch size is 128 and the learning rate is 0.01.
 The autoencoder follows the same hyperparameters both for the encoder and decoder.
 The difference is its learning size, 0.005, which was chosen empirically.
+
+## YouTube Presentation
+
+
+[![Paper video presentation](https://img.youtube.com/vi/XJ9bAPaJlyc/maxresdefault.jpg)](https://www.youtube.com/watch?v=XJ9bAPaJlyc)
