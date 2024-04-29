@@ -6,9 +6,13 @@ Watch [12-minute introduction to PWESuite](https://www.youtube.com/watch?v=XJ9bA
 
 > **Abstract:** Mapping words into a fixed-dimensional vector space is the backbone of modern NLP. While most word embedding methods successfully encode semantic information, they overlook phonetic information that is crucial for many tasks. We develop three methods that use articulatory features to build phonetically informed word embeddings. To address the inconsistent evaluation of existing phonetic word embedding methods, we also contribute a task suite to fairly evaluate past, current, and future methods. We evaluate both (1) intrinsic aspects of phonetic word embeddings, such as word retrieval and correlation with sound similarity, and (2) extrinsic performance on tasks such as rhyme and cognate detection and sound analogies. We hope our task suite will promote reproducibility and inspire future phonetic embedding research.
 
-<p align="center">
+
+
+[<img src="https://img.youtube.com/vi/XJ9bAPaJlyc/maxresdefault.jpg" width=600px>](https://www.youtube.com/watch?v=XJ9bAPaJlyc)
+
+<!--p align="center">
   <img src="https://github.com/zouharvi/pwesuite/assets/7661193/e8db7af0-cccf-425a-8a3c-4f260d5abab7" width="500em">
-</p>
+</p-->
 
 
 The suite contains the following tasks:
@@ -72,8 +76,3 @@ The metric learner uses bidirectional LSTM with 2 layers, hidden state size of 1
 The batch size is 128 and the learning rate is 0.01.
 The autoencoder follows the same hyperparameters both for the encoder and decoder.
 The difference is its learning size, 0.005, which was chosen empirically.
-
-## YouTube Presentation
-
-[<img src="https://img.youtube.com/vi/XJ9bAPaJlyc/maxresdefault.jpg" width=400px>](https://www.youtube.com/watch?v=XJ9bAPaJlyc)
-
