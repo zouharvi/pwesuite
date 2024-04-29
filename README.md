@@ -74,5 +74,5 @@ The difference is its learning size, 0.005, which was chosen empirically.
 
 ## YouTube Presentation
 
+[<img src="https://img.youtube.com/vi/XJ9bAPaJlyc/maxresdefault.jpg" width=400px>](https://www.youtube.com/watch?v=XJ9bAPaJlyc)
 
-[![Paper video presentation](https://img.youtube.com/vi/XJ9bAPaJlyc/maxresdefault.jpg)](https://www.youtube.com/watch?v=XJ9bAPaJlyc)
