@@ -14,7 +14,6 @@ Watch [12-minute introduction to PWESuite](https://www.youtube.com/watch?v=XJ9bA
   <img src="https://github.com/zouharvi/pwesuite/assets/7661193/e8db7af0-cccf-425a-8a3c-4f260d5abab7" width="500em">
 </p-->
 
-
 The suite contains the following tasks:
 - Correlation with human sound similarity judgement
 - Correlation with articulatory distance
@@ -76,3 +75,6 @@ The metric learner uses bidirectional LSTM with 2 layers, hidden state size of 1
 The batch size is 128 and the learning rate is 0.01.
 The autoencoder follows the same hyperparameters both for the encoder and decoder.
 The difference is its learning size, 0.005, which was chosen empirically.
+
+
+![poster](https://github.com/zouharvi/pwesuite/assets/7661193/e2539886-30b1-4fbd-b768-ec3a61dfa1ce)
