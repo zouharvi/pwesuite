@@ -3,7 +3,7 @@
 import os
 import pickle
 import tqdm
-from main.utils import load_multi_data, LANGS, UNK_SYMBOL
+from main.utils import load_multi_data_raw, UNK_SYMBOL
 import panphon
 import epitran
 from main.ipa2arp import IPA2ARP
@@ -105,9 +105,6 @@ def get_cognates():
                 "word": distractor[2],
             }
         ))
-        # print(data_cognates[-1])
-        # if len(data_cognates) == 100:
-        #     exit()
 
     with open(CACHE_PATH, "wb") as f:
         pickle.dump(data_cognates, f)
@@ -119,9 +116,10 @@ def get_cognates():
 
 if __name__ == '__main__':
     data_cognates = get_cognates()
-    data = load_multi_data(path="data/multi_2.tsv", purpose_key="all")
+    data = load_multi_data_raw(path="data/multi_2.tsv", purpose_key="all")
 
-    vocab_ipa_multi = set(open("data/vocab/ipa_multi.txt").read().split())
+    vocab_ipa = set(open("data/vocab/ipa_multi.txt").read().split())
+    vocab_ort = set(open("data/vocab/ort_multi.txt").read().split())
 
     seen_words = set()
     data_cog = []
@@ -133,23 +131,23 @@ if __name__ == '__main__':
             seen_words.add(word["word"])
 
             epi = lang2epi[word["lang"]]
-            segments = ft.ipa_segs(epi.transliterate(word["word"]))
-            segments = [
-                s if s in vocab_ipa_multi else UNK_SYMBOL for s in segments]
-            token_ipa = ''.join(segments)
+            token_ipa_raw = ft.ipa_segs(epi.transliterate(word["word"]))
+            token_ipa = ''.join([
+                s if s in vocab_ipa else UNK_SYMBOL
+                for s in token_ipa_raw
+            ])
 
             data_cog.append((
-                word["word"],
+                "".join([c if c in vocab_ort else UNK_SYMBOL for c in word["word"]]),
                 token_ipa,
                 # set to special "multi" language
                 "multi",
-                # lang2lang[word["lang"]],
                 "cognates",
-                " ".join(ipa2arp(token_ipa)),
+                " ".join(ipa2arp("".join(token_ipa_raw))),
             ))
 
     # no need to sort by languages here because we're adding a new one, "multi"
-    with open("data/multi.tsv", "w") as f:
+    with open("data/multi_3.tsv", "w") as f:
         for line in data:
             f.write("\t".join(line) + "\n")
         for line in data_cog:

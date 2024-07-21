@@ -16,38 +16,24 @@ ipa2arp = IPA2ARP().convert
 ft = panphon.FeatureTable()
 FEATURE_NAMES = ft.fts('a').names
 
-'''
-Example command: 
-python ./data/analogies/generate_analogies.py --lang_codes uz \
---vocab_file data/vocab_uz.txt --output_file data/analogies/uz100_2.txt \
---num_analogies 100 --num_perturbations 2
-'''
-
-# parser.add_argument('--num_analogies', type=int, help='size of the resulting analogy dataset')
-# parser.add_argument('--num_perturbations', type=int,
-#     help='number phonemes to perturb. '
-#     'eg. sik : zik <=> ʂik : ʐik is one perturbation,'
-#     '    sik : zix <=> ʂic : ʐiç is two perturbations.'
-# )
-
-
 class PhonemeAnalogy:
     def __init__(self, symbols, tokens):
         self.single_perturbation_pairs = self.find_single_perturbation_pairs(
-            symbols)
+            symbols
+        )
         self.all_tokens = tokens
         self.ipa_to_char = collections.defaultdict(list)
 
         # TODO: paralelize
         for token_i in range(len(self.all_tokens)):
             token = self.all_tokens[token_i]
-            char_orths = token["token_ort"]
-            char_ipas = ft.ipa_segs(token["token_ipa"])
+            token_ort = token[0]
+            token_ipa = ft.ipa_segs(token[1])
             # store orth and ipa segments
-            self.all_tokens[token_i] = (token["token_ort"], char_ipas)
-            if len(char_orths) != len(char_ipas):
+            self.all_tokens[token_i] = (token_ort, token_ipa)
+            if len(token_ort) != len(token_ipa):
                 continue
-            for char_orth, char_ipa in zip(char_orths, char_ipas):
+            for char_orth, char_ipa in zip(token_ort, token_ipa):
                 self.ipa_to_char[char_ipa] = char_orth
 
         self.random = random.Random(0)
@@ -205,12 +191,13 @@ if __name__ == '__main__':
 
     for lang in LANGS:
         data_local = [x for x in data if x[2] == lang]
-        print(lang, "prev", len(data_local))
+        print(lang, "previously", len(data_local))
         # this will run it across all languages
         output = get_analogies(data_local, lang)
         for analogy in output:
             # append only IPA
             for token_ort, token_ipa in analogy:
+                print(token_ipa, " ".join(ipa2arp(token_ipa)))
                 data_analogies.append((
                     token_ort, token_ipa, lang, "analogy", " ".join(ipa2arp(token_ipa))
                 ))

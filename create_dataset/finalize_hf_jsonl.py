@@ -1,6 +1,6 @@
 import json
 
-data = [line.rstrip().split("\t") for line in open("data/multi.tsv", "r")]
+data = [line.rstrip().split("\t") for line in open("data/multi_3.tsv", "r")]
 
 with open("data/train.jsonl", "w") as f:
     f.write("\n".join([json.dumps({
