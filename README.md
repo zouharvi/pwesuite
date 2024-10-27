@@ -45,7 +45,7 @@ The loader will automatically parse the file and check that the dimensions are c
 After this, you are all set to run all the evaluations using `./suite_evaluation/eval_all.py --embd your_embd.pkl`.
 Alternatively, you can invoke individual tasks: `./suite_evaluation/eval_{correlations,human_similarity,retrieval,analogy,rhyme,cognate}.py`.
 
-For a demo, see [this Jupyter notebook](meta/demo.ipynb).
+For a demo, see [this Jupyter notebook](demo.ipynb).
 
 ## Misc
 
