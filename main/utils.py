@@ -47,9 +47,23 @@ def load_analogies_data(lang):
 
     data_analogies = collections.defaultdict(lambda: ["", "", "", ""])
     for x in data:
-        analogy_index, word_index = x["analogy_index"].split("_")
+        analogy_index, word_index = x["extra_index"].split("_")
         data_analogies[int(analogy_index)][int(word_index)] = (x["token_ort"], x["token_ipa"], x["token_arp"])
     return list(data_analogies.values())
+
+
+def load_cognates_data():
+    print("Loading cognates data")
+    import datasets
+    import collections
+    data = datasets.load_dataset("zouharvi/pwesuite-eval", split="train")
+    data = [x for x in data if x["lang"] == "multi" and x["purpose"] == "cognate"]
+
+    data_cognates = collections.defaultdict(lambda: ["", "", ""])
+    for x in data:
+        analogy_index, word_index = x["extra_index"].split("_")
+        data_cognates[int(analogy_index)][int(word_index)] = (x["token_ort"], x["token_ipa"], x["token_arp"])
+    return list(data_cognates.values())
 
 def load_multi_data(purpose_key="main"):
     print("Loading multi data")

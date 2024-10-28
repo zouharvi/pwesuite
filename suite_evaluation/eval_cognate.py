@@ -2,10 +2,9 @@
 
 import numpy as np
 import argparse
-from main.utils import load_multi_data, load_embd_data
+from main.utils import load_multi_data, load_embd_data, load_cognates_data
 from sklearn.neural_network import MLPClassifier
 from sklearn.model_selection import train_test_split
-from create_dataset.add_cognates import get_cognates
 
 def evaluate_cognate(data_multi_all):
     data_multi = [
@@ -15,16 +14,21 @@ def evaluate_cognate(data_multi_all):
         if x["lang"] == "multi"
     ]
 
+    # map ort to embd
     word2embd = {x[1]:x[0] for x in data_multi}
-    cognates = get_cognates()
+    cognates = load_cognates_data()
 
     data_task = []
 
     for w1, w_pos, w_neg in cognates:
         # make sure everything is numpy
-        embd1 = np.array(word2embd[w1["word"]])
-        embd2 = np.array(word2embd[w_pos["word"]])
-        embd3 = np.array(word2embd[w_neg["word"]])
+
+        # w1 is (token_ort, token_ipa, token_arp)
+        # w1_pos is (token_ort, token_ipa, token_arp)
+        # w1_neg is (token_ort, token_ipa, token_arp)
+        embd1 = np.array(word2embd[w1[0]])
+        embd2 = np.array(word2embd[w_pos[0]])
+        embd3 = np.array(word2embd[w_neg[0]])
 
         data_task.append((np.concatenate((embd1, embd2)), True))
         data_task.append((np.concatenate((embd1, embd3)), False))

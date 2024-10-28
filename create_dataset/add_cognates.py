@@ -56,17 +56,10 @@ def get_closest_distractor(word, word_trans, ban_concept, ban_lang, data_cognate
     distractor = max(data_cognates_flat, key=modified_lev)
     return distractor
 
-
-def get_cognates():
+def generate_cognates():
     from urllib.request import urlretrieve
-    CACHE_PATH = f"data/cache/cognates.pkl"
-    if os.path.exists(CACHE_PATH):
-        with open(CACHE_PATH, "rb") as f:
-            return pickle.load(f)
-
-    if not os.path.exists("data/raw/CogNet-v0.tsv"):
-        os.makedirs("data/raw", exist_ok=True)
-        urlretrieve("https://raw.githubusercontent.com/kbatsuren/CogNet/master/CogNet-v0.tsv", "data/raw/CogNet-v0.tsv")
+    os.makedirs("data/raw", exist_ok=True)
+    urlretrieve("https://raw.githubusercontent.com/kbatsuren/CogNet/master/CogNet-v0.tsv", "data/raw/CogNet-v0.tsv")
 
     with open("data/raw/CogNet-v0.tsv", "r") as f:
         data_cognates_raw = [
@@ -91,7 +84,9 @@ def get_cognates():
         if word1 == word2:
             continue
         distractor = get_closest_distractor(
-            word1, translit1, concept, lang1, data_cognates_flat)
+            word1, translit1, concept,
+            lang1, data_cognates_flat
+        )
         data_cognates.append((
             {
                 "lang": lang1,
@@ -106,16 +101,13 @@ def get_cognates():
             }
         ))
 
-    with open(CACHE_PATH, "wb") as f:
-        pickle.dump(data_cognates, f)
-
     print("Got", len(data_cognates), "cognates")
 
     return data_cognates
 
 
 if __name__ == '__main__':
-    data_cognates = get_cognates()
+    data_cognates = generate_cognates()
     data = load_multi_data_raw(path="data/multi_2.tsv", purpose_key="all")
 
     vocab_ipa = set(open("data/vocab/ipa_multi.txt").read().split())
@@ -123,11 +115,11 @@ if __name__ == '__main__':
 
     seen_words = set()
     data_cog = []
-    for word1, word_pos, word_neg in data_cognates:
-        for word in [word1, word_pos, word_neg]:
+    for cognate_i, (word1, word_pos, word_neg) in enumerate(data_cognates):
+        if word1["word"] in seen_words:
+            continue
+        for word_i, word in enumerate([word1, word_pos, word_neg]):
             # update duplicates check
-            if word["word"] in seen_words:
-                continue
             seen_words.add(word["word"])
 
             epi = lang2epi[word["lang"]]
@@ -142,7 +134,7 @@ if __name__ == '__main__':
                 token_ipa,
                 # set to special "multi" language
                 "multi",
-                "cognates",
+                f"cognate_{cognate_i}_{word_i}",
                 " ".join(ipa2arp("".join(token_ipa_raw))),
             ))
 
