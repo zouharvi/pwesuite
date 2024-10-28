@@ -51,7 +51,6 @@ def evaluate_all(data_multi_all, data_embd, lang="all", jobs=20):
         if x["purpose"] == "analogy"
     ]
     output = evaluate_analogy(
-        [x for x, embd in data_multi],
         data_multi_analogy
     )
     scores_all["analogy"] = output["all"]
