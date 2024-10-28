@@ -38,10 +38,23 @@ def load_multi_data_raw(path="data/multi.tsv", purpose_key="main"):
     return data
 
 
-def load_multi_data(purpose_key="main"):
-    print("Loading data")
+def load_analogies_data(lang):
+    print("Loading analogies data")
     import datasets
+    import collections
     data = datasets.load_dataset("zouharvi/pwesuite-eval", split="train")
+    data = [x for x in data if x["lang"] == lang and x["purpose"] == "analogy"]
+
+    data_analogies = collections.defaultdict(lambda: ["", "", "", ""])
+    for x in data:
+        analogy_index, word_index = x["analogy_index"].split("_")
+        data_analogies[int(analogy_index)][int(word_index)] = (x["token_ort"], x["token_ipa"], x["token_arp"])
+    return list(data_analogies.values())
+
+def load_multi_data(purpose_key="main"):
+    print("Loading multi data")
+    import datasets
+    data = datasets.load_dataset("zouharvi/pwesuite-eval", split="train", download_mode='force_redownload')
 
     if purpose_key == "all":
         return list(data)
@@ -52,7 +65,6 @@ def load_multi_data(purpose_key="main"):
             if x["purpose"] == purpose_key
         ]
     return data
-
 
 def load_embd_data(path):
     if path.endswith(".pkl") or path.endswith(".pickle"):

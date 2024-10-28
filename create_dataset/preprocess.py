@@ -148,6 +148,7 @@ def process_en():
                 segments = ft.ipa_segs(ipa)
 
                 vocab_ipa.update(segments)
+
                 if segments and token in cmu_pronunciation:
                     pronunciation = cmu_pronunciation[token]
                     token = token.lower()

@@ -1,16 +1,15 @@
 #!/usr/bin/env python3
 
 import collections
-import os
-import pickle
+import copy
+import json
 import random
 from collections import defaultdict
 from functools import lru_cache
 import tqdm
-from main.utils import load_multi_data, load_multi_data_raw, LANGS
+from main.utils import load_multi_data_raw, LANGS
 import panphon
 from main.ipa2arp import IPA2ARP
-from pathlib import Path
 
 ipa2arp = IPA2ARP().convert
 ft = panphon.FeatureTable()
@@ -28,7 +27,7 @@ class PhonemeAnalogy:
         for token_i in range(len(self.all_tokens)):
             token = self.all_tokens[token_i]
             token_ort = token[0]
-            token_ipa = ft.ipa_segs(token[1])
+            token_ipa = token[1]
             # store orth and ipa segments
             self.all_tokens[token_i] = (token_ort, token_ipa)
             if len(token_ort) != len(token_ipa):
@@ -79,7 +78,7 @@ class PhonemeAnalogy:
         if len(w1_orth) != len(w1_segs):
             return None
 
-        w2_segs, w3_segs, w4_segs = w1_segs.copy(), w1_segs.copy(), w1_segs.copy()
+        w2_segs, w3_segs, w4_segs = copy.deepcopy(list(w1_segs)), copy.deepcopy(list(w1_segs)), copy.deepcopy(list(w1_segs))
 
         phoneme_idx_perturbed = set()
         for pi in range(num_perturbations):
@@ -158,18 +157,10 @@ class PhonemeAnalogy:
         return edges
 
 
-def get_analogies(data, lang):
-    os.makedirs("data/cache/", exist_ok=True)
-
-    CACHE_PATH = f"data/cache/analogies_{lang}.pkl"
-    if os.path.exists(CACHE_PATH):
-        with open(CACHE_PATH, "rb") as f:
-            return pickle.load(f)
-
+def generate_analogies(data):
+    output = []
     with open(f"data/vocab/ipa_multi.txt") as f:
         vocab_ipa_multi = f.read().split()
-
-    output = []
 
     analogy_model = PhonemeAnalogy(
         vocab_ipa_multi, data,
@@ -178,33 +169,28 @@ def get_analogies(data, lang):
         analogies = analogy_model.run(100, num_perturbations=num_perturbations)
         output += analogies
 
-    Path("data/cache").mkdir(exist_ok=True)
-    with open(CACHE_PATH, "wb") as f:
-        pickle.dump(output, f)
-
     return output
-
 
 if __name__ == '__main__':
     data = load_multi_data_raw(path="data/multi_0.tsv")
-    data_analogies = []
+    data_flat = []
 
     for lang in LANGS:
         data_local = [x for x in data if x[2] == lang]
         print(lang, "previously", len(data_local))
         # this will run it across all languages
-        output = get_analogies(data_local, lang)
-        for analogy in output:
+        output = generate_analogies(data_local)
+        for analogy_i, analogy in enumerate(output):
             # append only IPA
-            for token_ort, token_ipa in analogy:
+            for word_i, (token_ort, token_ipa) in enumerate(analogy):
                 print(token_ipa, " ".join(ipa2arp(token_ipa)))
-                data_analogies.append((
-                    token_ort, token_ipa, lang, "analogy", " ".join(ipa2arp(token_ipa))
+                data_flat.append((
+                    token_ort, token_ipa, lang, f"analogy_{analogy_i}_{word_i}", " ".join(ipa2arp(token_ipa))
                 ))
 
-    print("Adding", len(data_analogies), "words")
+    print("Adding", len(data_flat), "words")
     data_langs = collections.defaultdict(list)
-    for line in data+data_analogies:
+    for line in data+data_flat:
         data_langs[line[2]].append(line)
 
     with open("data/multi_1.tsv", "w") as f:
