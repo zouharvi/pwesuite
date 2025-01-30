@@ -1,11 +1,11 @@
 # Phonetic Word Embeddings Suite `PWESuite`
 
-[![Paper](https://img.shields.io/badge/📜%20paper-481.svg)](https://vilda.net/papers/subset2evaluate.pdf)
+[![Paper](https://img.shields.io/badge/📜%20paper-481.svg)](https://aclanthology.org/2024.lrec-main.1168/)
 &nbsp;
 [![YouTube video](https://img.shields.io/badge/🎥%20YouTube%20video-F00.svg)](https://www.youtube.com/watch?v=XJ9bAPaJlyc)
 
 Evaluation suite for phonetic (phonological) word embeddings and an additional model based on Panphone distance learning.
-This repository accompanies the paper [PWESuite: Phonetic Word Embeddings and Tasks They Facilitate](https://arxiv.org/abs/2304.02541) at LREC-COLING 2024.
+This repository accompanies the paper [PWESuite: Phonetic Word Embeddings and Tasks They Facilitate](https://aclanthology.org/2024.lrec-main.1168/) at LREC-COLING 2024.
 Watch [12-minute introduction to PWESuite](https://www.youtube.com/watch?v=XJ9bAPaJlyc).
 
 > **Abstract:** Mapping words into a fixed-dimensional vector space is the backbone of modern NLP. While most word embedding methods successfully encode semantic information, they overlook phonetic information that is crucial for many tasks. We develop three methods that use articulatory features to build phonetically informed word embeddings. To address the inconsistent evaluation of existing phonetic word embedding methods, we also contribute a task suite to fairly evaluate past, current, and future methods. We evaluate both (1) intrinsic aspects of phonetic word embeddings, such as word retrieval and correlation with sound similarity, and (2) extrinsic performance on tasks such as rhyme and cognate detection and sound analogies. We hope our task suite will promote reproducibility and inspire future phonetic embedding research.
@@ -54,12 +54,22 @@ Contact the authors if you encounter any issues using this evaluation suite.
 Read the [associated paper](https://arxiv.org/abs/2304.02541) and for now cite as:
 
 ```
-@article{zouhar2023pwesuite,
-  title={{PWESuite}: {P}honetic Word Embeddings and Tasks They Facilitate},
-  author={Zouhar, Vil{\'e}m and Chang, Kalvin and Cui, Chenxuan and Carlson, Nathaniel and Robinson, Nathaniel and Sachan, Mrinmaya and Mortensen, David},
-  journal={arXiv preprint arXiv:2304.02541},
-  year={2023},
-  url={https://arxiv.org/abs/2304.02541}
+@inproceedings{zouhar-etal-2024-pwesuite,
+    title = "{PWES}uite: Phonetic Word Embeddings and Tasks They Facilitate",
+    author = "Zouhar, Vil{\'e}m  and
+      Chang, Kalvin  and
+      Cui, Chenxuan  and
+      Carlson, Nate B.  and
+      Robinson, Nathaniel Romney  and
+      Sachan, Mrinmaya  and
+      Mortensen, David R.",
+    booktitle = "Proceedings of the 2024 Joint International Conference on Computational Linguistics, Language Resources and Evaluation (LREC-COLING 2024)",
+    month = may,
+    year = "2024",
+    address = "Torino, Italia",
+    publisher = "ELRA and ICCL",
+    url = "https://aclanthology.org/2024.lrec-main.1168/",
+    pages = "13344--13355",
 }
 ```
 
