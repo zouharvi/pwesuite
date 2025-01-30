@@ -1,4 +1,8 @@
-# Phonetic Word Embeddings Suite (`PWESuite`)
+# Phonetic Word Embeddings Suite `PWESuite`
+
+[![Paper](https://img.shields.io/badge/📜%20paper-481.svg)](https://vilda.net/papers/subset2evaluate.pdf)
+&nbsp;
+[![YouTube video](https://img.shields.io/badge/🎥%20YouTube%20video-F00.svg)](https://www.youtube.com/watch?v=XJ9bAPaJlyc)
 
 Evaluation suite for phonetic (phonological) word embeddings and an additional model based on Panphone distance learning.
 This repository accompanies the paper [PWESuite: Phonetic Word Embeddings and Tasks They Facilitate](https://arxiv.org/abs/2304.02541) at LREC-COLING 2024.
@@ -6,9 +10,6 @@ Watch [12-minute introduction to PWESuite](https://www.youtube.com/watch?v=XJ9bA
 
 > **Abstract:** Mapping words into a fixed-dimensional vector space is the backbone of modern NLP. While most word embedding methods successfully encode semantic information, they overlook phonetic information that is crucial for many tasks. We develop three methods that use articulatory features to build phonetically informed word embeddings. To address the inconsistent evaluation of existing phonetic word embedding methods, we also contribute a task suite to fairly evaluate past, current, and future methods. We evaluate both (1) intrinsic aspects of phonetic word embeddings, such as word retrieval and correlation with sound similarity, and (2) extrinsic performance on tasks such as rhyme and cognate detection and sound analogies. We hope our task suite will promote reproducibility and inspire future phonetic embedding research.
 
-
-
-[<img src="https://img.youtube.com/vi/XJ9bAPaJlyc/maxresdefault.jpg" width=600px>](https://www.youtube.com/watch?v=XJ9bAPaJlyc)
 
 <!--p align="center">
   <img src="https://github.com/zouharvi/pwesuite/assets/7661193/e8db7af0-cccf-425a-8a3c-4f260d5abab7" width="500em">
