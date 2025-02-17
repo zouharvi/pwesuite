@@ -11,3 +11,5 @@ __pycache__
 computed/
 data/rhymes.pkl
 *.egg-info
+# added so that dev work isn't capture by a lazy git add *
+dev-venv/
