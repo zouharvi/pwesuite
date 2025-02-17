@@ -20,7 +20,7 @@ then
   tar xjf flite-2.0.5-current.tar.bz2
   cd flite-2.0.5-current
   if [ "$(uname)" == "Darwin" ]; then
-  sed -i.bak "s/cp \-pd/cp \-pR/g" main/Makefile  # comment out if not Mac
+  sed -i.bak "s/cp \-pd/cp \-pR/g" main/Makefile #this command only needs to run if it is on a MacOS machine.
   fi
   ./configure && make
   sudo make install
