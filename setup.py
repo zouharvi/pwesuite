@@ -7,6 +7,7 @@ setup(
     author='CMU & ETH Affiliates',
     author_email='TODO',
     description='Evaluation suite for phonetic word embeddings and provides a few models.',
+    python_requires='<=3.11',
     packages=find_packages(),
     # the requirements here should only be for the evaluation, so e.g. transformers should not be here
     install_requires=[
