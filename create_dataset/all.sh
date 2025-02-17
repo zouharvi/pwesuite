@@ -15,10 +15,9 @@ wget -nc "https://github.com/menelik3/cmudict-ipa/raw/master/cmudict-0.7b-ipa.tx
 # for English epitran
 if ! command -v /usr/local/bin/lex_lookup &> /dev/null
 then
-  wget http://cmuflite.org/packed/flite-2.0/flite-2.0.0-release.tar.bz2 -O data/raw/flite-2.0.0-release.tar.bz2
   cd data/raw
-  tar xjf flite-2.0.0-release.tar.bz2
-  cd flite-2.0.0-release
+  git clone https://github.com/festvox/flite
+  cd flite
   if [ "$(uname)" == "Darwin" ]; then
   sed -i.bak "s/cp \-pd/cp \-pR/g" main/Makefile #this command only needs to run if it is on a MacOS machine.
   fi
