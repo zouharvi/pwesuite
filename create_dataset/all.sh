@@ -19,7 +19,9 @@ then
   cd data/raw
   tar xjf flite-2.0.5-current.tar.bz2
   cd flite-2.0.5-current
+  if [ "$(uname)" == "Darwin" ]; then
   sed -i.bak "s/cp \-pd/cp \-pR/g" main/Makefile  # comment out if not Mac
+  fi
   ./configure && make
   sudo make install
   cd testsuite
