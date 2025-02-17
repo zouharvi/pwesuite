@@ -138,7 +138,7 @@ Please note your export (i.e environment variable) will only be set for the life
 
 The final export to add lex_lookup to path preprends it so it will be encountered first.
 
-### Setting your python path so that the modules load
+### Setting your python path (if you're getting module not found errors)
 If you have multiple python projects active at once or are doing development sometimes your applications can't find parts of their modules. To fix this issue you just need to set your python path while you're inside an active virtual environment.
 ```
 (dev-venv)> export PYTHON_PATH=/YOUR_PATH_TO_PWESUITE/pwesuite 
