@@ -5,7 +5,7 @@ from sklearn.metrics.pairwise import cosine_distances
 import random
 import tqdm
 import numpy as np
-from intrinsic_evaluator import Evaluator
+from models.metric_learning.intrinsic_evaluator import Evaluator
 from main.utils import get_device
 
 DEVICE = get_device()
@@ -13,7 +13,7 @@ DEVICE = get_device()
 class RNNMetricLearner(torch.nn.Module):
     def __init__(
         self,
-        target_metric,
+        target_metric="l2",
         feature_size=24,
         dimension=300,
         safe_eval=False,
