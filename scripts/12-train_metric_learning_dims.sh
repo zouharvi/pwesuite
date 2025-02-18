@@ -27,7 +27,7 @@ done;
 done;
 done;
 
-# FEATURES=tokenort
+# FEATURES=token_ort
 # LANG=multi
 # python3 \
 #     ./models/metric_learning/train.py \
@@ -39,7 +39,7 @@ done;
 #         --epochs 20 \
 #     ;
 
-# FEATURES=tokenort
+# FEATURES=token_ort
 # for LANG in 'multi'; do
 #     SIGNATURE="train_rnn_${FEATURES}_${LANG}"
 #     sbatch --time=01-00 --ntasks=15 --mem-per-cpu=5G --gpus=1 \

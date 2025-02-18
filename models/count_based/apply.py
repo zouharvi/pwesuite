@@ -9,7 +9,7 @@ import argparse
 import panphon
 
 args = argparse.ArgumentParser()
-args.add_argument("--features", default="tokenort")
+args.add_argument("--features", default="token_ort")
 args.add_argument("--vectorizer", default="tfidf")
 args.add_argument("--nopca", action="store_true")
 args.add_argument("--norm", action="store_true")
@@ -21,9 +21,9 @@ ft = panphon.FeatureTable()
 
 
 def process_one_lang(lang):
-    if args.features == "tokenort":
+    if args.features == "token_ort":
         data_local = [" ".join(x["token_ort"]) for x in data if x["lang"] == lang]
-    elif args.features == "tokenipa":
+    elif args.features == "token_ipa":
         data_local = [
             " ".join(ft.ipa_segs(x["token_ipa"]))
             for x in data if x["lang"] == lang

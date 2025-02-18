@@ -43,9 +43,9 @@ def preprocess_dataset_token(data_all, data, features):
 
     # The vocab is based on data_all, so as long as the upstream dataset doesn't change, the vocab will be the same
 
-    if features == "tokenort":
+    if features == "token_ort":
         vocab_raw = [c for word in data_all for c in word[0]]
-    elif features == "tokenipa":
+    elif features == "token_ipa":
         ft = panphon.FeatureTable()
         vocab_raw = [c for word in data_all for c in ft.ipa_segs(word[1])]
     else:
@@ -58,9 +58,9 @@ def preprocess_dataset_token(data_all, data, features):
         indices = [vocab[c] for c in word if c in vocab]
         return F.one_hot(torch.tensor(indices), num_classes=len(vocab)).float()
     
-    if features == "tokenort":
+    if features == "token_ort":
         data = [(token_onehot(x[0]), x[1]) for x in data]
-    elif features == "tokenipa":
+    elif features == "token_ipa":
         ft = panphon.FeatureTable()
         data = [(token_onehot(ft.ipa_segs(x[1])), x[1]) for x in data]
     

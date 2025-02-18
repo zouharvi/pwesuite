@@ -42,7 +42,7 @@ print(f"Loaded {len(data_train)//1000}k words for training")
 model = RNNAutoencoder(
     dimension=args.dimension,
     feature_size=data_train[0][0].shape[1],
-    safe_eval=args.lang == "all" and args.features in {"tokenort", "tokenipa"}
+    safe_eval=args.lang == "all" and args.features in {"token_ort", "token_ipa"}
 )
 model.train_epochs(
     data_train=data_train, data_dev=data_dev,

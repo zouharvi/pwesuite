@@ -38,11 +38,11 @@ args.add_argument(
 )
 args.add_argument(
     "-e2", "--embd-2",
-    default="computed/embd_rnn_metric_learning/tokenipa.pkl"
+    default="computed/embd_rnn_metric_learning/token_ipa.pkl"
 )
 args.add_argument(
     "-e3", "--embd-3",
-    default="computed/embd_rnn_metric_learning/tokenort.pkl"
+    default="computed/embd_rnn_metric_learning/token_ort.pkl"
 )
 args.add_argument("--tsne-n", type=int, default=400)
 args.add_argument("--plot-n", type=int, default=200)

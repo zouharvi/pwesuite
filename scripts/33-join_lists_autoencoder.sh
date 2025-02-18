@@ -2,7 +2,7 @@
 
 mkdir -p computed/embd_rnn_metric_learning/
 
-for FEATURES in "panphon" "tokenipa" "tokenort"; do
+for FEATURES in "panphon" "token_ipa" "token_ort"; do
     SIGNATURE="join_rnn_autoencoder_${FEATURES}"
     sbatch --time=00-04 --ntasks=8 --mem-per-cpu=4G \
         --job-name="${SIGNATURE}" \
