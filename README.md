@@ -93,10 +93,10 @@ The difference is its learning size, 0.005, which was chosen empirically.
 ## Development
 ### Notes
 - This project has dependencies which determine usable Python 3 versions. That dependency currently is panphon2
-- This project requires local admin or sudo privelges depending on your instituion's priveleges policy and so to install flite, lex_lookup and epitran you may need to follow a workaround. This is detailed below.
-- This project is setup with relative directories to maintain portability, to set the top level directory so imports work you will need to export pwesuite's location to path. This is detailed below.
+- This project requires install with sudo privileges or a root account.
+- This project is setup with relative directories to maintain portability, call scripts from within the right folder.
 - This code is written to work on Linux or MacOS only.
-- Creating your own copy of the data may not be nessecary as you can instead download the data from huggingface.
+- Creating your own copy of the data is not strictly nessecary, as you can instead download the data from huggingface.
 
 
 ### Development setup
