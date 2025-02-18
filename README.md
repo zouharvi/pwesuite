@@ -96,7 +96,7 @@ The difference is its learning size, 0.005, which was chosen empirically.
 - This project requires install with sudo privileges or a root account.
 - This project is setup with relative directories to maintain portability, call scripts from within the right folder.
 - This code is written to work on Linux or MacOS only.
-- Creating your own copy of the data is not strictly nessecary, as you can instead download the data from huggingface.
+- Creating your own copy of the data is not strictly necessary, as you can instead download the data from huggingface.
 
 
 ### Development setup
