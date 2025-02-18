@@ -4,8 +4,8 @@ import argparse
 import random
 import panphon2
 import pickle
+from multiprocessing.pool import ThreadPool
 import numpy as np
-import multiprocess as mp
 from sklearn.manifold import TSNE
 from sklearn.metrics.pairwise import cosine_distances
 import matplotlib.pyplot as plt
@@ -63,7 +63,7 @@ def compute_panphon_distance(y, data):
 
 
 print("Computing Panphon FED")
-with mp.Pool() as pool:
+with ThreadPool() as pool:
     data_dists_fed = np.array(pool.map(
         lambda y: compute_panphon_distance(y[0], data),
         data

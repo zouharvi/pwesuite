@@ -5,7 +5,7 @@ import pickle
 import argparse
 from wsim.wsim import wsimdict as WSimDict
 from itertools import islice
-import multiprocess as mp
+from multiprocessing.pool import ThreadPool
 
 args = argparse.ArgumentParser()
 args.add_argument("-l", "--lang", default="en")
@@ -33,7 +33,7 @@ def compute_similarity_sub(data_local):
 
 data_chunked = list(chunk(data, 1000))
 
-with mp.Pool(args.ntasks) as pool:
+with ThreadPool(args.ntasks) as pool:
     sim_nums_chunked = pool.map(
         compute_similarity_sub, tqdm.tqdm(data_chunked)
     )

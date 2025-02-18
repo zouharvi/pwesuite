@@ -2,7 +2,7 @@
 
 import panphon2
 import numpy as np
-import multiprocess as mp
+from multiprocessing.pool import ThreadPool
 from sklearn.metrics.pairwise import cosine_distances, euclidean_distances
 from scipy.stats import pearsonr, spearmanr
 import argparse
@@ -32,7 +32,7 @@ def evaluate_correlations(data_multi, data_size=1000, jobs=20):
         r = random.Random(0)
         data = r.sample(data, k=data_size)
 
-        with mp.Pool(jobs) as pool:
+        with ThreadPool(jobs) as pool:
             data_dists_fed = np.array(pool.map(
                 lambda y: compute_panphon_distance(y[0], data),
                 data

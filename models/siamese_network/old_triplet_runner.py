@@ -1,15 +1,12 @@
 from tqdm import tqdm
 import torch
-from torch import nn
-from torch.utils.data import DataLoader
 import numpy as np
-import multiprocess as mp
+from multiprocessing.pool import ThreadPool
 import random
 import gc
 import panphon2
 import wandb
 from util import get_embeddings, seed_everything
-from util import triplet_collate_fn, plain_collate_fn
 
 class TripletRunner:
     def __init__(self, model, criterion, optimizer, data_train, data_val, train_loader, val_loader, evaluator, n_epochs, wandb_name="", wandb_entity="", eval_every=5):
@@ -55,19 +52,14 @@ class TripletRunner:
             return [fed(x, y) for x in data]
 
         if key not in self.panphon_distance_cache:
-            with mp.Pool() as pool:
+            with ThreadPool() as pool:
                 distances = pool.map(lambda y: compute_panphon_dist(y, data), data)
             distances = np.array(distances)
             self.panphon_distance_cache[key] = distances
             return distances
         else:
             return self.panphon_distance_cache[key]
-
-        # with mp.Pool() as pool:
-        #     distances = pool.map(lambda y: compute_panphon_dist(y, data), data)
-        # distances = np.array(distances)
-        # return distances
-
+        
 
     def get_batch_triplets(self, data, key, batch_size):
         if key not in self.batch_triplet_cache:

@@ -31,8 +31,8 @@ dependencies = [
     "scipy>=1.7",
     "emoji>=2.2",
     "Levenshtein>=0.20.9",
-    "multiprocess>=0.70",
-    "torch>=2.3",
+    "torch >= 2.3",
+    "datasets >= 3.3"
 ]
 
 # only phantom package

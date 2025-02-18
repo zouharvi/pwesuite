@@ -7,7 +7,7 @@ import tqdm
 from main.utils import get_device
 from wsim.wsim import wsimdict as WSimDict
 from itertools import islice
-import multiprocess as mp
+from multiprocessing.pool import ThreadPool
 
 DEVICE = get_device()
 # DEVICE = "cpu"
@@ -36,7 +36,7 @@ def get_similarity_fast(data_batch):
 
         return sim_nums
 
-    with mp.Pool(args.ntasks) as pool:
+    with ThreadPool(args.ntasks) as pool:
         sim_nums_chunked = pool.map(
             compute_similarity_sub, chunk(data_batch, args.batch_size//args.ntasks)
         )
