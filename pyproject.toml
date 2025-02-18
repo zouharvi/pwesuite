@@ -1,0 +1,40 @@
+[project]
+name = "PWEsuite"
+version = "0.0.1"
+requires-python = "<=3.11, >=3.7"
+readme = "README.md"
+description = "Evaluation suite for phonetic word embeddings and provides a few models."
+authors = [
+    {name = "Vilém Zouhar", email = "vzouhar@ethz.ch"},
+    {name = "Kalvin Chang", email = "kalvinc@cs.cmu.edu"},
+    {name = "Chenxuan Cui", email = "cxcui@cs.cmu.edu"},
+    {name = "Nate B. Carlson", email = "natbcar@gmail.com"},
+    {name = "Mrinmaya Sachan", email = "msachan@ethz.ch"},
+    {name = "David R. Mortensen", email = "dmortens@cs.cmu.edu"}
+]
+maintainers = [
+    {name = "Vilém Zouhar", email = "vzouhar@ethz.ch"}
+]
+dependencies = [
+    "panphon2>=0.3",
+    "numpy>=1.21",
+    "transformers>=4.22",
+    "wandb>=0.13",
+    "panphon>=0.20",
+    "epitran>=1.20",
+    "tqdm>=4.64",
+    "scikit-learn>=1.1",
+    "scipy>=1.7",
+    "emoji>=2.2",
+    "Levenshtein>=0.20.9",
+    "multiprocess>=0.70",
+]
+[project.optional.dependencies]
+dev = [
+    "torch",
+]
+
+[build-system]
+requires = ["setuptools >= 61.0"]
+build-backend = "setuptools.build_meta"
+
