@@ -21,22 +21,12 @@ then
   if [ "$(uname)" == "Darwin" ]; then
   sed -i.bak "s/cp \-pd/cp \-pR/g" main/Makefile #this command only needs to run if it is on a MacOS machine.
   fi
-  if [[ -z "${NON_ROOT_CUSTOM_INSTALL_DIR}" ]]; then
-  echo 'building the normal root install'
+  echo 'building the flite library'
   ./configure && make
   sudo make install
   cd testsuite
   make lex_lookup
   sudo cp lex_lookup /usr/local/bin
-  else
-  echo 'building the non-root workaround'
-  ./configure --prefix=${NON_ROOT_CUSTOM_INSTALL_DIR} && make
-  make install
-  cd testsuite
-  make
-  echo 'lex_lookup is located in the folder below, add it to path at a location of your choosing' 
-  pwd
-  fi
   cd ../../../..
 fi
 
