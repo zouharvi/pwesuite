@@ -24,6 +24,7 @@ The suite contains the following tasks:
 - Sound analogies
 
 Run `pip3 install -e .` to install this repository and its dependencies.
+Pre-trained modelse are available [here on Huggingface](https://huggingface.co/zouharvi/PWESuite-metric_learner).
 
 ## Embedding evaluation
 
