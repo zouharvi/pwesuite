@@ -2,16 +2,19 @@ import panphon
 import panphon2
 from main.utils import load_multi_data
 
-def preprocess_dataset(data, features, lang, purpose_key="all"):
+def preprocess_dataset(features, lang, purpose_key="all"):
     # token_ort, token_ipa, lang, pronunc
-    data = [
-        (x["token_ort"], x["token_ipa"], x["token_arp"]) for x in load_multi_data(data, purpose_key=purpose_key)
+    data_all = [
+        x for x in load_multi_data(purpose_key=purpose_key)
     ]
-    data_all = data
     data = [
-        x for x in data
+        (x["token_ort"], x["token_ipa"], x["token_arp"]) for x in data_all
         if lang == "all" or x["lang"] == lang
     ]
+    data_all = [
+        (x["token_ort"], x["token_ipa"], x["token_arp"]) for x in data_all
+    ]
+    print("data and data_all", len(data), len(data_all))
     if features == "panphon":
         return preprocess_dataset_panphon(data)
     else:

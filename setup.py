@@ -22,5 +22,7 @@ setup(
         "emoji>=2.2",
         "Levenshtein>=0.20.9",
         "multiprocess>=0.70",
+        "torchtext==0.18",
+        "torch==2.3",
     ],
 )

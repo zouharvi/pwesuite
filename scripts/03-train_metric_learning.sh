@@ -19,7 +19,8 @@ for FEATURES in "panphon" "tokenipa" "tokenort"; do
                 ;"
     done;
     
-    for LANG in 'multi'; do
+    # for LANG in 'all' 'multi'; do
+    for LANG in 'all'; do
         SIGNATURE="train_rnn_${FEATURES}_${LANG}"
         sbatch --time=01-00 --ntasks=15 --mem-per-cpu=5G --gpus=1 \
             --job-name="${SIGNATURE}" \

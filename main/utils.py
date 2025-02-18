@@ -68,7 +68,7 @@ def load_cognates_data():
 def load_multi_data(purpose_key="main"):
     print("Loading multi data")
     import datasets
-    data = datasets.load_dataset("zouharvi/pwesuite-eval", split="train", download_mode='force_redownload')
+    data = datasets.load_dataset("zouharvi/pwesuite-eval", split="train")
 
     if purpose_key == "all":
         return list(data)
