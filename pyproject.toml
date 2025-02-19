@@ -1,24 +1,23 @@
-[build-system]
-requires = ["setuptools", "wheel"]
-build-backend = "setuptools.build_meta"
-
 [project]
-name = "PWESuite"
+name = "PWEsuite"
 version = "0.0.2"
-description = "Evaluation suite for phonetic word embeddings and provides a few models."
-authors = [
-    { name = "Vilém Zouahr", email = "vzouhar@ethz.ch" },
-    { name = "Kalvin Chang" },
-    { name = "Nate B. Carlson" },
-    { name = "Nathaniel R. Robinson" },
-    { name = "Mrinmaya Sachan" },
-    { name = "David R. Mortensen" },
-]
+requires-python = "<=3.11, >=3.7"
 readme = "README.md"
-requires-python = ">=3.7"
-license = { text = "MIT" }
+license = {text = "MIT"}
 keywords = ["phonetic", "word embeddings", "evaluation"]
 urls = { "Homepage" = "https://github.com/zouharvi/pwesuite" }
+description = "Evaluation suite for phonetic word embeddings and provides a few models."
+authors = [
+    {name = "Vilém Zouhar", email = "vzouhar@ethz.ch"},
+    {name = "Kalvin Chang", email = "kalvinc@cs.cmu.edu"},
+    {name = "Chenxuan Cui", email = "cxcui@cs.cmu.edu"},
+    {name = "Nate B. Carlson", email = "natbcar@gmail.com"},
+    {name = "Mrinmaya Sachan", email = "msachan@ethz.ch"},
+    {name = "David R. Mortensen", email = "dmortens@cs.cmu.edu"}
+]
+maintainers = [
+    {name = "Vilém Zouhar", email = "vzouhar@ethz.ch"}
+]
 dependencies = [
     "panphon2>=0.3",
     "numpy>=1.21",
@@ -35,6 +34,11 @@ dependencies = [
     "datasets >= 3.3"
 ]
 
+[build-system]
+requires = ["setuptools", "wheel"]
+build-backend = "setuptools.build_meta"
+
+# This will need to be changed, it is not equivalent to the previous find_packages()
 # only phantom package
 [tool.setuptools]
 packages = []
