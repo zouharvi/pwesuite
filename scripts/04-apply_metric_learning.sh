@@ -2,7 +2,7 @@
 
 mkdir -p computed/tmp
 
-for FEATURES in "panphon" "tokenipa" "tokenort"; do
+for FEATURES in "panphon" "token_ipa" "token_ort"; do
 for LANG in 'en' 'am' 'bn' 'uz' 'pl' 'es' 'sw' 'fr' 'de' 'multi'; do
 # for LANG in 'sw'; do
     SIGNATURE="apply_rnn_${FEATURES}_${LANG}"

@@ -5,7 +5,7 @@ import argparse
 import random
 import panphon2
 import numpy as np
-import multiprocess as mp
+from multiprocessing.pool import ThreadPool
 from sklearn.manifold import TSNE
 from sklearn.metrics.pairwise import euclidean_distances
 import matplotlib.pyplot as plt
@@ -38,11 +38,11 @@ args.add_argument(
 )
 args.add_argument(
     "-e2", "--embd-2",
-    default="computed/embd_rnn_metric_learning/tokenipa.pkl"
+    default="computed/embd_rnn_metric_learning/token_ipa.pkl"
 )
 args.add_argument(
     "-e3", "--embd-3",
-    default="computed/embd_rnn_metric_learning/tokenort.pkl"
+    default="computed/embd_rnn_metric_learning/token_ort.pkl"
 )
 args.add_argument("--tsne-n", type=int, default=400)
 args.add_argument("--plot-n", type=int, default=200)
@@ -70,11 +70,12 @@ data = random.sample(data, k=args.tsne_n)
 
 def _compute_panphon_distance(y, data):
     # tok_features break pipe in multiprocess
+    # TODO: multiprocessing?
     fed = panphon2.FeatureTable().feature_edit_distance
     return [fed(tok_ipa, y) for tok_ipa in data]
 
 data_ipa = [x["token_ipa"] for x, y in data]
-with mp.Pool() as pool:
+with ThreadPool() as pool:
     data_dists_fed = list(pool.map(
         lambda y: (
             _compute_panphon_distance(y, data_ipa)

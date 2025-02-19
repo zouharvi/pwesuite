@@ -2,7 +2,7 @@
 
 import panphon2
 import numpy as np
-import multiprocess as mp
+from multiprocessing.pool import ThreadPool
 from sklearn.metrics.pairwise import cosine_distances, euclidean_distances
 import argparse
 from main.utils import load_embd_data, load_multi_data
@@ -28,7 +28,7 @@ def evaluate_retrieval(data_multi_all, data_size=1000, jobs=20):
         r = random.Random(0)
         data = r.sample(data, k=data_size)
 
-        with mp.Pool(20) as pool:
+        with ThreadPool(20) as pool:
             data_dists_fed = np.array(pool.map(
                 lambda y: compute_panphon_distance(y[0], data),
                 data

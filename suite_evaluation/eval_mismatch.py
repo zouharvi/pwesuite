@@ -4,8 +4,8 @@ import argparse
 from main.utils import load_embd_data, load_multi_data, LANGS
 from .eval_all import evaluate_all
 import numpy as np
+from multiprocessing.pool import ThreadPool
 import json
-import multiprocessing as mp
 from itertools import product
 
 if __name__ == "__main__":
@@ -31,7 +31,7 @@ if __name__ == "__main__":
         return score, scores_all
 
     # do all tasks in parallel
-    with mp.Pool(10) as pool:
+    with ThreadPool(10) as pool:
         output_raw = pool.map(
             evaluate_single_pair, lang_pairs
         )

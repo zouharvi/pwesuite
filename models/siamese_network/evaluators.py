@@ -2,7 +2,7 @@ import panphon2
 import numpy as np
 from scipy.stats import pearsonr, spearmanr
 from sklearn.metrics.pairwise import cosine_distances, euclidean_distances
-import multiprocess as mp
+from multiprocessing.pool import ThreadPool
 from torch.utils.data import DataLoader
 
 class IntrinsicEvaluator:
@@ -21,7 +21,7 @@ class IntrinsicEvaluator:
             data_dists_true = self.dist_cache[key]
         else:
             # parallelization
-            with mp.Pool() as pool:
+            with ThreadPool() as pool:
                 data_dists_true = pool.map(
                     lambda y: self.compute_panphon_distance(y[0], data), data)
                 

@@ -1,6 +1,6 @@
 [project]
 name = "PWEsuite"
-version = "0.0.1"
+version = "0.0.2"
 requires-python = "<=3.11, >=3.7"
 readme = "README.md"
 license = {text = "MIT"}
@@ -30,7 +30,6 @@ dependencies = [
     "scipy>=1.7",
     "emoji>=2.2",
     "Levenshtein>=0.20.9",
-    "multiprocess>=0.70",
     "torch >= 2.3",
     "datasets >= 3.3"
 ]
@@ -40,5 +39,6 @@ requires = ["setuptools", "wheel"]
 build-backend = "setuptools.build_meta"
 
 # This will need to be changed, it is not equivalent to the previous find_packages()
+# only phantom package
 [tool.setuptools]
 packages = []

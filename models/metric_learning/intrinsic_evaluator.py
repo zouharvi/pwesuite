@@ -1,5 +1,5 @@
 import panphon2
-import multiprocess as mp
+from multiprocessing.pool import ThreadPool
 from scipy.stats import pearsonr, spearmanr
 from sklearn.metrics.pairwise import cosine_distances, euclidean_distances
 import numpy as np
@@ -23,7 +23,7 @@ class Evaluator():
                 return [fed(tok_ipa, y) for tok_ipa in data]
                 
             # parallelization
-            with mp.Pool() as pool:
+            with ThreadPool() as pool:
                 # tok_features break pipe in multiprocess
                 data_ipa = [x[1] for x in data]
                 if self.safe_eval:
@@ -59,10 +59,14 @@ class Evaluator():
         if key is not None and key in self.panphon_rank_cache:
             data_rank_true = self.panphon_rank_cache[key]
         else:
-            with mp.Pool() as pool:
-                data_rank_true = pool.map(
+            with ThreadPool() as pool:
+                if self.safe_eval:
+                    iterator = map
+                else:
+                    iterator = pool.map
+                data_rank_true = list(iterator(
                     self._compute_neighbour_rank, data_dists_true
-                )
+                ))
             # take the second element (not first/zeroth - that's always self)
             data_rank_true = np.array([x[1] for x in data_rank_true])
             data_rank_true = data_rank_true.flatten()
@@ -75,10 +79,14 @@ class Evaluator():
         data_dists_hyp = euclidean_distances(np.array(data_sims))
 
         # paralelize
-        with mp.Pool() as pool:
-            data_rank_hyp = pool.map(
+        with ThreadPool() as pool:
+            if self.safe_eval:
+                iterator = map
+            else:
+                iterator = pool.map
+            data_rank_hyp = list(iterator(
                 self._compute_neighbour_rank, data_dists_hyp
-            )
+            ))
 
         data_rank_hyp = [
             row.index(nearest_neighbour_index)

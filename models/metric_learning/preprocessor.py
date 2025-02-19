@@ -2,55 +2,63 @@ import panphon
 import panphon2
 from main.utils import load_multi_data
 
-def preprocess_dataset(data, features, lang, purpose_key="all"):
+def preprocess_dataset(features, lang, purpose_key="all"):
     # token_ort, token_ipa, lang, pronunc
-    data = [
-        (x["token_ort"], x["token_ipa"], x["token_arp"]) for x in load_multi_data(data, purpose_key=purpose_key)
-    ]
-    data_all = data
+    data = load_multi_data(purpose_key=purpose_key)
     data = [
         x for x in data
         if lang == "all" or x["lang"] == lang
     ]
-    if features == "panphon":
-        return preprocess_dataset_panphon(data)
-    else:
-        return preprocess_dataset_token(data_all, data, features)
+    print("Loaded", len(data))
+    return preprocess_dataset_foreign(data, features)
+    
 
-
-def preprocess_dataset_panphon(data):
-    import numpy as np
-    f = panphon2.FeatureTable()
-    # panphon, token_ipa
-    return [(np.array(f.word_to_binary_vectors(x[1])), x[1]) for x in data]
-
-
-def preprocess_dataset_token(data_all, data, features):
-    from torchtext.vocab import build_vocab_from_iterator
+def preprocess_dataset_foreign(data, features):
     import torch
     import torch.nn.functional as F
-
-    # TODO: use huggingface and create own vocabulary instead of relying on the one on the disk
-    # use the same multi vocabulary across all models
-    # a nice side effect is the same number of parameters everywhere
-    if features == "tokenort":
-        vocab_raw = [c for word in data_all for c in word[0]]
-        vocab = build_vocab_from_iterator([[x] for x in vocab_raw])
-    elif features == "tokenipa":
-        ft = panphon.FeatureTable()
-        vocab_raw = [c for word in data_all for c in ft.ipa_segs(word[1])]
-        vocab = build_vocab_from_iterator([[x] for x in vocab_raw])
-
-    # TODO: add a default pointer to vocab to point to utils.UNK_SYMBOL
-
+    
     def token_onehot(word):
-        return F.one_hot(torch.tensor(vocab(list(word))), num_classes=len(vocab)).float()
-
-    # features, token_ipa
-    if features == "tokenort":
-        data = [(token_onehot(x[0]), x[1]) for x in data]
-    elif features == "tokenipa":
+        indices = [vocab[c] for c in word if c in vocab]
+        return F.one_hot(torch.tensor(indices), num_classes=len(vocab)).float()
+    
+    if features == "token_ort":
+        vocab = get_vocab_all("token_ort")
+        print("Vocabulary size", len(vocab))
+        # feature, token_ipa
+        return [(token_onehot(x["token_ort"]), x["token_ipa"]) for x in data]
+    elif features == "token_ipa":
+        vocab = get_vocab_all("token_ipa")
+        print("Vocabulary size", len(vocab))
         ft = panphon.FeatureTable()
-        data = [(token_onehot(ft.ipa_segs(x[1])), x[1]) for x in data]
+        # feature, token_ipa
+        return [(token_onehot(ft.ipa_segs(x["token_ipa"])), x["token_ipa"]) for x in data]
+    elif features == "panphon":
+        import numpy as np
+        f = panphon2.FeatureTable()
+        # panphon, token_ipa
+        return [(np.array(f.word_to_binary_vectors(x["token_ipa"])), x["token_ipa"]) for x in data]
+    else:
+        raise ValueError("Unsupported feature type")
 
-    return data
+
+def get_vocab_all(features):
+    """
+    The vocab is based on data_all, so as long as the upstream dataset doesn't change, the vocab will be the same
+    """
+
+    import panphon
+    import main.utils
+    
+    data_all = load_multi_data(purpose_key="all")
+    if features == "token_ort":
+        vocab_raw = [c for word in data_all for c in word["token_ort"]]
+    elif features == "token_ipa":
+        ft = panphon.FeatureTable()
+        vocab_raw = [c for word in data_all for c in ft.ipa_segs(word["token_ipa"])]
+    else:
+        raise ValueError("Unsupported feature type")
+    
+    # force-add UNK symbol
+    characters = {main.utils.UNK_SYMBOL} | set(vocab_raw)
+    vocab = {char: idx for idx, char in enumerate(characters)}
+    return vocab

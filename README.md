@@ -24,6 +24,7 @@ The suite contains the following tasks:
 - Sound analogies
 
 Run `pip3 install -e .` to install this repository and its dependencies.
+Pre-trained modelse are available [here on Huggingface](https://huggingface.co/zouharvi/PWESuite-metric_learner).
 
 ## Embedding evaluation
 
@@ -51,7 +52,7 @@ For a demo, see [this Jupyter notebook](demo.ipynb).
 ## Misc
 
 Contact the authors if you encounter any issues using this evaluation suite.
-Read the [associated paper](https://arxiv.org/abs/2304.02541) and for now cite as:
+Read the [associated paper](https://aclanthology.org/2024.lrec-main.1168/) and for now cite as:
 
 ```
 @inproceedings{zouhar-etal-2024-pwesuite,

@@ -4,9 +4,9 @@ import math
 import torch
 import argparse
 import tqdm
-from model import RNNMetricLearner
+from models.metric_learning.model import RNNMetricLearner
+from models.metric_learning.preprocessor import preprocess_dataset
 import pickle
-from preprocessor import preprocess_dataset
 
 args = argparse.ArgumentParser()
 args.add_argument("-l", "--lang", default="en")

@@ -39,7 +39,7 @@ def get_embd(arp):
 data = load_multi_data(purpose_key="all")
 data_out = []
 
-# TODO: multiprocess?
+# TODO: multiprocessing?
 for line in tqdm.tqdm(data):
     phones = "".join([c for c in line["token_arp"].lower() if c.isalpha() or c==" "]).split()
     if not phones:
