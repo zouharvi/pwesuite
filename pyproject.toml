@@ -3,6 +3,9 @@ name = "PWEsuite"
 version = "0.0.1"
 requires-python = "<=3.11, >=3.7"
 readme = "README.md"
+license = {text = "MIT"}
+keywords = ["phonetic", "word embeddings", "evaluation"]
+urls = { "Homepage" = "https://github.com/zouharvi/pwesuite" }
 description = "Evaluation suite for phonetic word embeddings and provides a few models."
 authors = [
     {name = "Vilém Zouhar", email = "vzouhar@ethz.ch"},
@@ -29,12 +32,11 @@ dependencies = [
     "Levenshtein>=0.20.9",
     "multiprocess>=0.70",
 ]
-[project.optional.dependencies]
-dev = [
-    "torch",
-]
 
 [build-system]
-requires = ["setuptools >= 61.0"]
+requires = ["setuptools", "wheel"]
 build-backend = "setuptools.build_meta"
 
+# This will need to be changed, it is not equivalent to the previous find_packages()
+[tool.setuptools]
+packages = []
