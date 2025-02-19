@@ -92,13 +92,8 @@ The difference is its learning size, 0.005, which was chosen empirically.
 ![poster](https://github.com/zouharvi/pwesuite/assets/7661193/e2539886-30b1-4fbd-b768-ec3a61dfa1ce)
 
 ## Development
-### Notes
-- This project has dependencies which determine usable Python 3 versions. That dependency currently is panphon2
-- This project requires install with sudo privileges or a root account.
-- This project is setup with relative directories to maintain portability, call scripts from within the right folder.
-- This code is written to work on Linux or MacOS only.
-- Creating your own copy of the data is not strictly necessary, as you can instead download the data from huggingface.
 
+Because of a dependency on panphon2, this project can use Python up to only 3.11, see [the tracking issue](https://github.com/zouharvi/pwesuite/issues/15).
 
 ### Development setup
 
@@ -111,13 +106,19 @@ If you are not a developer/contributor already you will have to fork and raise a
 > python -m venv dev-venv
 > source dev-venv/bin/activate
 > pip install -e .
+```
 Congratulations you are now ready to develop in PWESuite.
-```
-### Creating your own copy of the data (requires sudo)
 
-If you have sudo privileges this will also configure and install cmu flite as lex_lookup is a required tool. 
+### Contributors
 
-```
-> cd pwesuite
-> ./create_dataset/all.sh
+We sincerely thank [@JeffBezos64](https://github.com/JeffBezos64) for contributing to this project.
+
+### Replicating dataset
+
+Creating your own copy of the data is not strictly necessary, as you can instead download the data from huggingface.
+If you wish to replicate the data locally, having sudo privileges might be necessary as we need to install `flite`.
+The following script should handle everything for you in this case (on Linux and MacOS):
+
+```bash
+./create_dataset/all.sh
 ```

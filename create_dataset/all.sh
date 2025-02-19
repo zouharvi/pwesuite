@@ -18,8 +18,9 @@ then
   cd data/raw
   git clone https://github.com/festvox/flite
   cd flite
+  # only for MacOS
   if [ "$(uname)" == "Darwin" ]; then
-  sed -i.bak "s/cp \-pd/cp \-pR/g" main/Makefile #this command only needs to run if it is on a MacOS machine.
+  sed -i.bak "s/cp \-pd/cp \-pR/g" main/Makefile
   fi
   echo 'building the flite library'
   ./configure && make
