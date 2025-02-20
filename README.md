@@ -3,6 +3,8 @@
 [![Paper](https://img.shields.io/badge/📜%20paper-481.svg)](https://aclanthology.org/2024.lrec-main.1168/)
 &nbsp;
 [![YouTube video](https://img.shields.io/badge/🎥%20YouTube%20video-F00.svg)](https://www.youtube.com/watch?v=XJ9bAPaJlyc)
+&nbsp;
+[![Hugging Face Collection](https://img.shields.io/badge/%F0%9F%A4%97%20Hugging%20Face-Collection-FCD21D)](https://huggingface.co/collections/zouharvi/pwesuite-67b6e860a18e514d36293e74)
 
 Evaluation suite for phonetic (phonological) word embeddings and an additional model based on Panphone distance learning.
 This repository accompanies the paper [PWESuite: Phonetic Word Embeddings and Tasks They Facilitate](https://aclanthology.org/2024.lrec-main.1168/) at LREC-COLING 2024.
