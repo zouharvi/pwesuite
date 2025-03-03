@@ -51,6 +51,47 @@ Alternatively, you can invoke individual tasks: `./suite_evaluation/eval_{correl
 
 For a demo, see [this Jupyter notebook](demo.ipynb).
 
+## Using embeddings
+
+See the instructions on HuggingFace models. For example, the `rnn_metric_learning_token_orth` model can be loaded and used as:
+```
+from models.metric_learning.model import RNNMetricLearner
+from models.metric_learning.preprocessor import preprocess_dataset_foreign
+from main.utils import load_multi_data
+import torch
+import tqdm
+import math
+
+data = load_multi_data(purpose_key="all")
+data = preprocess_dataset_foreign(
+  [
+    {"token_ort": "Hello", "token_ipa": None},
+    {"token_ort": "what", "token_ipa": None},
+    {"token_ort": "is", "token_ipa": None},
+    {"token_ort": "pwesuite", "token_ipa": None},
+  ],
+  features="token_ort"
+)
+
+model = RNNMetricLearner(
+    dimension=300,
+    feature_size=data[0][0].shape[1],
+)
+model.load_state_dict(torch.load("computed/models/rnn_metric_learning_token_orth_all.pt"))
+
+# some cheap paralelization
+BATCH_SIZE = 32
+data_out = []
+for i in tqdm.tqdm(range(math.ceil(len(data) / BATCH_SIZE))):
+    batch = [f for f, _ in data[i * BATCH_SIZE:(i + 1) * BATCH_SIZE]]
+    data_out += list(
+        model.forward(batch).detach().cpu().numpy()
+    )
+
+assert len(data) == len(data_out)
+assert all([len(x) == 300 for x in data_out])
+```
+
 ## Misc
 
 Contact the authors if you encounter any issues using this evaluation suite.
